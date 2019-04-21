@@ -43,7 +43,7 @@ export interface Machine {
     architecture: string,
     resGuid: string,
     startDate: string,
-    dateUpdated: string,
+    dateAdded: string,
     credential: string,
     domain: string,
     publicIp: string
@@ -52,5 +52,6 @@ export interface Machine {
     ipAddress: String,
     groupName: String,
     processes: Process[],
-    pollingCycle: String
+    pollingCycle: String,
+    lastContact: String
 }

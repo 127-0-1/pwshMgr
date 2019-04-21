@@ -76,12 +76,10 @@ router.put('/:id', validateObjectId, async (req, res) => {
     machine.applications = req.body.applications
     machine.make = req.body.make
     machine.model = req.body.model
-    machine.publicIp = req.body.publicIp
     machine.domain = req.body.domain
     machine.services = req.body.services
     machine.processes = req.body.processes
     machine.drives = req.body.drives
-    machine.dateUpdated = Date.now()
     machine.status = req.body.status
     if (req.body.pollingCycle){
         console.log("this is an update from the UI")   

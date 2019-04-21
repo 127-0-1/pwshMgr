@@ -1,25 +1,15 @@
 #Requires -RunAsAdministrator
-
-#Input Parameters
 param (
     [Parameter(Mandatory = $true)]
-    [string] $ManagementNode,
-
-    [Parameter()]
-    [string] $InstallDirectory
+    [string] $ManagementNode
 )
-
 $InstallDirectory = "C:\pwshMgr\Agent"
-write $InstallDirectory
-
 $HostName = hostname
 $UUID     = (gcim -Class Win32_ComputerSystemProduct).UUID
-
 $RegisterData = @{
     'name'  = $HostName
     'uuid'  = $UUID
 } | ConvertTo-Json
-
 $parameters = @{
     Uri             = "$ManagementNode/api/register"
     Method          = "Post"
@@ -27,10 +17,9 @@ $parameters = @{
     UseBasicParsing = $True
     ContentType     = "application/json"
 }
-
 $RegisterResponse = (wget @parameters).Content | ConvertFrom-Json
-
 # Add database path to .env file
 $DotEnv = "ID=$($RegisterResponse._id)" +
-"`r`nMANAGEMENT_NODE=$ManagementNode" |
+"`r`nMANAGEMENT_NODE=$ManagementNode" +
+"`r`nAPI_KEY=$($RegisterResponse.apiKey)" |
     Out-File -Encoding ascii -NoClobber $InstallDirectory\.env -NoNewline

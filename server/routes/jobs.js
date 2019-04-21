@@ -3,11 +3,8 @@ const validateObjectId = require('../middleware/validateObjectId');
 const express = require('express');
 const router = express.Router();
 const Job = require('../models/job');
-const mongoose = require('mongoose');
 const status = require('http-status');
-const http = require('http');
 const Machine = require('../models/machine')
-const Application = require('../models/application')
 const Script = require('../models/script')
 const checkAuth = require("../middleware/check-auth");
 
@@ -23,18 +20,6 @@ router.post('/', checkAuth, async (req, res) => {
             dateAdded: Date.now(),
             output: null,
             type: "Script"
-        })
-    }
-    if (req.body.application) {
-        const application = await Application.findById(req.body.application);
-        var newJob = Job({
-            name: `Deploy ${application.name} to ${machine.name}`,
-            machine: req.body.machine,
-            application: application.chocoInstallName,
-            status: "Scheduled",
-            dateAdded: Date.now(),
-            output: null,
-            type: "Choco Application Install"
         })
     }
     await newJob.save()

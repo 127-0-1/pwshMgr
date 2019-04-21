@@ -2,6 +2,7 @@ require('dotenv').config();
 const uristring = process.env.MONGODBPATH
 const express = require('express');
 const router = express.Router();
+const uuidv1 = require('uuid/v1');
 const mongoose = require('mongoose');
 mongoose.connect(uristring)
     .then(connection => {
@@ -10,7 +11,7 @@ mongoose.connect(uristring)
     .catch(error => {
         console.log(error.message)
     });
-
+const bcrypt = require("bcryptjs");
 const machines = require('./machines');
 const users = require('./users');
 const jobs = require('./jobs');
@@ -22,6 +23,10 @@ const Alert = require('../models/alert');
 const Machine = require('../models/machine');
 const AlertPolicies = require('../models/alertPolicy');
 const checkAuth = require("../middleware/check-auth");
+const agentAuth = require("../middleware/agentAuth");
+
+
+
 
 router.use('/machines', machines);
 router.use('/jobs', jobs);
@@ -43,26 +48,31 @@ router.get('/count', async (req, res) => {
     res.send(count)
 });
 
-
-
 //   agent routes
+
+// this route is called on agent install
 router.post('/register', async (req,res) => {
+    console.log(req.body)
+    const apiKey = uuidv1()
+    const hash = await bcrypt.hash(apiKey, 10);
+    req.body.apiKey = hash
     console.log(req.body)
     req.body.dateAdded = Date.now()
     const machine = await Machine.create(req.body)
+    machine.apiKey = apiKey
     res.send(machine)
 })
 
 // get alert policies per machine
-router.get('/alertPolicies/machine/:id', async (req,res) => {
-    console.log(req.params.id)
+router.get('/alertPolicies/machine/:id', agentAuth, async (req,res) => {
+    console.log(req.header('api-key'))
     const alertPolices = await AlertPolicies.find({machineId: req.params.id})
     res.send(alertPolices)
 })
 
-
-// update data
-router.post('/machines/agent/:id', async (req,res) => {
+// data update
+router.post('/machines/agent/:id', agentAuth, async (req,res) => {
+    console.log(req.headers)
     if (!Array.isArray(req.body.alerts) || !req.body.alerts.length) {
         console.log("no alerts found to process")
       } else {
@@ -70,6 +80,7 @@ router.post('/machines/agent/:id', async (req,res) => {
         await Alert.insertMany(req.body.alerts) 
     }
     const machine = await Machine.findById(req.params.id)
+    machine.lastContact = Date.now()
     machine.name = req.body.name
     machine.operatingSystem = req.body.operatingSystem
     machine.architecture = req.body.architecture
@@ -82,7 +93,6 @@ router.post('/machines/agent/:id', async (req,res) => {
     machine.services = req.body.services
     machine.processes = req.body.processes
     machine.drives = req.body.drives
-    machine.dateUpdated = Date.now()
     machine.status = req.body.status
     if (req.body.pollingCycle){
         console.log("this is an update from the UI")   
@@ -91,7 +101,7 @@ router.post('/machines/agent/:id', async (req,res) => {
     if (req.body.credential) {
         machine.credential = req.body.credential
     }
-    const updatedMachine = await Machine.findByIdAndUpdate(req.params.id, machine, { new: true })
+    const updatedMachine = await Machine.findOneAndUpdate(req.params.id, machine, { new: true })
     req.io.sockets.in(req.params.id).emit('machineUpdate', updatedMachine)
     res.json(updatedMachine);
 })
