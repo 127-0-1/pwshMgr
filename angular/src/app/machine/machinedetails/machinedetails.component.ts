@@ -9,8 +9,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApplicationService } from '../../applications/application.service';
 import { Application } from '../../applications/application.model';
-import { CredentialService } from '../../credentials/credential.service';
-import { Credential } from '../../credentials/credential.model';
 import * as io from 'socket.io-client';
 import { JobService } from '../../jobs/jobs.service';
 import { Alert } from '../../alerts/alert.model';
@@ -40,7 +38,6 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   users: User[]
   applicationToDeploy: String
   applications: Application[]
-  credentials: Credential[];
   refreshing: string;
   jobs: Job[];
   alerts: Alert[];
@@ -53,12 +50,11 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private formBuilder: FormBuilder,
     private applicationService: ApplicationService,
-    private credentialService: CredentialService,
     private router: Router,
     private jobService: JobService
   ) {
 
-    this.socket = io.connect("")
+    this.socket = io.connect("http://localhost:8080")
     this.id = this.route.snapshot.params['id'];
   }
 
@@ -113,12 +109,6 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     this.machine.status = "Pending Poll"
     this.machineService.updateMachine(this.machine)
     .subscribe()
-  }
-
-  changeCredential(template: TemplateRef<any>) {
-    this.credentialService.getAllCredentials()
-      .subscribe((credentials: Array<Credential>) => this.credentials = credentials)
-    this.modalRef = this.modalService.show(template, this.modalConfig);
   }
 
   class() {

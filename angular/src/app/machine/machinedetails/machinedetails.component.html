@@ -49,7 +49,7 @@
   <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="hideAlerts()" *ngIf="alerts">Hide Alerts</button>
   <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="startMaintenance()" *ngIf="machine.status!=='Maintenance'">Start Maintenance</button>
   <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="stopMaintenance()" *ngIf="machine.status=='Maintenance'">Stop Maintenance</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="changeCredential(editTemplate)">Edit</button>
+  <!-- <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="changeCredential(editTemplate)">Edit</button> -->
   <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="deleteMachine()">Delete</button>
   <br>
   <br>
@@ -224,12 +224,6 @@
     </div>
     <div class="modal-body">
       <div class="container">
-        <div class="form-group">
-          <label for="exampleFormControlSelect1">Credential</label>
-          <select class="form-control col-md-5" #type="ngModel" [(ngModel)]="machine.credential">
-            <option *ngFor="let credential of credentials" [value]="credential._id">{{credential.credentialName}}</option>
-          </select>
-        </div>
         <div class="form-group">
           <label for="exampleFormControlSelect1">Polling Cycle (minutes)</label>
           <select class="form-control col-md-5" #type="ngModel" [(ngModel)]="machine.pollingCycle">

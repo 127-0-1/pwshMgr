@@ -12,16 +12,6 @@
         <a href id="basic-link" class="nav-link dropdown-toggle" dropdownToggle (click)="false" aria-controls="basic-link-dropdown">Machines</a>
         <div *dropdownMenu id="basic-link-dropdown" aria-labelledby="basic-link" class="dropdown-menu">
           <a class="dropdown-item" [routerLink]="['/machines']">All Machines</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" [routerLink]="['/machines/new']">New Machine</a>
-        </div>
-      </li>
-      <li dropdown class="nav-item dropdown" *ngIf="userIsAuthenticated">
-        <a href id="basic-link" class="nav-link dropdown-toggle" dropdownToggle (click)="false" aria-controls="basic-link-dropdown">Credentials</a>
-        <div *dropdownMenu id="basic-link-dropdown" aria-labelledby="basic-link" class="dropdown-menu">
-          <a class="dropdown-item" [routerLink]="['/credentials']">All Credentials</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" [routerLink]="['/credentials/new']">New Credential</a>
         </div>
       </li>
       <li dropdown class="nav-item dropdown" *ngIf="userIsAuthenticated">
@@ -29,17 +19,7 @@
         <div *dropdownMenu id="basic-link-dropdown" aria-labelledby="basic-link" class="dropdown-menu">
           <a class="dropdown-item" [routerLink]="['/jobs']">All Jobs</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" [routerLink]="['/jobs/new']">Run Choco Install</a>
-          <div class="dropdown-divider"></div>
           <a class="dropdown-item" [routerLink]="['/jobs/new/script']">Run Script</a>
-        </div>
-      </li>
-      <li dropdown class="nav-item dropdown" *ngIf="userIsAuthenticated">
-        <a href id="basic-link" class="nav-link dropdown-toggle" dropdownToggle (click)="false" aria-controls="basic-link-dropdown">Applications</a>
-        <div *dropdownMenu id="basic-link-dropdown" aria-labelledby="basic-link" class="dropdown-menu">
-          <a class="dropdown-item" [routerLink]="['/applications']">All Applications</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" [routerLink]="['/applications/new']">New Application</a>
         </div>
       </li>
       <li dropdown class="nav-item dropdown" *ngIf="userIsAuthenticated">

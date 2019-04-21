@@ -5,11 +5,10 @@ var alertSchema = new Schema({
     name: String,
     machineId: String,
     alertPolicyId: String,
-    dateRaised: Number,
     priority: String,
     occurrenceCount: Number,
     lastOccurred: Number
-});
+}, {timestamps: true} );
 
 var Alert = mongoose.model('Alert', alertSchema);
 

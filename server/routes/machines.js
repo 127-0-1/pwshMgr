@@ -25,7 +25,7 @@ router.get('/nonmaintenance', async (req, res) => {
     res.send(machines);
 });
 
-router.get('/:id', checkAuth, validateObjectId, async (req, res) => {
+router.get('/:id', validateObjectId, async (req, res) => {
     const machine = await Machine.findById(req.params.id);
     if (!machine) return res.status(404).send('The machine with the given ID was not found.');
     res.send(machine);
@@ -67,7 +67,7 @@ router.get('/', checkAuth, async (req, res) => {
     res.send(machines);
 });
 
-router.put('/:id', checkAuth, validateObjectId, async (req, res) => {
+router.put('/:id', validateObjectId, async (req, res) => {
     const machine = await Machine.findById(req.params.id)
     machine.name = req.body.name
     machine.operatingSystem = req.body.operatingSystem

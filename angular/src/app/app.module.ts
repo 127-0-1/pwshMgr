@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { MachinelistComponent } from './machine/machinelist/machinelist.component';
-import { NewMachineComponent} from './machine/new-machine/new-machine.component'
 import { MachineService } from './machine/machine.service';
 import { RouterModule } from '@angular/router';
 import { MachinedetailsComponent } from './machine/machinedetails/machinedetails.component';
@@ -19,10 +18,6 @@ import { NewApplicationComponent } from './applications/new-application/new-appl
 import { ApplicationDetailsComponent } from './applications/application-details/application-details.component';
 import { ApplicationListComponent } from './applications/application-list/application-list.component';
 import { UserListComponent } from './users/user-list/user-list.component';
-import { CredentialService } from './credentials/credential.service';
-import { CredentialListComponent } from './credentials/credential-list/credential-list.component';
-import { NewCredentialComponent } from './credentials/new-credential/new-credential.component';
-import { CredentialDetailsComponent } from './credentials/credential-details/credential-details.component';
 import { NewUserComponent } from './users/new-user/new-user.component';
 import { environment } from '../environments/environment';
 import { LoginComponent } from './login/login.component';
@@ -57,15 +52,11 @@ import { DashboardService } from './dashboard/dashboard.service';
     AppComponent,
     MachinelistComponent,
     MachinedetailsComponent,
-    NewMachineComponent,
     PageHeaderComponent,
     NewApplicationComponent,
     ApplicationDetailsComponent,
     ApplicationListComponent,
     UserListComponent,
-    CredentialListComponent,
-    NewCredentialComponent,
-    CredentialDetailsComponent,
     NewUserComponent,
     LoginComponent,
     NewScriptComponent,
@@ -96,18 +87,8 @@ import { DashboardService } from './dashboard/dashboard.service';
     CollapseModule.forRoot(),
     RouterModule.forRoot([
       {
-        path: 'machines/new',
-        component: NewMachineComponent,
-        canActivate: [AuthGuard]
-      },
-      {
         path: 'applications/new',
         component: NewApplicationComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'credentials/new',
-        component: NewCredentialComponent,
         canActivate: [AuthGuard]
       },
       {
@@ -171,11 +152,6 @@ import { DashboardService } from './dashboard/dashboard.service';
         canActivate: [AuthGuard]
       },
       {
-        path: 'credentials/:id',
-        component: CredentialDetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
         path: 'integrations/:id',
         component: IntegrationDetailComponent,
         canActivate: [AuthGuard]
@@ -220,11 +196,6 @@ import { DashboardService } from './dashboard/dashboard.service';
         component: LoginComponent
       },
       {
-        path: 'credentials',
-        component: CredentialListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
         path: 'applications',
         component: ApplicationListComponent,
         canActivate: [AuthGuard]
@@ -246,7 +217,7 @@ import { DashboardService } from './dashboard/dashboard.service';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    MachineService, UserService, ApplicationService, CredentialService, ScriptService, IntegrationService, JobService, DashboardService, AuthGuard],
+    MachineService, UserService, ApplicationService, ScriptService, IntegrationService, JobService, DashboardService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

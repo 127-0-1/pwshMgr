@@ -13,30 +13,30 @@ export class AlertService {
 
 
   getAllAlertPolicies(): Observable<AlertPolicyView[]> {
-    return this.http.get<AlertPolicyView[]>('/api/alertpolicies');
+    return this.http.get<AlertPolicyView[]>('http://localhost:8080/api/alertpolicies');
   }
 
   getAllAlerts(): Observable<Alert[]> {
-    return this.http.get<Alert[]>('/api/alerts');
+    return this.http.get<Alert[]>('http://localhost:8080/api/alerts');
   }
 
   postAlertPolicy(alertpolicy: AlertPolicy): Observable<AlertPolicy>{
-    return this.http.post<AlertPolicy>('/api/alertpolicies', alertpolicy)
+    return this.http.post<AlertPolicy>('http://localhost:8080/api/alertpolicies', alertpolicy)
   }
 
   getAlertPolicyById(alertPolicyId): Observable<AlertPolicyView> {
-    return this.http.get<AlertPolicyView>('/api/alertpolicies/' + alertPolicyId)
+    return this.http.get<AlertPolicyView>('http://localhost:8080/api/alertpolicies/' + alertPolicyId)
   }
 
   getAlertById(alertId): Observable<Alert> {
-    return this.http.get<Alert>('/api/alerts/' + alertId)
+    return this.http.get<Alert>('http://localhost:8080/api/alerts/' + alertId)
   }
 
   deleteAlert(alertId) {
-    return this.http.delete('/api/alerts/' + alertId)
+    return this.http.delete('http://localhost:8080/api/alerts/' + alertId)
   }
 
   deleteAlertPolicy(alertPolicyId) {
-    return this.http.delete('/api/alertpolicies/' + alertPolicyId);
+    return this.http.delete('http://localhost:8080/api/alertpolicies/' + alertPolicyId);
   }
 }
