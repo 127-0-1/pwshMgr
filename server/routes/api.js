@@ -48,11 +48,9 @@ router.get('/count', async (req, res) => {
 
 // this route is called on agent install
 router.post('/register', async (req,res) => {
-    console.log(req.body)
     const apiKey = uuidv1()
     const hash = await bcrypt.hash(apiKey, 10);
     req.body.apiKey = hash
-    console.log(req.body)
     req.body.dateAdded = Date.now()
     const machine = await Machine.create(req.body)
     machine.apiKey = apiKey
@@ -60,22 +58,24 @@ router.post('/register', async (req,res) => {
 })
 
 // get alert policies per machine
-router.get('/alertPolicies/machine/:id', agentAuth, async (req,res) => {
-    console.log(req.header('api-key'))
+router.get('/alertPolicies/machine/:id', async (req,res) => {
     const alertPolices = await AlertPolicies.find({machineId: req.params.id})
     res.send(alertPolices)
 })
 
 // data update
 router.post('/machines/agent/:id', agentAuth, async (req,res) => {
-    console.log(req.headers)
+    console.log(req.body)
+    const machine = await Machine.findById(req.params.id)
+    console.log(req.body.alerts)
     if (!Array.isArray(req.body.alerts) || !req.body.alerts.length) {
         console.log("no alerts found to process")
+      } else if (machine.status == "Maintenance") {
+          console.log("machine in maintenance mode")
       } else {
         console.log("alerts found to process")
         await Alert.insertMany(req.body.alerts) 
     }
-    const machine = await Machine.findById(req.params.id)
     machine.lastContact = Date.now()
     machine.name = req.body.name
     machine.operatingSystem = req.body.operatingSystem
@@ -89,13 +89,11 @@ router.post('/machines/agent/:id', agentAuth, async (req,res) => {
     machine.services = req.body.services
     machine.processes = req.body.processes
     machine.drives = req.body.drives
-    machine.status = req.body.status
-    if (req.body.pollingCycle){
-        console.log("this is an update from the UI")   
-        machine.pollingCycle = req.body.pollingCycle
+    if (machine.status !== "Maintenance"){
+        machine.status = req.body.status
     }
-    if (req.body.credential) {
-        machine.credential = req.body.credential
+    if (req.body.pollingCycle){
+        machine.pollingCycle = req.body.pollingCycle
     }
     const updatedMachine = await Machine.findOneAndUpdate(req.params.id, machine, { new: true })
     req.io.sockets.in(req.params.id).emit('machineUpdate', updatedMachine)

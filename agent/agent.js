@@ -11,11 +11,12 @@ const alertPoliciesUrl = process.env.MANAGEMENT_NODE + "/api/alertPolicies/machi
 const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/api/machines/agent/" + process.env.ID;
 const agentId = process.env.ID
 const managementNode = process.env.MANAGEMENT_NODE
+const apiKey = process.env.API_KEY
 
-var logger = new(winston.createLogger)({
+var logger = new (winston.createLogger)({
   transports: [
-      new(winston.transports.Console)(),
-      new(winston.transports.File)({filename: 'agent.log'})
+    new (winston.transports.Console)(),
+    new (winston.transports.File)({ filename: 'agent.log' })
   ]
 });
 
@@ -34,20 +35,23 @@ async function startUp() {
 startUp()
   .then(data => {
     logger.info((new Date) + " successful startup");
-  })
+  });
 
 async function dataUpdate() {
   logger.info((new Date) + " starting data update");
-  const headers = {
-    'api-key': process.env.API_KEY
-  };
-  const alertPolicies = await axios.get(alertPoliciesUrl, { headers });
-  const { stdout, stderr } = await exec(`powershell -file ${scriptPath} -AlertPolicies "${alertPolicies.data}"`);
+  const { stdout, stderr } = await exec(`powershell -file ${scriptPath} -ApiKey "${apiKey}" -ManagementNode "${managementNode}" -MachineID ${agentId}`);
+  console.log(stderr)
   scriptOutput = JSON.parse(stdout);
+  console.log(scriptOutput)
+  const headers = {
+    'api-key': apiKey
+  };
   const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
 }
 
-// data update
-cron.schedule('*/1 * * * *', () => {
-  dataUpdate();
-});
+dataUpdate();
+
+// // data update
+// cron.schedule('*/1 * * * *', () => {
+
+// });

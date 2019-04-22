@@ -1,9 +1,15 @@
 param (
     [Parameter()]
-    $AlertPolicies
+    $ApiKey,
+
+    [Parameter()]
+    $MachineID,
+
+    [Parameter()]
+    $ManagementNode
 )
 
-$AlertPolicies = $AlertPolicies | ConvertFrom-Json  
+$AlertPolicies = (wget "$ManagementNode/api/alertPolicies/machine/$MachineID").Content | ConvertFrom-Json
 
 Function New-PwshMgrAlert {
     Param(
@@ -89,6 +95,7 @@ $computerProperties = @{
     'status'          = "Online"
     'processes'       = $processes
     'alerts'          = $Alerts
+    'alertPolicies'   = $AlertPolicies
 }
 
-$computerProperties | ConvertTo-Json -Compress
+ $computerProperties | ConvertTo-Json -Compress
