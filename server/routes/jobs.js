@@ -24,69 +24,6 @@ router.post('/', checkAuth, async (req, res) => {
     }
     await newJob.save()
     res.status(status.OK).json(newJob);
-
-    var exec = require('child_process').exec;
-    if (req.body.application) {
-        let scriptPath = require("path").resolve(__dirname, '../../scripts/install_choco_app.ps1')
-        let command = `pwsh -file ${scriptPath} -machineID ${machine._id} -jobID ${newJob._id} -ApiPwd ${process.env.ADMINPW}`
-        exec(command, function callback(error, stdout, stderr) {
-            console.log(stdout)
-            if (!stderr) {
-                console.log("no error found")
-                newJob.output = stdout
-                newJob.status = "Completed"
-                newJob.finishDate = Date.now()
-                Job.findByIdAndUpdate(newJob._id, newJob, function (err, job) {
-                    Job.findById(newJob._id, function (err, jobFounded) {
-                        req.io.sockets.in(newJob._id).emit('jobUpdate', jobFounded)
-                    });
-                });
-            } else {
-                console.log(stderr)
-                console.log("error found")
-                newJob.output = stderr
-                newJob.status = "Failed"
-                newJob.finishDate = Date.now()
-                Job.findByIdAndUpdate(newJob._id, newJob, function (err, job) {
-                    Job.findById(newJob._id, function (err, jobFounded) {
-                        req.io.sockets.in(newJob._id).emit('jobUpdate', jobFounded)
-
-                    });
-                });
-            }
-        });
-    }
-    if (req.body.script) {
-        let scriptPath = require("path").resolve(__dirname, '../../scripts/script_runner.ps1')
-        let command = `pwsh -file "${scriptPath}" -machineID ${machine._id} -ScriptID ${req.body.script} -ApiPwd ${process.env.ADMINPW}`
-        exec(command, function callback(error, stdout, stderr) {
-            if (!stderr) {
-                console.log("no error found")
-                newJob.output = stdout
-                newJob.status = "Completed"
-                newJob.finishDate = Date.now()
-                Job.findByIdAndUpdate(newJob._id, newJob, function (err, job) {
-                    Job.findById(newJob._id, function (err, jobFounded) {
-                        req.io.sockets.in(newJob._id).emit('jobUpdate', jobFounded)
-                    });
-                });
-            } else {
-                console.log(stderr)
-                console.log("error found")
-                newJob.output = stderr
-                newJob.status = "Failed"
-                newJob.finishDate = Date.now()
-                Job.findByIdAndUpdate(newJob._id, newJob, function (err, job) {
-                    Job.findById(newJob._id, function (err, jobFounded) {
-                        req.io.sockets.in(newJob._id).emit('jobUpdate', jobFounded)
-                    });
-                });
-            }
-
-        });
-    }
-
-
 });
 
 router.get('/:id', checkAuth, validateObjectId, async (req, res) => {

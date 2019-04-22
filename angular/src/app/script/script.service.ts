@@ -12,23 +12,23 @@ export class ScriptService {
   constructor(private http: HttpClient) {}
 
     getAllScripts(): Observable<Script[]> {
-      return this.http.get<Script[]>('/api/scripts');
+      return this.http.get<Script[]>('http://localhost:8080/api/scripts');
     }
   
     getScriptById(scriptID): Observable<Script> {
-      return this.http.get<Script>('/api/scripts/' + scriptID)
+      return this.http.get<Script>('http://localhost:8080/api/scripts/' + scriptID)
     }
   
     postScript(script: Script): Observable<Script> {
-      return this.http.post<Script>('/api/scripts/', script);
+      return this.http.post<Script>('http://localhost:8080/api/scripts/', script);
     }
   
     updateScript(script: Script): Observable<Script> {
-      return this.http.put<Script>('/api/scripts', script);
+      return this.http.put<Script>('http://localhost:8080/api/scripts', script);
     }
   
     deleteScript(scriptID) {
-      return this.http.delete('/api/scripts/' + scriptID);
+      return this.http.delete('http://localhost:8080/api/scripts/' + scriptID);
     }
     
 }

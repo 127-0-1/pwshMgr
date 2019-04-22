@@ -22,6 +22,8 @@ const integrations = require('./integrations');
 const Alert = require('../models/alert');
 const Machine = require('../models/machine');
 const AlertPolicies = require('../models/alertPolicy');
+const Script = require('../models/script');
+const Job = require('../models/job');
 const checkAuth = require("../middleware/check-auth");
 const agentAuth = require("../middleware/agentAuth");
 
@@ -61,6 +63,12 @@ router.post('/register', async (req,res) => {
 router.get('/alertPolicies/machine/:id', async (req,res) => {
     const alertPolices = await AlertPolicies.find({machineId: req.params.id})
     res.send(alertPolices)
+})
+
+// get all scripts for machine
+router.get('/agent/jobs/machine/:id', async (req,res) => {
+    const jobs = await Job.find({machine: req.params.id})
+    res.send(jobs)
 })
 
 // data update

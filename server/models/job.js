@@ -4,7 +4,6 @@ var Schema = mongoose.Schema;
 var jobSchema = new Schema({
     name: String,
     machine: String,
-    application: String,
     status: String,
     startDate: String,
     finishDate: String,
@@ -13,7 +12,8 @@ var jobSchema = new Schema({
     masterJob: String,
     dateAdded: Number,
     output: String,
-    type: String
+    type: String,
+    script: String
 });
 
 var Job = mongoose.model('Job', jobSchema);

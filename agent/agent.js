@@ -49,6 +49,18 @@ async function dataUpdate() {
   const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
 }
 
+async function scriptLauncher() {
+  logger.info((new Date) + " starting script launcher");
+  const { stdout, stderr } = await exec(`powershell -file ${scriptPath} -ApiKey "${apiKey}" -ManagementNode "${managementNode}" -MachineID ${agentId}`);
+  console.log(stderr)
+  scriptOutput = JSON.parse(stdout);
+  console.log(scriptOutput)
+  const headers = {
+    'api-key': apiKey
+  };
+  const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
+}
+
 dataUpdate();
 
 // // data update
