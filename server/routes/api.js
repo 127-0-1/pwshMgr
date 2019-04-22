@@ -25,9 +25,6 @@ const AlertPolicies = require('../models/alertPolicy');
 const checkAuth = require("../middleware/check-auth");
 const agentAuth = require("../middleware/agentAuth");
 
-
-
-
 router.use('/machines', machines);
 router.use('/jobs', jobs);
 router.use('/users', users);
@@ -35,7 +32,6 @@ router.use('/scripts', scripts);
 router.use('/alertpolicies', alertPolicies);
 router.use('/alerts', alerts);
 router.use('/integrations', integrations);
-
 router.get('/count', async (req, res) => {
     const onlineMachines = await Machine.count({ status: 'Online' });
     const offlineMachines = await Machine.count({ status: 'Offline' });

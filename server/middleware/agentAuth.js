@@ -4,6 +4,7 @@ const Machine = require('../models/machine');
 
 module.exports = async (req, res, next) => {
   try {
+    console.log(req.header('api-key'))
     const machine = await Machine.findById(req.params.id)
     const hash = await bcrypt.compare(req.header('api-key'), machine.apiKey);
     if (hash) {

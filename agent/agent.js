@@ -6,37 +6,48 @@ const axios = require("axios");
 const cron = require('node-cron');
 const winston = require('winston');
 const scriptPath = path.join(__dirname, './scripts/data_update.ps1');
-const connectionScriptPath = path.join(__dirname, './scripts/connection.ps1');
+const startUpUrl = process.env.MANAGEMENT_NODE + "/api/machines/" + process.env.ID;
 const alertPoliciesUrl = process.env.MANAGEMENT_NODE + "/api/alertPolicies/machine/" + process.env.ID;
 const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/api/machines/agent/" + process.env.ID;
+const agentId = process.env.ID
+const managementNode = process.env.MANAGEMENT_NODE
 
-if (!(process.env.ID)) {
-  throw "no id found"
+var logger = new(winston.createLogger)({
+  transports: [
+      new(winston.transports.Console)(),
+      new(winston.transports.File)({filename: 'agent.log'})
+  ]
+});
+
+async function startUp() {
+  if (!(process.env.ID)) {
+    throw new Error("no id found")
+  }
+  try {
+    const data = await axios.get(startUpUrl)
+    return data;
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
-axios.get(process.env.MANAGEMENT_NODE + "/api/machines/" + process.env.ID)
-  .then(response => {
-
+startUp()
+  .then(data => {
+    logger.info((new Date) + " successful startup");
   })
-  .catch(error => {
-    console.log(error)
-    throw "machine not found"
-  });
 
 async function dataUpdate() {
+  logger.info((new Date) + " starting data update");
   const headers = {
-    'Api-Key': process.env.API_KEY
+    'api-key': process.env.API_KEY
   };
   const alertPolicies = await axios.get(alertPoliciesUrl, { headers });
-  console.log(alertPolicies.data)
-  // const { stdout, stderr } = await exec(`powershell -file ${scriptPath} -AlertPolicies "${alertPolicies.data}"`);
-  // scriptOutput = JSON.parse(stdout);
-  // const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput);
+  const { stdout, stderr } = await exec(`powershell -file ${scriptPath} -AlertPolicies "${alertPolicies.data}"`);
+  scriptOutput = JSON.parse(stdout);
+  const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
 }
 
-dataUpdate();
-
-// // data update
-// cron.schedule('*/1 * * * *', () => {
-//   testAlertPolicies();
-// });
+// data update
+cron.schedule('*/1 * * * *', () => {
+  dataUpdate();
+});
