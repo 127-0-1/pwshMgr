@@ -65,6 +65,12 @@ router.get('/alertPolicies/machine/:id', async (req,res) => {
     res.send(alertPolices)
 })
 
+// get alert policies per machine
+router.get('/alerts/machine/:machineid/:alertpolicyid', async (req,res) => {
+    const alerts = await Alert.find({machineId: req.params.machineid, alertPolicyId: req.params.alertpolicyid})
+    res.send(alerts)
+})
+
 // get all scripts for machine
 router.get('/agent/jobs/machine/:id', async (req,res) => {
     const jobs = await Job.find({machine: req.params.id})

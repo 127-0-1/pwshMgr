@@ -43,23 +43,33 @@ foreach ($Policy in $AlertPolicies) {
     if ($Policy.type -eq "service") {
         $ServiceToCheck = $Services | Where-Object { $_.displayName -eq $Policy.item }
         if ($ServiceToCheck.status -eq "Stopped") {
-            $AlertText = """$($ServiceToCheck.displayName)"" service is stopped on ""$HostName"""
-            $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+            $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
+            if (!$ActiveAlerts) {
+                $AlertText = """$($ServiceToCheck.displayName)"" service is stopped"
+                $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+            }
         }
     }
     if ($Policy.type -eq "drive") {
         $DriveToCheck = $Drives | Where-Object { $_.name -eq $Policy.item }
         if ([Double]$DriveToCheck.freeGB -lt [Double]$Policy.threshold) {
-            $AlertText = "$($DriveToCheck.name) drive on $($HostName) is below $($Policy.threshold)GB. Currently $($DriveToCheck.freeGB)GB"
-            $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+            $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
+            if (!$ActiveAlerts) {
+                $AlertText = "$($DriveToCheck.name) drive is below $($Policy.threshold)GB. Currently $($DriveToCheck.freeGB)GB"
+                $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+            }
+
         }
     }
     if ($Policy.type -eq "process" -And $Policy.threshold -eq "is-running") {
         $Processes = $Processes | Select-Object name
         foreach ($Process in $Processes) {
             if ($Process.name -eq $policy.item) {
-                $AlertText = """$($policy.item)"" process is running on ""$($output.name)"""
-                $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+                $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
+                if (!$ActiveAlerts) {
+                    $AlertText = """$($policy.item)"" process is running"
+                    $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+                }
                 break
             }
         }
@@ -72,8 +82,11 @@ foreach ($Policy in $AlertPolicies) {
             }
         }
         if (!$running) {
-            $AlertText = """$($policy.item)"" process is not running on ""$($Hostname)"""
-            $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+            $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
+            if (!$ActiveAlerts) {
+                $AlertText = """$($policy.item)"" process is not running"
+                $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
+            }
         } 
         else {
             $running = $null
@@ -98,4 +111,4 @@ $computerProperties = @{
     'alertPolicies'   = $AlertPolicies
 }
 
- $computerProperties | ConvertTo-Json -Compress
+$computerProperties | ConvertTo-Json -Compress

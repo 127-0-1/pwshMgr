@@ -1,6 +1,10 @@
 <div class="container-fluid pt-3">
   <table class="table table-bordered table-hover table-sm">
     <tbody>
+        <tr>
+            <th>Machine Name</th>
+            <td>{{alert.machineId.name}}</td>
+          </tr>
       <tr>
         <th>Alert Name</th>
         <td>{{alert.name}}</td>
@@ -12,14 +16,6 @@
       <tr>
         <th>Date Raised</th>
         <td>{{alert.createdAt | date:'medium'}}</td>
-      </tr>
-      <tr>
-        <th>Last Occurrence</th>
-        <td>{{alert.updatedAt | date:'medium'}}</td>
-      </tr>
-      <tr>
-        <th>Occurrence Count</th>
-        <td>{{alert.occurrenceCount}}</td>
       </tr>
     </tbody>
   </table>

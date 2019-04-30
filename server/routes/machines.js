@@ -20,7 +20,6 @@ router.get('/count', (req, res) => {
 });
 
 router.get('/nonmaintenance', async (req, res) => {
-    console.log(req.query.pollcycle)
     const machines = await Machine.find({"status": {"$ne": "Maintenance"}, pollingCycle: req.query.pollcycle },'name _id operatingSystem status ipAddress credential');
     res.send(machines);
 });
@@ -113,15 +112,8 @@ router.get('/jobs/:id', checkAuth, (req, res) => {
     });
 });
 
-router.get('/alerts/:id', checkAuth, validateObjectId, (req, res) => {
-    Alert.find({ machineId: req.params.id }, '_id name lastOccurred priority', function (err, alerts) {
-        if (err) return res.status(status.BAD_REQUEST).json(err);
-        res.status(status.OK).json(alerts);
-    });
-});
-
 router.get('/alerts/:id', checkAuth, validateObjectId, async (req, res) => {
-    const alerts = await Alert.find({ machineId: req.params.id }, '_id name lastOccurred priority');
+    const alerts = await Alert.find({ machineId: req.params.id });
     res.send(alerts);
 });
 

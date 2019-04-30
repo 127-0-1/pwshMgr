@@ -2,6 +2,7 @@
   <table class="table table-bordered table-hover table-sm">
     <thead class="thead-light">
       <tr>
+        <th>Device Name</th>
         <th>Alert Policy Name</th>
         <th>Priority</th>
       </tr>
@@ -9,11 +10,14 @@
     <tbody>
       <tr *ngFor="let alertPolicy of alertPolicies">
         <td>
+          {{alertPolicy.machineId.name}}
+        </td>
+        <td>
           <a [routerLink]="['/alertpolicies', alertPolicy._id ]" class="text-dark">{{alertPolicy.name}}</a>
         </td>
         <td>
-            {{alertPolicy.priority}}
-          </td>
+          {{alertPolicy.priority}}
+        </td>
       </tr>
     </tbody>
   </table>

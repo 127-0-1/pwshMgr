@@ -2,13 +2,17 @@
   <table class="table table-bordered table-hover table-sm">
     <thead class="thead-light">
       <tr>
+        <th>Machine Name</th>
         <th>Alert Name</th>
         <th>Priority</th>
-        <th>Last Occurrence</th>
+        <th>Date Raised</th>
       </tr>
     </thead>
     <tbody>
       <tr [ngClass]="runThis(alert)" *ngFor="let alert of alerts">
+          <td>
+              {{alert.machineId.name}}
+            </td>
         <td>
           <a [routerLink]="['/alerts', alert._id ]" class="text-dark">{{alert.name}}</a>
         </td>

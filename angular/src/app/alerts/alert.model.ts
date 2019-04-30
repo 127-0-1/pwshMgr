@@ -1,10 +1,13 @@
+export interface MachineId {
+    _id: string,
+    name: string
+}
+
 export interface Alert {
     _id: string,
-    machineId: string,
+    machineId: MachineId,
     name: String,
     alertPolicyId: String,
     priority: String,
-    occurrenceCount: String,
-    createdAt: String,
-    updatedAt: String
+    createdAt: String
 }

@@ -132,7 +132,7 @@
         <tr>
           <th>Alert Name</th>
           <th>Priority</th>
-          <th>Last Occurred</th>
+          <th>Date Raised</th>
         </tr>
       </thead>
       <tbody>
@@ -141,7 +141,7 @@
             <a [routerLink]="['/alerts', alert._id]" class="text-dark">{{alert.name}}</a>
           </td>
           <td>{{alert.priority}}</td>
-          <td>{{alert.lastOccurred | date:'medium'}}</td>
+          <td>{{alert.createdAt | date:'medium'}}</td>
         </tr>
       </tbody>
     </table>

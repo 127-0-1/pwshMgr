@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var alertPolicySchema = new Schema({
     name: String,
     type: String,
-    machineId: String,
+    machineId: { type: Schema.Types.ObjectId, ref: 'Machine' },
     threshold: String,
     item: String,
     priority: String,
