@@ -26,8 +26,8 @@ router.post('/', checkAuth, async (req, res) => {
     res.status(status.OK).json(newJob);
 });
 
-router.get('/:id', checkAuth, validateObjectId, async (req, res) => {
-    const job = await Job.findById(req.params.id);
+router.get('/:id', validateObjectId, async (req, res) => {
+    const job = await Job.findById(req.params.id).populate('machine', 'name').populate('script', 'name');
     if (!job) return res.status(404).send('The job with the given ID was not found.');
     if (job.group) {
         const subJobs = await Job.find({ masterJob: req.params.id })

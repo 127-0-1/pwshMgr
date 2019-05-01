@@ -17,7 +17,7 @@ router.post('/', checkAuth, async (req, res) => {
 
 //get script
 router.get('/:id', checkAuth, validateObjectId, async (req, res) => {
-    const script = await Script.findById(req.params.id);
+    const script = await Script.findById(req.params.id)
     if (!script) return res.status(404).send('The script with the given ID was not found.');
     res.send(script)
 });

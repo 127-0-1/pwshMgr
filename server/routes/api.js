@@ -18,11 +18,13 @@ const jobs = require('./jobs');
 const scripts = require('./scripts');
 const alertPolicies = require('./alertPolicies');
 const alerts = require('./alerts')
+const groups = require('./groups');
 const integrations = require('./integrations');
 const Alert = require('../models/alert');
 const Machine = require('../models/machine');
 const AlertPolicies = require('../models/alertPolicy');
 const Script = require('../models/script');
+const Group = require('../models/group');
 const Job = require('../models/job');
 const checkAuth = require("../middleware/check-auth");
 const agentAuth = require("../middleware/agentAuth");
@@ -34,6 +36,7 @@ router.use('/scripts', scripts);
 router.use('/alertpolicies', alertPolicies);
 router.use('/alerts', alerts);
 router.use('/integrations', integrations);
+router.use('/groups', groups)
 router.get('/count', async (req, res) => {
     const onlineMachines = await Machine.count({ status: 'Online' });
     const offlineMachines = await Machine.count({ status: 'Offline' });

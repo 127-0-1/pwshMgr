@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var Machine = Machine = require('../models/machine');
 
 var alertSchema = new Schema({
     name: String,

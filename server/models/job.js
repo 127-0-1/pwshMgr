@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var jobSchema = new Schema({
     name: String,
-    machine: String,
+    machine: { type: Schema.Types.ObjectId, ref: 'Machine' },
     status: String,
     startDate: String,
     finishDate: String,
@@ -13,7 +13,7 @@ var jobSchema = new Schema({
     dateAdded: Number,
     output: String,
     type: String,
-    script: String
+    script: { type: Schema.Types.ObjectId, ref: 'Script' }
 });
 
 var Job = mongoose.model('Job', jobSchema);

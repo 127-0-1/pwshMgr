@@ -2,7 +2,6 @@ const validateObjectId = require('../middleware/validateObjectId');
 const express = require('express');
 const router = express.Router();
 const Machine = require('../models/machine');
-const Group = require('../models/groups');
 const mongoose = require('mongoose');
 const status = require('http-status');
 const Job = require('../models/job');
