@@ -1,0 +1,16 @@
+<div class="container-fluid pt-3">
+  <table class="table table-bordered table-hover table-sm">
+    <thead class="thead-light">
+      <tr>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let group of groups">
+        <td>
+          <a [routerLink]="['/groups', group._id ]" class="text-dark">{{group.name}}</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

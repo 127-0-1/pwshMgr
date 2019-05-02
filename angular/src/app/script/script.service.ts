@@ -2,7 +2,6 @@ import { Script } from './script.model'
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
-import * as io from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root'

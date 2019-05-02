@@ -1,0 +1,14 @@
+<div class="container-fluid">
+  <h2>
+    Add new Group
+  </h2>
+  <div class="container" class="was-validated">
+    <form [formGroup]="newGroupForm" novalidate (ngSubmit)="submitForm(newGroupForm.value)">
+      <div class="form-group">
+        <label for="exampleFormControlSelect1">Name</label>
+        <input class="form-control" [formControl]="newGroupForm.controls['name']" type="text" required>
+      </div>
+      <button type="Start" class="btn btn-primary" [disabled]="!newGroupForm.valid">Submit</button>
+    </form>
+  </div>
+</div>

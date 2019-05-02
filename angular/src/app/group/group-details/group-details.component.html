@@ -1,0 +1,49 @@
+<div class="container-fluid pt-3">
+  <table class="table table-bordered table-hover table-sm">
+    <tbody>
+        <tr>
+            <th>Group Name</th>
+            <td>{{group.name}}</td>
+          </tr>
+    </tbody>
+  </table>
+  <button type="button" class="btn btn-secondary btn-space" (click)="deleteGroup()">Delete</button>
+  <button type="button" class="btn btn-secondary btn-space" (click)="addMachineToGroup(editTemplate)">Add Machine To Group</button>
+  <h5>Members</h5>
+  <table class="table table-bordered table-hover table-sm">
+    <thead class="thead-light">
+      <tr>
+        <th>Machine Name</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let machine of group.machines">
+        <td><a [routerLink]="['/machine', machine._id ]" class="text-dark">{{machine.name}}</a></td>
+        <td><button type="button" class="btn btn-secondary btn-space" (click)="deleteFromGroup(machine._id)">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <ng-template #editTemplate>
+    <div>
+      <div class="modal-header">
+        <h5 class="modal-title pull-left">Add machine to "{{ group.name }}"</h5>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Machine</label>
+            <select class="form-control col-md-5" #type="ngModel" [(ngModel)]="selectedMachine">
+              <option *ngFor="let machine of machines" [value]="machine._id">{{machine.name}}</option>
+            </select>
+          </div>
+          <button type="Start" class="btn btn-primary" (click)="addToGroup()">Save</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>

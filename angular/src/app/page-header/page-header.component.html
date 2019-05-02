@@ -15,6 +15,15 @@
         </div>
       </li>
       <li dropdown class="nav-item dropdown" *ngIf="userIsAuthenticated">
+        <a href id="basic-link" class="nav-link dropdown-toggle" dropdownToggle (click)="false" aria-controls="basic-link-dropdown">Groups</a>
+        <div *dropdownMenu id="basic-link-dropdown" aria-labelledby="basic-link" class="dropdown-menu">
+          <a class="dropdown-item" [routerLink]="['/groups']">All Groups</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" [routerLink]="['/groups/new']">New Group</a>
+        </div>
+
+      </li>
+      <li dropdown class="nav-item dropdown" *ngIf="userIsAuthenticated">
         <a href id="basic-link" class="nav-link dropdown-toggle" dropdownToggle (click)="false" aria-controls="basic-link-dropdown">Jobs</a>
         <div *dropdownMenu id="basic-link-dropdown" aria-labelledby="basic-link" class="dropdown-menu">
           <a class="dropdown-item" [routerLink]="['/jobs']">All Jobs</a>

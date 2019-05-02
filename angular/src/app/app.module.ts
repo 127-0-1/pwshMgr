@@ -46,6 +46,10 @@ import { IntegrationListComponent } from './integrations/integration-list/integr
 import { IntegrationDetailComponent } from './integrations/integration-detail/integration-detail.component';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { DashboardService } from './dashboard/dashboard.service';
+import { GroupListComponent } from './group/group-list/group-list.component';
+import { GroupService } from './group/group.service';
+import { GroupDetailsComponent } from './group/group-details/group-details.component';
+import { NewGroupComponent } from './group/new-group/new-group.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +80,10 @@ import { DashboardService } from './dashboard/dashboard.service';
     NewProcessAlertComponent,
     IntegrationListComponent,
     IntegrationDetailComponent,
-    DashboardComponent
+    DashboardComponent,
+    GroupListComponent,
+    GroupDetailsComponent,
+    NewGroupComponent
   ],
   imports: [
     BrowserModule,
@@ -117,6 +124,11 @@ import { DashboardService } from './dashboard/dashboard.service';
         canActivate: [AuthGuard]
       },
       {
+        path: 'groups/new',
+        component: NewGroupComponent,
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'jobs/new',
         component: NewJobComponent,
         canActivate: [AuthGuard]
@@ -144,6 +156,11 @@ import { DashboardService } from './dashboard/dashboard.service';
       {
         path: 'alertpolicies/:id',
         component: AlertPolicyDetailsComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'groups/:id',
+        component: GroupDetailsComponent,
         canActivate: [AuthGuard]
       },
       {
@@ -210,6 +227,11 @@ import { DashboardService } from './dashboard/dashboard.service';
         component: MachinelistComponent,
         canActivate: [AuthGuard]
       },
+      {
+        path: 'groups',
+        component: GroupListComponent,
+        canActivate: [AuthGuard]
+      },
       { path: '**', redirectTo: 'machines', pathMatch: 'full' },
     ]),
     FormsModule,
@@ -217,7 +239,7 @@ import { DashboardService } from './dashboard/dashboard.service';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    MachineService, UserService, ApplicationService, ScriptService, IntegrationService, JobService, DashboardService, AuthGuard],
+    MachineService, UserService, ApplicationService, ScriptService, IntegrationService, JobService, DashboardService, AuthGuard, GroupService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
