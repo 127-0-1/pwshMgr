@@ -74,10 +74,22 @@ router.get('/alerts/machine/:machineid/:alertpolicyid', async (req,res) => {
     res.send(alerts)
 })
 
-// get all scripts for machine
+// get all jobs for machine
 router.get('/agent/jobs/machine/:id', async (req,res) => {
-    const jobs = await Job.find({machine: req.params.id})
+    console.log(req.params.id)
+    const jobs = await Job.find({machine: req.params.id, status: "Scheduled"}).populate('script', 'scriptBody')
     res.send(jobs)
+})
+
+// Add script output for job
+router.put('/agent/jobupdate/:id', async (req,res) => {
+    console.log(req.params.id)
+    console.log(req.body.output)
+    const job = await Job.findById(req.body.jobId)
+    job.output = req.body.output
+    job.status = req.body.status
+    const updatedJob = await Job.findOneAndUpdate(req.params.jobId, job, { new: true })
+    res.send(updatedJob)
 })
 
 // data update

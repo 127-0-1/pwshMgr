@@ -1,19 +1,22 @@
 <div class="container-fluid pt-3">
+  
   <table class="table table-bordered table-hover table-sm">
     <thead class="thead-light">
       <tr>
-        <th>Name</th>
+        <th>Machine</th>
+        <th>Script</th>
         <th>Start Date</th>
         <th>Status</th>
-        <th>Type</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let job of jobs">
-        <td><a [routerLink]="['/jobs', job._id]" class="text-dark">{{job.name}}</a></td>
+        <td class="text-dark">{{job.machine.name}}</td>
+        <td class="text-dark">{{job.script.name}}</td>
         <td>{{job.dateAdded | date:'medium'}}</td>
         <td>{{job.status}}</td>
-        <td>{{job.type}}</td>
+        <td><a [routerLink]="['/jobs', job._id ]" class="text-dark">View details</a></td>
       </tr>
     </tbody>
   </table>

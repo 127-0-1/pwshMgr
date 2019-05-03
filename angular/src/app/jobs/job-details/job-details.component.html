@@ -1,25 +1,14 @@
 <div class="container-fluid pt-3" *ngIf="job">
+    <h5>Job Details</h5>
   <table class="table table-bordered table-hover table-sm">
     <tbody>
-      <tr>
-        <th>Name</th>
-        <td>{{job.name}}</td>
-      </tr>
-      <tr>
-        <th>Type</th>
-        <td>{{job.type}}</td>
-      </tr>
-      <tr *ngIf="job.application">
-        <th>Application</th>
-        <td>{{job.application}}</td>
-      </tr>
       <tr *ngIf="job.script">
         <th>Script</th>
-        <td>{{job.script}}</td>
+        <td>{{job.script.name}}</td>
       </tr>
       <tr>
         <th>Deployed To</th>
-        <td>{{job.machine}}</td>
+        <td>{{job.machine.name}}</td>
       </tr>
       <tr>
         <th>Date Added</th>

@@ -4,24 +4,16 @@ const express = require('express');
 const router = express.Router();
 const Job = require('../models/job');
 const status = require('http-status');
-const Machine = require('../models/machine')
-const Script = require('../models/script')
 const checkAuth = require("../middleware/check-auth");
 
 router.post('/', checkAuth, async (req, res) => {
-    const machine = await Machine.findById(req.body.machine);
-    if (req.body.script) {
-        const script = await Script.findById(req.body.script)
         var newJob = Job({
-            name: `Run ${script.name} script on ${machine.name}`,
             machine: req.body.machine,
             script: req.body.script,
             status: "Scheduled",
             dateAdded: Date.now(),
             output: null,
-            type: "Script"
         })
-    }
     await newJob.save()
     res.status(status.OK).json(newJob);
 });
@@ -48,7 +40,7 @@ router.get('/:id', validateObjectId, async (req, res) => {
 });
 
 router.get('/', checkAuth, async (req, res) => {
-    const jobs = await Job.find();
+    const jobs = await Job.find().populate('machine', 'name').populate('script', 'name');
     res.send(jobs);
 });
 
