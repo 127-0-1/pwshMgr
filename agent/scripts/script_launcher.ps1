@@ -1,32 +1,59 @@
 param (
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     $ApiKey,
 
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     $MachineID,
 
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     $ManagementNode
 )
 
+Start-Sleep -Seconds 30
+
 function ConvertTo-ScriptBlock {
-    param ([string]$string)
+    param ([string]$Script)
     $scriptblock = $executioncontext.invokecommand.NewScriptBlock($string)
     return $scriptblock
 }
 
-$Jobs = (wget -Uri "$ManagementNode/api/agent/jobs/machine/$MachineID").Content | ConvertFrom-Json
+$RunningJobs = (wget -Uri "$ManagementNode/api/agent/jobs/machine/$MachineID/Running").Content | ConvertFrom-Json
+$ScheduledJobs = (wget -Uri "$ManagementNode/api/agent/jobs/machine/$MachineID/Scheduled").Content | ConvertFrom-Json
 
-if 
-
-$ScriptBlock = ConvertTo-ScriptBlock -string $jobs[0].script.scriptBody
-
-$ScriptOutput = Invoke-Command -ScriptBlock $ScriptBlock
-
-$ScriptOutputJson = @{
-    'output'            = (Out-String -InputObject $ScriptOutput)
-    'jobId' = ($Jobs[0]._id)
-    'status' = "Completed"
-} | ConvertTo-Json
-
-wget -Uri "$ManagementNode/api/agent/jobupdate/$MachineID" -Method Put -Body $ScriptOutputJson -ContentType "application/json"
+if (!$ScheduledJobs) {
+    write "no jobs to run"
+} 
+ElseIf ($RunningJobs) {
+    write "in progress jobs - exiting"
+}
+else {
+    write "found jobs to process"
+    foreach ($Job in $ScheduledJobs) {
+        write "Job ID $($Job._id)"
+        $ScriptBlock = ConvertTo-ScriptBlock -Script $job.script.scriptBody
+        $SetJobToRunningData = @{
+            'status' = "Running"
+        } | ConvertTo-Json
+        $SetJobToRunning = wget -Uri "$ManagementNode/api/agent/jobupdate/$($Job._id)" -Method Post -Body $SetJobToRunningData -ContentType "application/json"
+        try {
+            $ScriptOutput = Invoke-Command -ScriptBlock $ScriptBlock
+        }
+        catch {
+            $ErrorOutput = $_
+        }
+        if ($ErrorOutput) {
+            $JobStatus = "Failed"
+            $Output = Out-String -InputObject $ErrorOutput
+        }
+        else {
+            $JobStatus = "Completed"
+            $Output = Out-String -InputObject $ScriptOutput
+        }
+        $ScriptOutputJson = @{
+            'output' = $Output
+            'status' = $JobStatus
+        } | ConvertTo-Json
+        
+        $SendJobOutput = wget -Uri "$ManagementNode/api/agent/jobupdate/$($Job._id)" -Method Post -Body $ScriptOutputJson -ContentType "application/json"
+    }
+}

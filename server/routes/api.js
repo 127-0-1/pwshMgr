@@ -75,21 +75,21 @@ router.get('/alerts/machine/:machineid/:alertpolicyid', async (req,res) => {
 })
 
 // get all jobs for machine
-router.get('/agent/jobs/machine/:id', async (req,res) => {
-    console.log(req.params.id)
-    const jobs = await Job.find({machine: req.params.id, status: "Scheduled"}).populate('script', 'scriptBody')
+router.get('/agent/jobs/machine/:id/:status', async (req,res) => {
+    const jobs = await Job.find({machine: req.params.id, status: req.params.status}).populate('script', 'scriptBody')
     res.send(jobs)
 })
 
 // Add script output for job
-router.put('/agent/jobupdate/:id', async (req,res) => {
-    console.log(req.params.id)
-    console.log(req.body.output)
-    const job = await Job.findById(req.body.jobId)
-    job.output = req.body.output
-    job.status = req.body.status
-    const updatedJob = await Job.findOneAndUpdate(req.params.jobId, job, { new: true })
-    res.send(updatedJob)
+router.post('/agent/jobupdate/:id', async (req,res) => {
+    const jobId = req.params.id
+    console.log("job id" + req.params.id)
+    var newJob = {};
+    newJob.status = req.body.status;
+    newJob.output = req.body.output;
+    const updatedJob = await Job.findOneAndUpdate({_id: jobId}, newJob, { new: true })
+    console.log(updatedJob)
+    await res.send(updatedJob)
 })
 
 // data update
@@ -124,7 +124,7 @@ router.post('/machines/agent/:id', agentAuth, async (req,res) => {
     if (req.body.pollingCycle){
         machine.pollingCycle = req.body.pollingCycle
     }
-    const updatedMachine = await Machine.findOneAndUpdate(req.params.id, machine, { new: true })
+    const updatedMachine = await Machine.findOneAndUpdate({_id: req.params.id}, machine, { new: true })
     req.io.sockets.in(req.params.id).emit('machineUpdate', updatedMachine)
     res.json(updatedMachine);
 })

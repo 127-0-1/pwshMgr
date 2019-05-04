@@ -1,11 +1,11 @@
 param (
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     $ApiKey,
 
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     $MachineID,
 
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     $ManagementNode
 )
 
@@ -25,8 +25,7 @@ Function New-PwshMgrAlert {
 }
 
 $HostName = hostname
-$Processes = Get-Process | Select-Object @{Name = "name"; Expr = { $_.ProcessName } }, @{Name = "pId"; Expr = { $_.Id } }
-                                  
+$Processes = Get-Process | Select-Object @{Name = "name"; Expr = { $_.ProcessName } }, @{Name = "pId"; Expr = { $_.Id } }                          
 $Domain = (Get-WmiObject Win32_ComputerSystem).Domain
 $Services = Get-Service | Select-Object @{Name = "displayName"; Expr = { $_.DisplayName } }, @{Name = "status"; Expr = { $_.Status } } | ConvertTo-Csv | ConvertFrom-Csv                                                                    
 $OSDetails = Get-CimInstance Win32_OperatingSystem
@@ -34,8 +33,7 @@ $Drives = Get-PSDrive -PSProvider FileSystem | Select-Object @{Name = "name"; Ex
 $SerialNumber = Get-CimInstance win32_bios
 $Applications = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |
 Where-Object { $_.DisplayName -ne $null } |
-Select-Object @{Name = "name"; Expr = { $_.DisplayName } }, @{Name = "version"; Expr = { $_.DisplayVersion } }
-                  
+Select-Object @{Name = "name"; Expr = { $_.DisplayName } }, @{Name = "version"; Expr = { $_.DisplayVersion } }      
 $MakeModel = Get-CimInstance Win32_ComputerSystemProduct
 
 $Alerts = @()

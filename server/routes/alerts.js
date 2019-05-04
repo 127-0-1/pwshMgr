@@ -33,7 +33,7 @@ router.put('/:id', checkAuth, validateObjectId, async (req, res) => {
     let newCount = alert.occurrenceCount + 1
     alert.occurrenceCount = newCount
     alert.lastOccurred = Date.now()
-    const savedAlert = await Alert.findByIdAndUpdate(req.params.id, alert, { new: true })
+    const savedAlert = await Alert.findByIdAndUpdate({_id: req.params.id}, alert, { new: true })
     res.status(status.OK).json(savedAlert);
 });
 

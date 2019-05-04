@@ -47,7 +47,7 @@ router.get('/:id', validateObjectId, async (req, res) => {
 
 // add machine to group
 router.get('/:id/:machineid', validateObjectId, async (req, res) => {
-    const group = await Group.findByIdAndUpdate(req.params.id, { $addToSet: { machines: req.params.machineid } }, { safe: true, upsert: true, new: true })
+    const group = await Group.findByIdAndUpdate({_id: req.params.id}, { $addToSet: { machines: req.params.machineid } }, { safe: true, upsert: true, new: true })
         .populate('machines', 'name')
     if (!group) return res.status(404).send('The group with the given ID was not found.')
     res.send(group)
@@ -55,7 +55,7 @@ router.get('/:id/:machineid', validateObjectId, async (req, res) => {
 
 // remove machine from group
 router.delete('/:id/:machineid', validateObjectId, async (req, res) => {
-    const group = await Group.findByIdAndUpdate(req.params.id, { $pull: { machines: req.params.machineid } }, { safe: true, upsert: true, new: true })
+    const group = await Group.findByIdAndUpdate({_id: req.params.id}, { $pull: { machines: req.params.machineid } }, { safe: true, upsert: true, new: true })
         .populate('machines', 'name')
     if (!group) return res.status(404).send('The group with the given ID was not found.')
     res.send(group)

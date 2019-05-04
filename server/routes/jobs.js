@@ -70,7 +70,7 @@ router.put('/', checkAuth, (req, res) => {
         }
     }
 
-    Job.findByIdAndUpdate(id, jobToUpdate, function (err, job) {
+    Job.findByIdAndUpdate({_id: req.params.id}, jobToUpdate, function (err, job) {
         Job.findById(id, function (err, jobFounded) {
             req.io.sockets.in(id).emit('jobUpdate', jobFounded)
             console.log(id)
