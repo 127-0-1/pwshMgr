@@ -5,9 +5,9 @@ const path = require('path');
 const axios = require("axios");
 const cron = require('node-cron');
 const winston = require('winston');
-const scriptPath = path.join(__dirname, './scripts/data_update.ps1');
+const dateUpdateScript = path.join(__dirname, './scripts/data_update.ps1');
+const jobRunnerScript = path.join(__dirname, './scripts/job_runner.ps1');
 const startUpUrl = process.env.MANAGEMENT_NODE + "/api/machines/" + process.env.ID;
-const alertPoliciesUrl = process.env.MANAGEMENT_NODE + "/api/alertPolicies/machine/" + process.env.ID;
 const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/api/machines/agent/" + process.env.ID;
 const agentId = process.env.ID
 const managementNode = process.env.MANAGEMENT_NODE
@@ -32,38 +32,41 @@ async function startUp() {
   }
 }
 
+async function dataUpdate() {
+  logger.info((new Date) + " starting data update");
+  const { stdout, stderr } = await exec(`powershell -file ${dateUpdateScript} -ApiKey "${apiKey}" -ManagementNode "${managementNode}" -MachineID ${agentId}`);
+  console.log(stderr)
+  scriptOutput = JSON.parse(stdout);
+  console.log(scriptOutput)
+  const headers = {
+    'api-key': apiKey
+  };
+  const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
+}
+
+async function jobRunner() {
+  logger.info((new Date) + " starting job runner");
+  const { stdout, stderr } = await exec(`powershell -file ${jobRunnerScript} -ApiKey "${apiKey}" -ManagementNode "${managementNode}" -MachineID ${agentId}`);
+  if (stdout) {
+    logger.info((new Date) + " " + stdout);
+  }
+  if (stderr) {
+    logger.info((new Date) + " " + stderr)
+  }
+};
+
 startUp()
   .then(data => {
+    dataUpdate();
     logger.info((new Date) + " successful startup");
   });
 
-async function dataUpdate() {
-  logger.info((new Date) + " starting data update");
-  const { stdout, stderr } = await exec(`powershell -file ${scriptPath} -ApiKey "${apiKey}" -ManagementNode "${managementNode}" -MachineID ${agentId}`);
-  console.log(stderr)
-  scriptOutput = JSON.parse(stdout);
-  console.log(scriptOutput)
-  const headers = {
-    'api-key': apiKey
-  };
-  const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
-}
+// data update
+cron.schedule('*/5 * * * *', () => {
+  dataUpdate();
+});
 
-async function scriptLauncher() {
-  logger.info((new Date) + " starting script launcher");
-  const { stdout, stderr } = await exec(`powershell -file ${scriptPath} -ApiKey "${apiKey}" -ManagementNode "${managementNode}" -MachineID ${agentId}`);
-  console.log(stderr)
-  scriptOutput = JSON.parse(stdout);
-  console.log(scriptOutput)
-  const headers = {
-    'api-key': apiKey
-  };
-  const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
-}
-
-dataUpdate();
-
-// // data update
-// cron.schedule('*/1 * * * *', () => {
-
-// });
+// Job runner
+cron.schedule('*/1 * * * *', () => {
+  jobRunner();
+});

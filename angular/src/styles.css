@@ -1,4 +1,6 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
+@import "../node_modules/@swimlane/ngx-datatable/release/themes/bootstrap.css";
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
 
 body { 
     padding-top: 55px; 

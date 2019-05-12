@@ -13,7 +13,7 @@ Start-Sleep -Seconds 30
 
 function ConvertTo-ScriptBlock {
     param ([string]$Script)
-    $scriptblock = $executioncontext.invokecommand.NewScriptBlock($string)
+    $scriptblock = $executioncontext.invokecommand.NewScriptBlock($Script)
     return $scriptblock
 }
 
@@ -30,7 +30,7 @@ else {
     write "found jobs to process"
     foreach ($Job in $ScheduledJobs) {
         write "Job ID $($Job._id)"
-        $ScriptBlock = ConvertTo-ScriptBlock -Script $job.script.scriptBody
+        $ScriptBlock = ConvertTo-ScriptBlock -Script $Job.Script.scriptBody
         $SetJobToRunningData = @{
             'status' = "Running"
         } | ConvertTo-Json
@@ -55,5 +55,8 @@ else {
         } | ConvertTo-Json
         
         $SendJobOutput = wget -Uri "$ManagementNode/api/agent/jobupdate/$($Job._id)" -Method Post -Body $ScriptOutputJson -ContentType "application/json"
+        $ErrorOutput = $null
+        $ScriptOutput = $null
     }
+
 }

@@ -1,22 +1,40 @@
 import {
   HttpInterceptor,
   HttpRequest,
-  HttpHandler
+  HttpHandler,
+  HttpEvent,
+  HttpResponse,
+  HttpErrorResponse
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-
-import { AuthService } from "./auth.service";
+import { Router } from '@angular/router';
+import { tap } from "rxjs/operators";
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    const authToken = this.authService.getToken();
-    console.log("hiting auth interceptor")
-    const authRequest = req.clone({
-      headers: req.headers.set("Authorization", "Bearer " + authToken)
-    });
-    return next.handle(authRequest);
+  constructor(private router: Router) { }
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    let accessToken = localStorage.getItem("token");
+    if (accessToken) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      });
+    }
+    return next.handle(request).pipe(
+      tap((event: HttpEvent<any>) => {
+        if (event instanceof HttpResponse) {
+        }
+      }, (err: any) => {
+        if (err instanceof HttpErrorResponse) {
+          if (err.status === 401) {
+            this.router.navigate(['/login']);
+          }
+        }
+      })
+    )
   }
 }

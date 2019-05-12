@@ -8,6 +8,12 @@ const Job = require('../models/job');
 const Alert = require('../models/alert');
 const checkAuth = require("../middleware/check-auth");
 
+router.put('/multiple', async (req,res) => {
+    const result = await Machine.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
+    console.log(result)
+    res.status(status.OK).json({message: 'SUCCESS'})
+})
+
 router.get('/count', (req, res) => {
     Machine.count({}, function (err, count) {
         if (err) return res.status(status.BAD_REQUEST).json(err);
@@ -57,6 +63,8 @@ router.delete('/:id', checkAuth,validateObjectId, async (req, res) => {
     await Machine.findByIdAndRemove(req.params.id);
     res.status(status.OK).json({ message: 'SUCCESS' });
 });
+
+
 
 
 

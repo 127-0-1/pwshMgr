@@ -43,4 +43,8 @@ export class MachineService {
       return this.http.get<Alert[]>('http://localhost:8080/api/machines/alerts/' + machineID)
     }
 
+    deleteMultiple(machines){
+      return this.http.put('http://localhost:8080/api/machines/multiple', machines)
+    }
+
 }

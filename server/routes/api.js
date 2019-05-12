@@ -94,9 +94,7 @@ router.post('/agent/jobupdate/:id', async (req,res) => {
 
 // data update
 router.post('/machines/agent/:id', agentAuth, async (req,res) => {
-    console.log(req.body)
     const machine = await Machine.findById(req.params.id)
-    console.log(req.body.alerts)
     if (!Array.isArray(req.body.alerts) || !req.body.alerts.length) {
         console.log("no alerts found to process")
       } else if (machine.status == "Maintenance") {

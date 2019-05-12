@@ -1,4 +1,6 @@
 <div class="container-fluid pt-3">
+
+<!-- <div class="container-fluid pt-3">
   <table class="table table-bordered table-hover table-sm">
     <thead class="thead-light">
       <tr>
@@ -20,4 +22,57 @@
       </tr>
     </tbody>
   </table>
+</div> -->
+<input
+type='text'
+style='padding:8px;margin:10px auto;'
+placeholder='Search'
+(keyup)='updateFilter($event)'
+/>
+
+<button *ngIf="selected.length > 0" type="button" class="btn btn-secondary btn-sm btn-space" (click)="delete()">Delete selected</button>
+<div>
+    <ngx-datatable *ngIf="tData"
+      #table
+      class="bootstrap fullscreen"
+      [headerHeight]="50"
+      [columnMode]="'force'"
+      [rowHeight]="'auto'"
+      [footerHeight]="50"
+      [count]="true"
+      [limit]="10"
+      [rows]="machines"
+      [selected]="selected"
+      [selectionType]="'checkbox'"
+      [selectAllRowsOnPage]="false"
+      (select)='onSelect($event)'
+      >
+      <ngx-datatable-column
+      [width]="30"
+      [sortable]="false"
+      [canAutoResize]="false"
+      [draggable]="false"
+      [resizeable]="false"
+      [headerCheckboxable]="true"
+      [checkboxable]="true">
+    </ngx-datatable-column>
+      <ngx-datatable-column name="Name" prop="name">
+          <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+              <a [routerLink]="['/machines', row._id ]" class="text-dark">{{row.name}}</a>
+          </ng-template>
+  </ngx-datatable-column>
+
+
+      <ngx-datatable-column name="Operating System">
+        <ng-template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Status">
+        <ng-template ngx-datatable-cell-template let-value="value">
+          {{value}}
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+</div>
 </div>

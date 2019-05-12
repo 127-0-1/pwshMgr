@@ -50,6 +50,7 @@ import { GroupListComponent } from './group/group-list/group-list.component';
 import { GroupService } from './group/group.service';
 import { GroupDetailsComponent } from './group/group-details/group-details.component';
 import { NewGroupComponent } from './group/new-group/new-group.component';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [
@@ -235,7 +236,8 @@ import { NewGroupComponent } from './group/new-group/new-group.component';
       { path: '**', redirectTo: 'machines', pathMatch: 'full' },
     ]),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxDatatableModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

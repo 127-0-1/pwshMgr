@@ -25,7 +25,7 @@ Function New-PwshMgrAlert {
 }
 
 $HostName = hostname
-$Processes = Get-Process | Select-Object @{Name = "name"; Expr = { $_.ProcessName } }, @{Name = "pId"; Expr = { $_.Id } }                          
+$Processes = Get-Process | Select-Object @{Name = "name"; Expr = { $_.ProcessName } }, @{Name = "pId"; Expr = { [string]$_.Id } }                          
 $Domain = (Get-WmiObject Win32_ComputerSystem).Domain
 $Services = Get-Service | Select-Object @{Name = "displayName"; Expr = { $_.DisplayName } }, @{Name = "status"; Expr = { $_.Status } } | ConvertTo-Csv | ConvertFrom-Csv                                                                    
 $OSDetails = Get-CimInstance Win32_OperatingSystem
