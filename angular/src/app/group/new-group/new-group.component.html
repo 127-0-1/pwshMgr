@@ -1,14 +1,17 @@
-<div class="container-fluid">
-  <h2>
-    Add new Group
-  </h2>
-  <div class="container" class="was-validated">
-    <form [formGroup]="newGroupForm" novalidate (ngSubmit)="submitForm(newGroupForm.value)">
-      <div class="form-group">
-        <label for="exampleFormControlSelect1">Name</label>
-        <input class="form-control" [formControl]="newGroupForm.controls['name']" type="text" required>
-      </div>
-      <button type="Start" class="btn btn-primary" [disabled]="!newGroupForm.valid">Submit</button>
-    </form>
-  </div>
-</div>
+<h2 mat-dialog-title>New Group</h2>
+<form [formGroup]="newGroupForm" autocomplete="off" class="example-form" (ngSubmit)="submitForm(newGroupForm.value)">
+  <mat-dialog-content>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-raised-button type="Start" [disabled]="!newGroupForm.valid">Submit</button>
+
+
+  </mat-dialog-actions>
+</form>

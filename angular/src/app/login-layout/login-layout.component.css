@@ -1,0 +1,30 @@
+:host {
+    display: flex;
+    justify-content: center;
+    margin: 100px 0px;
+  }
+  
+  .mat-form-field {
+    width: 100%;
+    min-width: 300px;
+  }
+  
+  mat-card-title,
+  mat-card-content,
+  mat-card-actions {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .button {
+    display: flex;
+    justify-content: center;
+    color: primary;
+  }
+  
+  .mat-toolbar.mat-primary {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #3c3c3c
+  }

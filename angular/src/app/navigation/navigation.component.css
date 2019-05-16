@@ -1,0 +1,32 @@
+mat-sidenav-container {
+    width: 100% !important;
+    height: calc(100vh - 64px) !important;
+  }
+
+  .mat-sidenav {
+    width: 200px;
+  }
+  
+    
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: yellow;
+    height: 4000px;
+  }
+  
+  mat-toolbar {
+    height: 64px;
+    position: relative;
+    z-index: 100;
+  }
+
+.font-nav {
+    font-family: 'Baloo Bhai', cursive; 
+    /* Add !important to overwrite all elements */
+  }
+
+  .mat-nav-list a.active {
+    background: lightgray;
+}

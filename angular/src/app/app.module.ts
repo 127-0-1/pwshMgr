@@ -51,6 +51,16 @@ import { GroupService } from './group/group.service';
 import { GroupDetailsComponent } from './group/group-details/group-details.component';
 import { NewGroupComponent } from './group/new-group/new-group.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatTableModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule, MatDialogContainer, MatDatepickerModule, MatCardModule, MatIconModule, MatInputModule, MatButtonModule, MatSelectModule, MatSnackBarModule, MatToolbarModule, MatGridListModule, MatSidenavModule, MatListModule, MatDialogContent, MatDialogModule } from '@angular/material';
+import { NavigationComponent } from './navigation/navigation.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
+import { LoginLayoutComponent } from './login-layout/login-layout.component';
+import { HomeLayoutComponent } from './home-layout/home-layout.component';
+import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
+import { ErrorDialogService } from './error-dialog.service';
+import { FlexLayoutModule } from '@angular/flex-layout';
+
 
 @NgModule({
   declarations: [
@@ -84,156 +94,144 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     DashboardComponent,
     GroupListComponent,
     GroupDetailsComponent,
-    NewGroupComponent
+    NewGroupComponent,
+    NavigationComponent,
+    ToolbarComponent,
+    LoginLayoutComponent,
+    HomeLayoutComponent,
+    ErrorDialogComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatProgressSpinnerModule,
+    MatDatepickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatIconModule,
+    MatInputModule,
+    MatSidenavModule,
+    MatDialogModule,
+    MatListModule,
+    MatButtonModule,
+    MatSelectModule,
+    FlexLayoutModule,
+    MatSnackBarModule,
+    MatToolbarModule,
+    MatGridListModule,
     HttpClientModule,
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
     ModalModule.forRoot(),
     CollapseModule.forRoot(),
     RouterModule.forRoot([
+      { path: '', redirectTo: 'login', data: { title: 'First Component' }, pathMatch: 'full' },
       {
-        path: 'applications/new',
-        component: NewApplicationComponent,
-        canActivate: [AuthGuard]
+        path: 'login', component: LoginLayoutComponent, data: { title: 'First Component' },
+        children: [
+          { path: '', component: LoginComponent }
+        ]
       },
       {
-        path: 'alerts/new-disk-space',
-        component: NewDiskAlertComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'alerts/new/process',
-        component: NewProcessAlertComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'alerts/new-windows-service',
-        component: NewWindowsServiceAlertComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'integrations/new-slack',
-        component: NewSlackIntegrationComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'scripts/new',
-        component: NewScriptComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'groups/new',
-        component: NewGroupComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'jobs/new',
-        component: NewJobComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'jobs/new/script',
-        component: RunScriptJobComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'applications/:id',
-        component: ApplicationDetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'machines/:id',
-        component: MachinedetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'scripts/:id',
-        component: ScriptDetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'alertpolicies/:id',
-        component: AlertPolicyDetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'groups/:id',
-        component: GroupDetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'jobs/:id',
-        component: JobDetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'integrations/:id',
-        component: IntegrationDetailComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'alerts/:id',
-        component: AlertDetailsComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'users',
-        component: UserListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'scripts',
-        component: ScriptListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'integrations',
-        component: IntegrationListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'jobs',
-        component: JobListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'alertpolicies',
-        component: AlertPolicyListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'alerts',
-        component: AlertListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'login',
-        component: LoginComponent
-      },
-      {
-        path: 'applications',
-        component: ApplicationListComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'dashboard',
-        component: DashboardComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'machines',
-        component: MachinelistComponent,
-        canActivate: [AuthGuard]
-      },
-      {
-        path: 'groups',
-        component: GroupListComponent,
-        canActivate: [AuthGuard]
-      },
-      { path: '**', redirectTo: 'machines', pathMatch: 'full' },
+        path: 'main', component: HomeLayoutComponent,
+        children: [
+          { path: '', redirectTo: 'machines', pathMatch: 'full' },
+          {
+            path: 'applications/:id',
+            component: ApplicationDetailsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'machines/:id',
+            component: MachinedetailsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'scripts/:id',
+            component: ScriptDetailsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'alertpolicies/:id',
+            component: AlertPolicyDetailsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'groups/:id',
+            component: GroupDetailsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'jobs/:id',
+            component: JobDetailsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'integrations/:id',
+            component: IntegrationDetailComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'alerts/:id',
+            component: AlertDetailsComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'users',
+            component: UserListComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'scripts',
+            component: ScriptListComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'integrations',
+            component: IntegrationListComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'jobs',
+            component: JobListComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'alertpolicies',
+            component: AlertPolicyListComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'alerts',
+            component: AlertListComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'applications',
+            component: ApplicationListComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'dashboard',
+            component: DashboardComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'machines',
+            component: MachinelistComponent,
+            canActivate: [AuthGuard]
+          },
+          {
+            path: 'groups',
+            component: GroupListComponent,
+            canActivate: [AuthGuard]
+          },
+        ]
+      }
     ]),
     FormsModule,
     ReactiveFormsModule,
@@ -241,7 +239,13 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    MachineService, UserService, ApplicationService, ScriptService, IntegrationService, JobService, DashboardService, AuthGuard, GroupService],
+    MachineService, 
+    UserService, 
+    ApplicationService, 
+    ScriptService, 
+    IntegrationService, 
+    JobService, DashboardService, AuthGuard, GroupService, ErrorDialogService],
+    entryComponents: [ErrorDialogComponent, NewGroupComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

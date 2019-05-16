@@ -1,7 +1,15 @@
-@import '~bootstrap/dist/css/bootstrap.min.css';
-@import "../node_modules/@swimlane/ngx-datatable/release/themes/bootstrap.css";
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/material.css';
 @import '~@swimlane/ngx-datatable/release/assets/icons.css';
 
+/* html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
+html, body { height: 100%; }
 body { 
-    padding-top: 55px; 
-}
+    font-family: Roboto, Arial, sans-serif;
+    margin: 0;
+  }
+  
+  .basic-container {
+    padding: 5px;
+  }

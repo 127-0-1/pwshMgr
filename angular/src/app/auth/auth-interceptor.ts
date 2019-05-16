@@ -8,13 +8,14 @@ import {
 } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from '@angular/router';
-import { tap } from "rxjs/operators";
-import { Observable } from 'rxjs';
+import { tap, catchError } from "rxjs/operators";
+import { Observable, throwError } from 'rxjs';
+import { ErrorDialogService } from '../error-dialog.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, public errorDialogService: ErrorDialogService) { }
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let accessToken = localStorage.getItem("token");
     if (accessToken) {
@@ -25,16 +26,16 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
     return next.handle(request).pipe(
-      tap((event: HttpEvent<any>) => {
-        if (event instanceof HttpResponse) {
-        }
-      }, (err: any) => {
-        if (err instanceof HttpErrorResponse) {
-          if (err.status === 401) {
-            this.router.navigate(['/login']);
-          }
-        }
-      })
-    )
+      catchError((error: HttpErrorResponse) => {
+        console.log(error)
+          let data = {};
+          data = {
+              reason: error.error.message,
+              status: error.status
+          };
+          this.errorDialogService.openDialog(data);
+          return throwError(error);
+      
+    }));
   }
 }

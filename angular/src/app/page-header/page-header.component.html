@@ -9,7 +9,7 @@
       <li class="nav-item active">
       </li>
       <li dropdown class="nav-item dropdown" *ngIf="userIsAuthenticated">
-        <a href id="basic-link" class="nav-link dropdown-toggle" dropdownToggle (click)="false" aria-controls="basic-link-dropdown">Machines</a>
+        <a href id="basic-link" class="nav-link dropdown-toggle" dropdownToggle (click)="false" aria-controls="basic-link-dropdown" routerLinkActive="active">Machines</a>
         <div *dropdownMenu id="basic-link-dropdown" aria-labelledby="basic-link" class="dropdown-menu">
           <a class="dropdown-item" [routerLink]="['/machines']">All Machines</a>
         </div>

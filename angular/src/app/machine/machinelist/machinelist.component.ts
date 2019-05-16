@@ -1,10 +1,10 @@
-import { Component, OnInit, PipeTransform, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MachineService } from '../machine.service'
 import { Machine } from '../machine.model'
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { Observable } from 'rxjs'; // Angular 6 
+
 
 @Component({
   selector: 'app-machinelist',
@@ -20,7 +20,7 @@ export class MachinelistComponent implements OnInit {
   tData: boolean = false;
   @ViewChild(DatatableComponent) table: DatatableComponent;
 
-  constructor(private machineService: MachineService, private router: Router) {
+  constructor(private machineService: MachineService) {
   }
 
   ngOnInit() {
@@ -32,17 +32,17 @@ export class MachinelistComponent implements OnInit {
       });
   }
 
-  runThis(machine) {
-    if (machine.status == "Offline") {
-      return "table-danger"
-    }
-    if (machine.status == "Online, WinRM unreachable") {
-      return "table-danger"
-    }
-    if (machine.status == "Maintenance") {
-      return "table-warning"
-    }
-  }
+  // runThis(machine) {
+  //   if (machine.status == "Offline") {
+  //     return "table-danger"
+  //   }
+  //   if (machine.status == "Online, WinRM unreachable") {
+  //     return "table-danger"
+  //   }
+  //   if (machine.status == "Maintenance") {
+  //     return "table-warning"
+  //   }
+  // }
 
 
   updateFilter(event) {
@@ -71,9 +71,5 @@ export class MachinelistComponent implements OnInit {
   onSelect({ selected }) {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
-  }
-
-  routeToMachineDetails(valObj: any) {
-    this.router.navigate(['/machines/' + valObj._id])
   }
 }
