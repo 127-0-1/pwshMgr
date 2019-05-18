@@ -29,7 +29,7 @@ $Processes = Get-Process | Select-Object @{Name = "name"; Expr = { $_.ProcessNam
 $Domain = (Get-WmiObject Win32_ComputerSystem).Domain
 $Services = Get-Service | Select-Object @{Name = "displayName"; Expr = { $_.DisplayName } }, @{Name = "status"; Expr = { $_.Status } } | ConvertTo-Csv | ConvertFrom-Csv                                                                    
 $OSDetails = Get-CimInstance Win32_OperatingSystem
-$Drives = Get-PSDrive -PSProvider FileSystem | Select-Object @{Name = "name"; Expr = { $_.Name } }, @{Name = "usedGB"; Expr = { [math]::Round($_.Used / 1GB, 2) } }, @{Name = "freeGB"; Expr = { [math]::Round($_.Free / 1GB, 2) } } | ConvertTo-Csv | ConvertFrom-Csv                              
+$Drives = Get-PSDrive -PSProvider FileSystem | Select-Object @{Name = "name"; Expr = { $_.Name } }, @{Name = "usedGb"; Expr = { [math]::Round($_.Used / 1GB, 2) } }, @{Name = "freeGb"; Expr = { [math]::Round($_.Free / 1GB, 2) } } | ConvertTo-Csv | ConvertFrom-Csv                              
 $SerialNumber = Get-CimInstance win32_bios
 $Applications = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* |
 Where-Object { $_.DisplayName -ne $null } |

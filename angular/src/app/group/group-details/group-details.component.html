@@ -1,50 +1,34 @@
-<div class="container-fluid pt-3">
-    <h5>Group Details</h5>
-  <table class="table table-bordered table-hover table-sm">
-    <tbody>
-        <tr>
-            <th>Group Name</th>
-            <td>{{group.name}}</td>
-          </tr>
-    </tbody>
-  </table>
-  <button type="button" class="btn btn-secondary btn-space" (click)="deleteGroup()">Delete</button>
-  <button type="button" class="btn btn-secondary btn-space" (click)="addMachineToGroup(editTemplate)">Add Machine To Group</button>
-  <h5>Members</h5>
-  <table class="table table-bordered table-hover table-sm">
-    <thead class="thead-light">
-      <tr>
-        <th>Machine Name</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let machine of group.machines">
-        <td><a [routerLink]="['/machine', machine._id ]" class="text-dark">{{machine.name}}</a></td>
-        <td><button type="button" class="btn btn-secondary btn-space" (click)="deleteFromGroup(machine._id)">Delete</button></td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-
-  <ng-template #editTemplate>
-    <div>
-      <div class="modal-header">
-        <h5 class="modal-title pull-left">Add machine to "{{ group.name }}"</h5>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="container">
-          <div class="form-group">
-            <label for="exampleFormControlSelect1">Machine</label>
-            <select class="form-control col-md-5" #type="ngModel" [(ngModel)]="selectedMachine">
-              <option *ngFor="let machine of machines" [value]="machine._id">{{machine.name}}</option>
-            </select>
+<div class="table-div" *ngIf="group">
+    <mat-card>
+        <mat-card-title>{{group.name}}</mat-card-title>
+      </mat-card>
+      <br>
+<mat-card>
+  <mat-tab-group [@.disabled]="true">
+    <mat-tab label="Members">
+        <div class="table-container">
+            <table mat-table [dataSource]="machines">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/machines', element._id ]" class="text-dark">{{element.name}} </a></td>
+              </ng-container>
+              <ng-container matColumnDef="operatingSystem">
+                <th mat-header-cell *matHeaderCellDef> Operating System </th>
+                <td mat-cell *matCellDef="let element"> {{element.operatingSystem}} </td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef> Status </th>
+                  <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+                </ng-container>
+              <tr mat-header-row *matHeaderRowDef="machineDisplayedColumns; sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: machineDisplayedColumns;"></tr>
+            </table>
           </div>
-          <button type="Start" class="btn btn-primary" (click)="addToGroup()">Save</button>
-        </div>
-      </div>
-    </div>
-  </ng-template>
+    </mat-tab>
+    <mat-tab label="Alert Policies"></mat-tab>
+  </mat-tab-group>
+</mat-card>
+<br>
+
+  <button mat-stroked-button (click)="deleteGroup()" color="primary"><strong>DELETE</strong></button>
+  <button mat-stroked-button (click)="deleteMachine()" color="primary"><strong>ADD MACHINES</strong></button>

@@ -1,10 +1,20 @@
-<div>
-  <button mat-raised-button *ngIf="selected.length > 0" (click)="delete()" color="primary">Delete selected
-    machines</button>
-  <div class="table-div">
-    <mat-form-field appearance="standard">
-      <input matInput type='text' placeholder="Search" (keyup)='updateFilter($event)'>
-    </mat-form-field>
+<div class="table-div" *ngIf="machines">
+    <div class="customFlexContainerNoSpace">
+        <div>
+          <mat-form-field>
+            <input matInput type='text' placeholder="Search" (keyup)='updateFilter($event)'>
+          </mat-form-field>
+    
+        </div>
+        <div class="customFlexContainer flexGrow3">
+          <div>
+          </div>
+          <div>
+            <button class="goRight" mat-stroked-button *ngIf="selected.length > 0" (click)="delete()"
+              color="primary"><strong>DELETE</strong></button>
+          </div>
+        </div>
+      </div>
     <ngx-datatable *ngIf="tData" #table class="material fullscren" [headerHeight]="50" [columnMode]="'force'"
       [rowHeight]="'auto'" [footerHeight]="50" [count]="true" [limit]="10" [rows]="machines" [selected]="selected"
       [selectionType]="'checkbox'" [selectAllRowsOnPage]="false" (select)='onSelect($event)'>
@@ -27,5 +37,4 @@
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>
-  </div>
 </div>

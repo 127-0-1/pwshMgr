@@ -8,16 +8,11 @@ export interface Service {
     status: String
 }
 
-export interface DriveDetails {
-    name: String,
-    usedGB: String,
-    freeGB: String
-}
-
 export interface Drive {
-    drives: DriveDetails[]
+    name: String,
+    usedGb: String,
+    freeGb: String
 }
-
 
 export interface Process {
     name: String,
@@ -29,7 +24,6 @@ export interface Job {
     name: String,
     dateAdded: String
 }
-
 
 export interface Machine {
     _id: string,
@@ -54,4 +48,5 @@ export interface Machine {
     processes: Process[],
     pollingCycle: String,
     lastContact: String
+    services: Service[]
 }

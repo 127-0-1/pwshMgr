@@ -23,6 +23,7 @@ export class GroupDetailsComponent implements OnInit {
   };
   machines: Machine[]
   selectedMachine: String
+  machineDisplayedColumns: string[] = ['name', 'operatingSystem', 'status'];
 
   constructor(private groupService: GroupService,
     private route: ActivatedRoute,
@@ -33,13 +34,16 @@ export class GroupDetailsComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
     this.groupService.getGroupById(this.id)
-      .subscribe(group => { this.group = group })
+      .subscribe(group => {
+         this.group = group
+         this.machines = group.machines
+        })
   }
 
   deleteGroup() {
     this.groupService.deleteGroup(this.group._id)
       .subscribe()
-    this.router.navigate(['groups'])
+    this.router.navigate(['main/groups'])
   }
 
   addMachineToGroup(template: TemplateRef<any>) {

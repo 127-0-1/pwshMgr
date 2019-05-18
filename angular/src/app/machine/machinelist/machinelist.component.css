@@ -2,13 +2,37 @@
   padding:0.5em;
 }
 
-mat-form-field-flex {
-  padding-top: 0%
-}
 
 a { color: inherit;
   text-decoration: none; } 
 a:hover, a:focus, a:active {
   text-decoration: none;
   color: inherit;
+}
+
+
+.customFlexContainer {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  height: 0%;
+  align-items: center;  
+}
+
+.customFlexContainerNoSpace {
+  display: flex;  
+  height: 0%;
+  align-items: center;
+}
+
+.flexGrow3 {
+  flex-grow: 3;
+}
+
+button {
+  margin-left: 5px;  
+}
+
+.goRight {
+  align-self: flex-end;
 }

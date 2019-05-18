@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Group } from '../group.model';
 import { GroupService } from '../group.service';
 import { Router } from '@angular/router';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
 
 @Component({
   selector: 'app-new-group',
@@ -15,10 +15,12 @@ export class NewGroupComponent implements OnInit {
   newGroupForm: FormGroup;
   group: Group;
 
-  constructor(private groupService: GroupService,
+  constructor(
+    private groupService: GroupService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private dialogRef: MatDialogRef<NewGroupComponent>) {
+    private dialogRef: MatDialogRef<NewGroupComponent>
+  ) {
     this.newGroupForm = this.formBuilder.group({
       'name': ['', [Validators.required]]
     });

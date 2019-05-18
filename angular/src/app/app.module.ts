@@ -52,7 +52,7 @@ import { GroupDetailsComponent } from './group/group-details/group-details.compo
 import { NewGroupComponent } from './group/new-group/new-group.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTableModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule, MatDialogContainer, MatDatepickerModule, MatCardModule, MatIconModule, MatInputModule, MatButtonModule, MatSelectModule, MatSnackBarModule, MatToolbarModule, MatGridListModule, MatSidenavModule, MatListModule, MatDialogContent, MatDialogModule } from '@angular/material';
+import { MatTableModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule, MatDialogContainer, MatDatepickerModule, MatCardModule, MatIconModule, MatInputModule, MatButtonModule, MatSelectModule, MatSnackBarModule, MatToolbarModule, MatGridListModule, MatSidenavModule, MatListModule, MatDialogContent, MatDialogModule, MatTabsModule } from '@angular/material';
 import { NavigationComponent } from './navigation/navigation.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { LoginLayoutComponent } from './login-layout/login-layout.component';
@@ -60,6 +60,7 @@ import { HomeLayoutComponent } from './home-layout/home-layout.component';
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { ErrorDialogService } from './error-dialog.service';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MachineAddToGroupDialogComponent } from './machine/machinedetails/machine-add-to-group-dialog/machine-add-to-group-dialog.component';
 
 
 @NgModule({
@@ -99,7 +100,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     ToolbarComponent,
     LoginLayoutComponent,
     HomeLayoutComponent,
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    MachineAddToGroupDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -119,6 +121,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatListModule,
     MatButtonModule,
     MatSelectModule,
+    MatTabsModule,
     FlexLayoutModule,
     MatSnackBarModule,
     MatToolbarModule,
@@ -239,13 +242,22 @@ import { FlexLayoutModule } from '@angular/flex-layout';
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    MachineService, 
-    UserService, 
-    ApplicationService, 
-    ScriptService, 
-    IntegrationService, 
-    JobService, DashboardService, AuthGuard, GroupService, ErrorDialogService],
-    entryComponents: [ErrorDialogComponent, NewGroupComponent],
+    MachineService,
+    UserService,
+    ApplicationService,
+    ScriptService,
+    IntegrationService,
+    JobService,
+    DashboardService,
+    AuthGuard,
+    GroupService,
+    ErrorDialogService
+  ],
+  entryComponents: [
+    ErrorDialogComponent,
+    NewGroupComponent,
+    MachineAddToGroupDialogComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

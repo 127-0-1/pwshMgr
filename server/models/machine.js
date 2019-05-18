@@ -12,8 +12,8 @@ var serviceSchema = new Schema({
 
 var driveSchema = new Schema({
   name: String,
-  usedGB: String,
-  freeGB: String
+  usedGb: String,
+  freeGb: String
 })
 
 var processSchema = new Schema({

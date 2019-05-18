@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
 
 // get groups for specific machine
 router.get('/machine/:id', validateObjectId, async (req, res) => {
-    const groups = await Group.find({ machines: req.params.id }).populate('machines', 'name');
+    const groups = await Group.find({ machines: req.params.id });
     if (!groups) return res.status(404).send('No groups found.');
     res.send(groups);
 });
@@ -40,13 +40,14 @@ router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {
 
 // get single group by ID
 router.get('/:id', validateObjectId, async (req, res) => {
-    const group = await Group.findById(req.params.id).populate('machines', 'name')
+    const group = await Group.findById(req.params.id).populate('machines', 'name operatingSystem status')
     if (!group) return res.status(404).send('The integration with the given ID was not found.')
     res.send(group)
 });
 
 // add machine to group
 router.get('/:id/:machineid', validateObjectId, async (req, res) => {
+    console.log("hitting group add route")
     const group = await Group.findByIdAndUpdate({_id: req.params.id}, { $addToSet: { machines: req.params.machineid } }, { safe: true, upsert: true, new: true })
         .populate('machines', 'name')
     if (!group) return res.status(404).send('The group with the given ID was not found.')

@@ -1,252 +1,155 @@
-
-<div class="table-div"> 
-    <mat-card>
-        <mat-card-title>{{machine.name}}</mat-card-title>
-        <mat-divider></mat-divider>
-    </mat-card>
-    
-</div>
-
-
-<div class="container-fluid pt-3" *ngIf="machine">
-  <table class="table table-bordered table-hover table-sm">
-    <tbody>
-      <tr>
-        <th>Name</th>
-        <td></td>
-        <th>Operating System</th>
-        <td>{{machine.operatingSystem}}</td>
-      </tr>
-      <tr>
-        <th>IP Address</th>
-        <td>{{machine.ipAddress}}</td>
-        <th>Public IP</th>
-        <td>{{machine.publicIp}}</td>
-      </tr>
-      <tr>
-        <th>Make</th>
-        <td>{{machine.make}}</td>
-        <th>Model</th>
-        <td>{{machine.model}}</td>
-      </tr>
-      <tr>
-        <th>Serial Number</th>
-        <td>{{machine.serialNumber}}</td>
-        <th>Architecture</th>
-        <td>{{machine.architecture}}</td>
-      </tr>
-      <tr>
-        <th>Domain</th>
-        <td>{{machine.domain}}</td>
-        <th>Date Added</th>
-        <td>{{machine.dateAdded | date:'medium'}}</td>
-      </tr>
-      <tr [ngClass]="class()">
-        <th>Status</th>
-        <td>{{machine.status}}</td>
-        <th>Last Contact</th>
-        <td>{{machine.lastContact | date:'medium'}}</td>
-      </tr>
-    </tbody>
-  </table>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="show=!show">{{show ? 'Hide Applications' : 'Applications'}}</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="showProcesses=!showProcesses">{{showProcesses ? 'Hide Processes' : 'Processes'}}</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="showServices=!showServices">{{showServices ? 'Hide Services' : 'Services'}}</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="showDrives=!showDrives">{{showDrives ? 'Hide Drives' : 'Drives'}}</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="showJobs()" *ngIf="!jobs">Jobs</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="hideJobs()" *ngIf="jobs">Hide Jobs</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="showAlerts()" *ngIf="!alerts">Alerts</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="hideAlerts()" *ngIf="alerts">Hide Alerts</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="startMaintenance()" *ngIf="machine.status!=='Maintenance'">Start Maintenance</button>
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="stopMaintenance()" *ngIf="machine.status=='Maintenance'">Stop Maintenance</button>
-  <!-- <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="changeCredential(editTemplate)">Edit</button> -->
-  <button type="button" class="btn btn-secondary btn-sm btn-space" (click)="deleteMachine()">Delete</button>
+<div class="table-div" *ngIf="machine">
+  <mat-card>
+    <mat-card-title>{{machine.name}}</mat-card-title>
+  </mat-card>
   <br>
-  <br>
-
-  <div style="overflow-y: scroll; height: 400px" *ngIf="showServices">
-    <table class="table table-bordered table-hover table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th>Service Name</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr [ngClass]="runThis(service)" *ngFor="let service of machine.services">
-          <td>{{service.displayName}}</td>
-          <td>{{service.status}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div style="overflow-y: scroll; height: 400px" *ngIf="showProcesses">
-    <table class="table table-bordered table-hover table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th>Process Name</th>
-          <th>PID</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let process of machine.processes">
-          <td>{{process.name}}</td>
-          <td>{{process.pId}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div style="overflow-y: scroll; height: 400px" *ngIf="show">
-    <table class="table table-bordered table-hover table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th>Application Name</th>
-          <th>Version</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let application of machine.applications">
-          <td>{{application.name}}</td>
-          <td>{{application.version}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div style="overflow-y: scroll; height: 400px" *ngIf="jobs">
-    <table class="table table-bordered table-hover table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th>Job Name</th>
-          <th>Status</th>
-          <th>Date Added</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let job of jobs">
-          <td>
-            <a [routerLink]="['/jobs', job._id]" class="text-dark">{{job.name}}</a>
-          </td>
-          <td>{{job.status}}</td>
-          <td>{{job.dateAdded | date:'medium'}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div style="overflow-y: scroll; height: 400px" *ngIf="alerts">
-    <table class="table table-bordered table-hover table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th>Alert Name</th>
-          <th>Priority</th>
-          <th>Date Raised</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let alert of alerts">
-          <td>
-            <a [routerLink]="['/alerts', alert._id]" class="text-dark">{{alert.name}}</a>
-          </td>
-          <td>{{alert.priority}}</td>
-          <td>{{alert.createdAt | date:'medium'}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div style="overflow-y: scroll; height: 400px" *ngIf="showDrives">
-    <table class="table table-bordered table-hover table-sm">
-      <thead class="thead-light">
-        <tr>
-          <th>Drive Name</th>
-          <th>Used GB</th>
-          <th>Free GB</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let drive of machine.drives">
-          <td>{{drive.name}}</td>
-          <td>{{drive.usedGB}}</td>
-          <td>{{drive.freeGB}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- <ng-template #template>
-
-  <div *ngIf="!activeDeployment">
-    <div class="modal-header">
-      <h5 class="modal-title pull-left">{{ machine.name }} - New Deployment</h5>
-      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="container" class="was-validated">
-        <form [formGroup]="deployForm" novalidate (ngSubmit)="submitForm(deployForm.value)">
-          <div class="form-group">
-            <label for="exampleFormControlSelect1">Application</label>
-            <select class="form-control" [formControl]="deployForm.controls['chocoApp']" required>
-              <option *ngFor="let application of applications" [value]="application.chocoName">{{application.name}}</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleFormControlSelect1">Credential</label>
-            <select class="form-control" [formControl]="deployForm.controls['credential']" required>
-              <option *ngFor="let credential of credentials" [value]="credential._id">{{credential.username}}</option>
-            </select>
-          </div>
-          <button type="Start" class="btn btn-success" [disabled]="!deployForm.valid">Start</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!<div *ngIf="activeDeployment">
-    <div class="modal-header">
-      <h5 class="modal-title pull-left">{{ activeDeployment.name }}</h5>
-      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="container">
-        <p *ngIf="activeDeployment">Status: {{activeDeployment.status}}</p>
-      </div>
-      <button type="Start" class="btn btn-success" (click)="refreshDeploymentStatus()">Refresh</button>
-    </div>
-  </div> -->
-
-<!-- </ng-template> -->
-
-<ng-template #editTemplate>
-  <div>
-    <div class="modal-header">
-      <h5 class="modal-title pull-left">Edit ({{ machine.name }})</h5>
-      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="container">
-        <div class="form-group">
-          <label for="exampleFormControlSelect1">Polling Cycle (minutes)</label>
-          <select class="form-control col-md-5" #type="ngModel" [(ngModel)]="machine.pollingCycle">
-            <option value="1">1</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="30">30</option>
-            <option value="60">60</option>
-          </select>
+  <mat-card>
+    <mat-tab-group [@.disabled]="true" (selectedTabChange)="tabClick($event)">
+      <mat-tab label="Details">
+        <div class="table-container">
+          <table class="mat-table">
+            <tbody>
+              <tr>
+                <th>Name</th>
+                <td></td>
+                <th>Operating System</th>
+                <td>{{machine.operatingSystem}}</td>
+              </tr>
+              <tr>
+                <th>IP Address</th>
+                <td>{{machine.ipAddress}}</td>
+                <th>Public IP</th>
+                <td>{{machine.publicIp}}</td>
+              </tr>
+              <tr>
+                <th>Make</th>
+                <td>{{machine.make}}</td>
+                <th>Model</th>
+                <td>{{machine.model}}</td>
+              </tr>
+              <tr>
+                <th>Serial Number</th>
+                <td>{{machine.serialNumber}}</td>
+                <th>Architecture</th>
+                <td>{{machine.architecture}}</td>
+              </tr>
+              <tr>
+                <th>Domain</th>
+                <td>{{machine.domain}}</td>
+                <th>Date Added</th>
+                <td>{{machine.dateAdded | date:'medium'}}</td>
+              </tr>
+              <tr>
+                <th>Status</th>
+                <td>{{machine.status}}</td>
+                <th>Last Contact</th>
+                <td>{{machine.lastContact | date:'medium'}}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <button type="Start" class="btn btn-primary" (click)="saveMachine()">Save</button>
-      </div>
-    </div>
-  </div>
-</ng-template>
+      </mat-tab>
+      <mat-tab label="Applications">
+        <div class="table-container">
+          <table mat-table [dataSource]="applications">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="version">
+              <th mat-header-cell *matHeaderCellDef> Version </th>
+              <td mat-cell *matCellDef="let element"> {{element.version}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="applicationDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: applicationDisplayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="Processes">
+        <div class="table-container">
+          <table mat-table [dataSource]="processes">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="pId">
+              <th mat-header-cell *matHeaderCellDef> ID </th>
+              <td mat-cell *matCellDef="let element"> {{element.pId}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="processDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: processDisplayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="Services">
+        <div class="table-container">
+          <table mat-table [dataSource]="services">
+            <ng-container matColumnDef="displayName">
+              <th mat-header-cell *matHeaderCellDef> Display Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.displayName}} </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="serviceDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: serviceDisplayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="Drives">
+        <div class="table-container">
+          <table mat-table [dataSource]="drives">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="usedGb">
+              <th mat-header-cell *matHeaderCellDef> Used GB </th>
+              <td mat-cell *matCellDef="let element"> {{element.usedGb}} </td>
+            </ng-container>
+            <ng-container matColumnDef="freeGb">
+              <th mat-header-cell *matHeaderCellDef> Free GB </th>
+              <td mat-cell *matCellDef="let element"> {{element.freeGb}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="driveDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: driveDisplayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="Groups">
+        <div class="table-container" *ngIf="groups">
+          <table mat-table [dataSource]="groups">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/groups', element._id ]"
+                  class="text-dark">{{element.name}}</a> </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="groupDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: groupDisplayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="Alerts">
+
+      </mat-tab>
+      <mat-tab label="Alert Policies">
+
+      </mat-tab>
+      <mat-tab label="Jobs">
+
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+  <br>
+  <button mat-stroked-button (click)="deleteMachine()" color="primary"><strong>RUN SCRIPT</strong></button>
+  <button mat-stroked-button (click)="addToGroup()" color="primary"><strong>ADD TO GROUP</strong></button>
+  <button mat-stroked-button (click)="deleteMachine()" color="primary"><strong>NEW ALERT POLICY</strong></button>
+  <button mat-stroked-button (click)="startMaintenance()" *ngIf="machine.status!=='Maintenance'"
+    color="primary"><strong>START MAINTENANCE</strong></button>
+
+  <button mat-stroked-button (click)="stopMaintenance()" color="primary"
+    *ngIf="machine.status=='Maintenance'"><strong>STOP MAINTENANCE</strong></button>
+  <button mat-stroked-button (click)="deleteMachine()" color="primary"><strong>DELETE</strong></button>
+
+</div>

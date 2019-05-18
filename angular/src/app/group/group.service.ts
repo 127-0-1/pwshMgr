@@ -34,6 +34,11 @@ export class GroupService {
     return this.http.get('http://localhost:8080/api/groups/' + groupID + '/' + machineId)
   }
 
+  
+  getSingleMachineGroups(machineId:String): Observable<Group[]>{
+    return this.http.get<Group[]>('http://localhost:8080/api/groups/machine' + '/' + machineId)
+  }
+
   deleteMachineFromGroup(groupID, machineId){
     return this.http.delete('http://localhost:8080/api/groups/' + groupID + '/' + machineId)
   }

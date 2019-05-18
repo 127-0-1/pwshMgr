@@ -3,7 +3,7 @@ import { Group } from '../group.model';
 import { GroupService } from '../group.service';
 import { FormControl } from '@angular/forms';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import {MatDialog, MatDialogConfig} from "@angular/material";
+import { MatDialog, MatDialogConfig } from "@angular/material";
 import { NewGroupComponent } from '../new-group/new-group.component';
 
 @Component({

@@ -1,18 +1,17 @@
-import { Component, OnInit, TemplateRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, TemplateRef, OnDestroy, Inject } from '@angular/core';
 import { MachineService } from '../machine.service';
-import { Machine, Job } from '../machine.model';
+import { Machine, Job, Application, Process, Drive, Service } from '../machine.model';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { UserService } from '../../users/user.service';
-import { User } from '../../users/user.model'
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ApplicationService } from '../../applications/application.service';
-import { Application } from '../../applications/application.model';
 import * as io from 'socket.io-client';
 import { JobService } from '../../jobs/jobs.service';
 import { Alert } from '../../alerts/alert.model';
-import { AlertService } from '../../alerts/alert.service';
+import { GroupService } from 'src/app/group/group.service';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogConfig } from "@angular/material";
+import { MachineAddToGroupDialogComponent } from './machine-add-to-group-dialog/machine-add-to-group-dialog.component';
+import { Group } from 'src/app/group/group.model';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-machinedetails',
@@ -20,41 +19,34 @@ import { AlertService } from '../../alerts/alert.service';
   styleUrls: ['./machinedetails.component.css']
 })
 export class MachinedetailsComponent implements OnInit, OnDestroy {
-  //for modal
+
   socket: SocketIOClient.Socket
-
-  modalRef: BsModalRef;
-  modalConfig = {
-    animated: false,
-    class: 'modal-lg',
-    ignoreBackdropClick: true
-  };
-
-  //for form
   deployForm: FormGroup;
   machine: Machine;
   id: string;
   active = false;
-  users: User[]
-  applicationToDeploy: String
   applications: Application[]
+  processes: Process[]
+  drives: Drive[]
+  services: Service[]
   refreshing: string;
+  groups: Group[]
   jobs: Job[];
   alerts: Alert[];
-  showJobsDiv: Boolean
+  applicationDisplayedColumns: string[] = ['name', 'version'];
+  processDisplayedColumns: string[] = ['name', 'pId'];
+  serviceDisplayedColumns: string[] = ['displayName', 'status'];
+  driveDisplayedColumns: string[] = ['name', 'usedGb', 'freeGb'];
+  groupDisplayedColumns: string[] = ['name'];
 
   constructor(
     private machineService: MachineService,
     private route: ActivatedRoute,
-    private userService: UserService,
-    private modalService: BsModalService,
-    private formBuilder: FormBuilder,
-    private applicationService: ApplicationService,
     private router: Router,
-    private jobService: JobService
+    private groupService: GroupService,
+    private dialog: MatDialog
   ) {
-
-    this.socket = io.connect("http://localhost:8080")
+    // this.socket = io.connect("http://localhost:8080")
     this.id = this.route.snapshot.params['id'];
   }
 
@@ -62,24 +54,33 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     this.machineService.getMachineById(this.id)
       .subscribe(machine => {
         this.machine = machine
+        this.applications = machine.applications
+        this.processes = machine.processes
+        this.drives = machine.drives
+        this.services = machine.services
       });
-    this.socket.emit('room', this.id)
-    this.socket.on('machineUpdate', (machine: Machine) => {
-      console.log("received update")
-      this.machine = machine
-    })
+    // this.socket.emit('room', this.id)
+    // this.socket.on('machineUpdate', (machine: Machine) => {
+    //   console.log("received update")
+    //   this.machine = machine
+    // })
   }
 
   deleteMachine() {
     this.machineService.deleteMachine(this.machine._id)
       .subscribe()
-    this.router.navigate(['machines'])
+    this.router.navigate(['main/machines'])
   }
 
-  saveMachine() {
-    this.machineService.updateMachine(this.machine)
-      .subscribe()
-    this.modalRef.hide()
+  addToGroup() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.data = {machineId: this.id}
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '500px'
+    dialogConfig.height = '300px'
+    dialogConfig.position = { top: '10%' }
+    this.dialog.open(MachineAddToGroupDialogComponent, dialogConfig);
   }
 
   showJobs() {
@@ -92,48 +93,33 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
       .subscribe((alerts: Array<Alert>) => this.alerts = alerts)
   }
 
-  hideJobs() {
-    this.jobs = null
-  }
 
-  hideAlerts() {
-    this.alerts = null
-  }
   startMaintenance() {
     this.machine.status = "Maintenance"
     this.machineService.updateMachine(this.machine)
-    .subscribe()
+      .subscribe()
+  }
+
+  tabClick(tab) {
+    if (tab.tab.textLabel == "Groups"){
+      if(!this.groups){
+        this.groupService.getSingleMachineGroups(this.id).subscribe(groups => {
+          this.groups = groups
+          console.log(this.groups)
+        })
+      }
+      console.log("groups tab selected")
+    }
   }
 
   stopMaintenance() {
     this.machine.status = "Pending Poll"
     this.machineService.updateMachine(this.machine)
-    .subscribe()
-  }
-
-  class() {
-    if (this.machine.status == "Online") {
-      return "table-success"
-    }
-    if (this.machine.status == "Offline") {
-      return "table-danger"
-    }
-    if (this.machine.status == "Online, WinRM unreachable") {
-      return "table-danger"
-    }
-    if (this.machine.status == "Maintenance") {
-      return "table-warning"
-    }
-  }
-
-  runThis(service) {
-    if (service.status == "Stopped") {
-      return "table-danger"
-    }
+      .subscribe()
   }
 
   ngOnDestroy() {
-    this.socket.disconnect()
-    console.log("disconneted socket")
+    // this.socket.disconnect()
+    // console.log("disconneted socket")
   }
 }
