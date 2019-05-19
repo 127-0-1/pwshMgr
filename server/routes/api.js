@@ -1,16 +1,15 @@
 require('dotenv').config();
-const uristring = process.env.MONGODBPATH
+const db = process.env.MONGODBPATH
 const express = require('express');
 const router = express.Router();
-const uuidv1 = require('uuid/v1');
 const mongoose = require('mongoose');
-mongoose.connect(uristring)
-    .then(connection => {
-        console.log('Connected to MongoDB')
-    })
-    .catch(error => {
-        console.log(error.message)
-    });
+
+// connect to MongoDB
+mongoose
+    .connect(db, { useNewUrlParser: true })
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.log(err));
+
 const bcrypt = require("bcryptjs");
 const machines = require('./machines');
 const users = require('./users');
