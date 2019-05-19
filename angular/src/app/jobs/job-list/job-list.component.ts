@@ -46,10 +46,25 @@ export class JobListComponent implements OnInit {
     updateFilter(event) {
       const val = event.target.value.toLowerCase();
       const temp = this.temp.filter(function (d) {
-        return d.name.toLowerCase().indexOf(val) !== -1 || !val;
+        console.log(d)
+        return d.machine.name.toLowerCase().indexOf(val) !== -1 || !val;
       });
       this.jobs = temp
       this.table.offset = 0
+    }
+
+    delete() {
+      this.tData = false;
+      let result = this.selected.map(a => a._id);
+      this.jobService.deleteMultipleJobs(result).subscribe(() => {
+        this.jobService.getAllJobs()
+          .subscribe((jobs: Array<Job>) => {
+            this.jobs = jobs
+            this.temp = [...jobs]
+            this.tData = true
+            this.selected = []
+          });
+      })
     }
   
     onSelect({ selected }) {

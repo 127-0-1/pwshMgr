@@ -54,6 +54,20 @@ export class GroupListComponent implements OnInit {
     this.table.offset = 0
   }
 
+  delete() {
+    this.tData = false;
+    let result = this.selected.map(a => a._id);
+    this.groupService.deleteMultipleGroups(result).subscribe(() => {
+      this.groupService.getAllGroups()
+        .subscribe((groups: Array<Group>) => {
+          this.groups = groups
+          this.temp = [...groups]
+          this.tData = true
+          this.selected = []
+        });
+    })
+  }
+
   onSelect({ selected }) {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);

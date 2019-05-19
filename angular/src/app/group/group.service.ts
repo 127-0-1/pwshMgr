@@ -39,6 +39,10 @@ export class GroupService {
     return this.http.get<Group[]>('http://localhost:8080/api/groups/machine' + '/' + machineId)
   }
 
+  deleteMultipleGroups(groups){
+    return this.http.post('http://localhost:8080/api/groups/multiple/delete', groups)
+  }
+
   deleteMachineFromGroup(groupID, machineId){
     return this.http.delete('http://localhost:8080/api/groups/' + groupID + '/' + machineId)
   }

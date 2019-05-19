@@ -28,7 +28,7 @@ export class AlertPolicyDetailsComponent implements OnInit {
   deleteAlertPolicy() {
     this.alertService.deleteAlertPolicy(this.alertPolicy._id)
       .subscribe()
-      this.router.navigate(['alertpolicies'])
+      this.router.navigate(['main/alertpolicies'])
   }
 
 }

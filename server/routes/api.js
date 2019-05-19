@@ -49,82 +49,34 @@ router.get('/count', async (req, res) => {
     res.send(count)
 });
 
-//   agent routes
-
-// this route is called on agent install
-router.post('/register', async (req,res) => {
-    const apiKey = uuidv1()
-    const hash = await bcrypt.hash(apiKey, 10);
-    req.body.apiKey = hash
-    req.body.dateAdded = Date.now()
-    const machine = await Machine.create(req.body)
-    machine.apiKey = apiKey
-    res.send(machine)
-})
-
 // get alert policies per machine
-router.get('/alertPolicies/machine/:id', async (req,res) => {
-    const alertPolices = await AlertPolicies.find({machineId: req.params.id})
+router.get('/alertPolicies/machine/:id', async (req, res) => {
+    const alertPolices = await AlertPolicies.find({ machineId: req.params.id })
     res.send(alertPolices)
 })
 
 // get alert policies per machine
-router.get('/alerts/machine/:machineid/:alertpolicyid', async (req,res) => {
-    const alerts = await Alert.find({machineId: req.params.machineid, alertPolicyId: req.params.alertpolicyid})
+router.get('/alerts/machine/:machineid/:alertpolicyid', async (req, res) => {
+    const alerts = await Alert.find({ machineId: req.params.machineid, alertPolicyId: req.params.alertpolicyid })
     res.send(alerts)
 })
 
 // get all jobs for machine
-router.get('/agent/jobs/machine/:id/:status', async (req,res) => {
-    const jobs = await Job.find({machine: req.params.id, status: req.params.status}).populate('script', 'scriptBody')
+router.get('/agent/jobs/machine/:id/:status', async (req, res) => {
+    const jobs = await Job.find({ machine: req.params.id, status: req.params.status }).populate('script', 'scriptBody')
     res.send(jobs)
 })
 
 // Add script output for job
-router.post('/agent/jobupdate/:id', async (req,res) => {
+router.post('/agent/jobupdate/:id', async (req, res) => {
     const jobId = req.params.id
     console.log("job id" + req.params.id)
     var newJob = {};
     newJob.status = req.body.status;
     newJob.output = req.body.output;
-    const updatedJob = await Job.findOneAndUpdate({_id: jobId}, newJob, { new: true })
+    const updatedJob = await Job.findOneAndUpdate({ _id: jobId }, newJob, { new: true })
     console.log(updatedJob)
     await res.send(updatedJob)
-})
-
-// data update
-router.post('/machines/agent/:id', agentAuth, async (req,res) => {
-    const machine = await Machine.findById(req.params.id)
-    if (!Array.isArray(req.body.alerts) || !req.body.alerts.length) {
-        console.log("no alerts found to process")
-      } else if (machine.status == "Maintenance") {
-          console.log("machine in maintenance mode")
-      } else {
-        console.log("alerts found to process")
-        await Alert.insertMany(req.body.alerts) 
-    }
-    machine.lastContact = Date.now()
-    machine.name = req.body.name
-    machine.operatingSystem = req.body.operatingSystem
-    machine.architecture = req.body.architecture
-    machine.serialNumber = req.body.serialNumber
-    machine.applications = req.body.applications
-    machine.make = req.body.make
-    machine.model = req.body.model
-    machine.publicIp = req.body.publicIp
-    machine.domain = req.body.domain
-    machine.services = req.body.services
-    machine.processes = req.body.processes
-    machine.drives = req.body.drives
-    if (machine.status !== "Maintenance"){
-        machine.status = req.body.status
-    }
-    if (req.body.pollingCycle){
-        machine.pollingCycle = req.body.pollingCycle
-    }
-    const updatedMachine = await Machine.findOneAndUpdate({_id: req.params.id}, machine, { new: true })
-    req.io.sockets.in(req.params.id).emit('machineUpdate', updatedMachine)
-    res.json(updatedMachine);
 })
 
 module.exports = router;

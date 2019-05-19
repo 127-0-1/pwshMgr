@@ -18,11 +18,7 @@ export class MachineService {
     getMachineById(machineID): Observable<Machine> {
       return this.http.get<Machine>('http://localhost:8080/api/machines/' + machineID)
     }
-  
-    postMachine(machine: Machine): Observable<Machine> {
-      return this.http.post<Machine>('http://localhost:8080/api/machines/', machine);
-    }
-  
+
     updateMachine(machine: Machine): Observable<Machine> {
       return this.http.put<Machine>('http://localhost:8080/api/machines/' + machine._id, machine);
     }

@@ -38,6 +38,11 @@
         <a [routerLink]="['/main/jobs', row._id ]" class="text-dark">{{row.machine.name}}</a>
       </ng-template>
     </ngx-datatable-column>
+    <ngx-datatable-column name="Script" prop="script">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+          {{row.script.name}}
+        </ng-template>
+      </ngx-datatable-column>
     <ngx-datatable-column name="Date Added" prop="dateAdded">
       <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
         {{row.dateAdded | date:'medium'}}

@@ -6,13 +6,9 @@ import { MachinelistComponent } from './machine/machine-list/machine-list.compon
 import { MachineService } from './machine/machine.service';
 import { RouterModule } from '@angular/router';
 import { MachinedetailsComponent } from './machine/machine-details/machine-details.component';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { ModalModule } from 'ngx-bootstrap/modal';
 import { UserService } from './users/user.service';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { PageHeaderComponent } from './page-header/page-header.component';
-import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { UserListComponent } from './users/user-list/user-list.component';
 import { NewUserComponent } from './users/new-user/new-user.component';
 import { environment } from '../environments/environment';
@@ -22,7 +18,7 @@ import { NewScriptComponent } from './script/new-script/new-script.component';
 import { NewDiskAlertComponent } from './alerts/new-disk-alert/new-disk-alert.component';
 import { AlertPolicyListComponent } from './alerts/alert-policy-list/alert-policy-list.component';
 import { AlertListComponent } from './alerts/alert-list/alert-list.component';
-import { NewWindowsServiceAlertComponent } from './alerts/new-windows-service-alert/new-windows-service-alert.component';
+import { NewAlertPolicyComponent } from './alerts/new-alert-policy/new-alert-policy.component';
 import { IntegrationService } from './integrations/integration.service';
 import { NewSlackIntegrationComponent } from './integrations/new-slack-integration/new-slack-integration.component';
 import { AlertPolicyDetailsComponent } from './alerts/alert-policy-details/alert-policy-details.component';
@@ -72,7 +68,7 @@ import { MachineAddToGroupDialogComponent } from './machine/machine-details/mach
     NewDiskAlertComponent,
     AlertPolicyListComponent,
     AlertListComponent,
-    NewWindowsServiceAlertComponent,
+    NewAlertPolicyComponent,
     NewSlackIntegrationComponent,
     AlertPolicyDetailsComponent,
     AlertDetailsComponent,
@@ -120,10 +116,6 @@ import { MachineAddToGroupDialogComponent } from './machine/machine-details/mach
     MatToolbarModule,
     MatGridListModule,
     HttpClientModule,
-    BsDropdownModule.forRoot(),
-    TooltipModule.forRoot(),
-    ModalModule.forRoot(),
-    CollapseModule.forRoot(),
     RouterModule.forRoot([
       { path: '', redirectTo: 'login', data: { title: 'First Component' }, pathMatch: 'full' },
       {
@@ -240,7 +232,8 @@ import { MachineAddToGroupDialogComponent } from './machine/machine-details/mach
     NewGroupComponent,
     MachineAddToGroupDialogComponent,
     NewScriptComponent,
-    RunScriptJobComponent
+    RunScriptJobComponent,
+    NewAlertPolicyComponent
   ],
   bootstrap: [AppComponent]
 })

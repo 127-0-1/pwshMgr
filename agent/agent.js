@@ -7,8 +7,8 @@ const cron = require('node-cron');
 const winston = require('winston');
 const dateUpdateScript = path.join(__dirname, './scripts/data_update.ps1');
 const jobRunnerScript = path.join(__dirname, './scripts/job_runner.ps1');
-const startUpUrl = process.env.MANAGEMENT_NODE + "/api/machines/" + process.env.ID;
-const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/api/machines/agent/" + process.env.ID;
+const startUpUrl = process.env.MANAGEMENT_NODE + "/" + process.env.ID;
+const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/data-update/" + process.env.ID;
 const agentId = process.env.ID
 const managementNode = process.env.MANAGEMENT_NODE
 const apiKey = process.env.API_KEY
@@ -66,7 +66,7 @@ cron.schedule('*/5 * * * *', () => {
   dataUpdate();
 });
 
-// Job runner
-cron.schedule('*/1 * * * *', () => {
-  jobRunner();
-});
+// // Job runner
+// cron.schedule('*/1 * * * *', () => {
+//   jobRunner();
+// });

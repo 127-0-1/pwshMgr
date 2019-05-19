@@ -6,6 +6,7 @@ const Group = require('../models/group');
 const checkAuth = require("../middleware/check-auth");
 const validateObjectId = require('../middleware/validateObjectId');
 
+
 //create new group
 router.post('/', async (req, res) => {
     console.log(req.body)
@@ -17,6 +18,12 @@ router.post('/', async (req, res) => {
     if (!group) return res.status(404).send('failed to create group')
     res.status(status.OK).json(group);
 });
+
+router.post('/multiple/delete', async (req,res) => {
+    const result = await Group.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
+    console.log(result)
+    res.status(status.OK).json({message: 'SUCCESS'})
+})
 
 // get groups for specific machine
 router.get('/machine/:id', validateObjectId, async (req, res) => {

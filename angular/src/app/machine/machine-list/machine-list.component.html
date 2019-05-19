@@ -26,9 +26,9 @@
           <a [routerLink]="['/main/machines', row._id ]" class="text-dark">{{row.name}}</a>
         </ng-template>
       </ngx-datatable-column>
-      <ngx-datatable-column name="Operating System">
-        <ng-template ngx-datatable-cell-template let-value="value">
-          {{value}}
+      <ngx-datatable-column name="Operating System" prop="operatingSystem">
+        <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+          {{row.operatingSystem}}
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column name="Status">

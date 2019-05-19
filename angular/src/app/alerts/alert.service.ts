@@ -39,4 +39,8 @@ export class AlertService {
   deleteAlertPolicy(alertPolicyId) {
     return this.http.delete('http://localhost:8080/api/alertpolicies/' + alertPolicyId);
   }
+
+  deleteMultipleAlertPolicies(alertPolicies){
+    return this.http.post('http://localhost:8080/api/alertPolicies/multiple/delete', alertPolicies)
+  }
 }

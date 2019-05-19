@@ -36,4 +36,8 @@ export class JobService {
     getJobsByMachine(machineID): Observable<Job[]>{
       return this.http.get<Job[]>('http://localhost:8080/api/machines/jobs/' + machineID)
     }
+
+    deleteMultipleJobs(jobs) {
+      return this.http.post('http://localhost:8080/api/jobs/multiple/delete', jobs)
+    }
 }

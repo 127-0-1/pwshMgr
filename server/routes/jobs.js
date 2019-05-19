@@ -3,6 +3,7 @@ const validateObjectId = require('../middleware/validateObjectId');
 const express = require('express');
 const router = express.Router();
 const Job = require('../models/job');
+const mongoose = require('mongoose');
 const status = require('http-status');
 const checkAuth = require("../middleware/check-auth");
 
@@ -17,6 +18,13 @@ router.post('/', checkAuth, async (req, res) => {
     await newJob.save()
     res.status(status.OK).json(newJob);
 });
+
+router.post('/multiple/delete', async (req,res) => {
+    const result = await Job.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
+    console.log(result)
+    res.status(status.OK).json({message: 'SUCCESS'})
+})
+
 
 router.get('/:id', validateObjectId, async (req, res) => {
     const job = await Job.findById(req.params.id).populate('machine', 'name').populate('script', 'name');
