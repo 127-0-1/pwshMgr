@@ -1,16 +1,44 @@
-<div class="container-fluid pt-3">
-  <table class="table table-bordered table-hover table-sm">
-    <thead class="thead-light">
-      <tr>
-        <th>Name</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let script of scripts">
-        <td>
-          <a [routerLink]="['/scripts', script._id ]" class="text-dark">{{script.name}}</a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="table-div" *ngIf="scripts">
+
+  <div class="customFlexContainerNoSpace">
+    <div>
+      <mat-form-field>
+        <input matInput type='text' placeholder="Search" (keyup)='updateFilter($event)'>
+      </mat-form-field>
+
+    </div>
+    <div class="customFlexContainer flexGrow3">
+      <div>
+      </div>
+      <div>
+        <button class="goRight" mat-stroked-button (click)="openDialog()" color="primary"><strong>NEW</strong></button>
+        <button class="goRight" mat-stroked-button *ngIf="selected.length > 0" (click)="delete()"
+          color="primary"><strong>DELETE</strong></button>
+      </div>
+    </div>
+  </div>
+  <ngx-datatable
+     *ngIf="tData" 
+     #table 
+     class="material fullscren" 
+     [headerHeight]="50" 
+     [columnMode]="'force'"
+     [rowHeight]="'auto'" 
+     [footerHeight]="50" 
+     [count]="true" 
+     [limit]="10"
+     [rows]="scripts" 
+     [selected]="selected"
+     [selectionType]="'checkbox'" 
+     [selectAllRowsOnPage]="false" 
+     (select)='onSelect($event)'>
+    <ngx-datatable-column [width]="30" [sortable]="false" [canAutoResize]="false" [draggable]="false"
+      [resizeable]="false" [headerCheckboxable]="true" [checkboxable]="true">
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Name" prop="name">
+      <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+        <a [routerLink]="['/main/scripts', row._id ]" class="text-dark">{{row.name}}</a>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
 </div>

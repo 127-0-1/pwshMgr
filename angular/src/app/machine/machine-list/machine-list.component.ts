@@ -7,9 +7,9 @@ import { DatatableComponent } from '@swimlane/ngx-datatable';
 
 
 @Component({
-  selector: 'app-machinelist',
-  templateUrl: './machinelist.component.html',
-  styleUrls: ['./machinelist.component.css']
+  selector: 'app-machine-list',
+  templateUrl: './machine-list.component.html',
+  styleUrls: ['./machine-list.component.css']
 })
 export class MachinelistComponent implements OnInit {
 

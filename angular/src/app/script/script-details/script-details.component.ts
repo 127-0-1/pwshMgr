@@ -28,7 +28,7 @@ export class ScriptDetailsComponent implements OnInit {
   deleteScript(){
     this.scriptService.deleteScript(this.script._id)
     .subscribe()
-    this.router.navigate(['scripts'])
+    this.router.navigate(['main/scripts'])
   }
 
 }

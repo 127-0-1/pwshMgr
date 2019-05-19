@@ -1,18 +1,15 @@
-<div class="container-fluid pt-3">
-  <table class="table table-bordered table-hover table-sm">
-    <tbody>
-        <tr>
-            <th>Script Name</th>
-            <td>{{script.name}}</td>
-          </tr>
-      <tr>
-        <th>Script</th>
-        <td style="white-space:pre-wrap; word-wrap:break-word">{{script.scriptBody}}</td>
-      </tr>
+<div class="table-div" *ngIf="script">
+  <mat-card>
+    <mat-card-title>{{script.name}}</mat-card-title>
+  </mat-card>
+  <br>
+  <mat-card>
+    <mat-tab-group [@.disabled]="true">
+      <mat-tab label="Script">
+        <p style="white-space:pre-wrap; word-wrap:break-word">{{script.scriptBody}}</p>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+  <br>
 
-    </tbody>
-  </table>
-  <button type="button" class="btn btn-secondary btn-space" (click)="deleteScript()">Delete</button>
-  <br>
-  <br>
-  </div>
+  <button mat-stroked-button (click)="deleteScript()" color="primary"><strong>DELETE</strong></button>

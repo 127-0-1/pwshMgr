@@ -7,6 +7,7 @@ import { MachineService } from '../../machine/machine.service';
 import { ScriptService } from '../../script/script.service';
 import { Router } from '@angular/router';
 import { Job } from '../job.model';
+import { MatDialogRef } from "@angular/material";
 
 @Component({
   selector: 'app-run-script-job',
@@ -24,7 +25,8 @@ export class RunScriptJobComponent implements OnInit {
     private formBuilder: FormBuilder,
     private machineService: MachineService,
     private scriptService: ScriptService,
-    private router: Router
+    private router: Router,
+    private dialogRef: MatDialogRef<RunScriptJobComponent>
   ) {
     this.newJobForm = this.formBuilder.group({
       'machine': ['', [Validators.required]],
@@ -43,7 +45,8 @@ export class RunScriptJobComponent implements OnInit {
     newJob.subJob = false
     this.jobService.postJob(newJob)
       .subscribe(newJob => {
-        this.router.navigate(['jobs/' + newJob._id])
+        this.router.navigate(['main/jobs/' + newJob._id])
+        this.dialogRef.close()
       });
   }
 

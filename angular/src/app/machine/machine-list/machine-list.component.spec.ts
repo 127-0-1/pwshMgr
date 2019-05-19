@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MachinelistComponent } from './machinelist.component';
+import { MachinelistComponent } from './machine-list.component';
 
 describe('MachinelistComponent', () => {
   let component: MachinelistComponent;

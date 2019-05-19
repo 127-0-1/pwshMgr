@@ -1,8 +1,9 @@
-textarea  
-{  
-    font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace; 
+.mat-form-field {
+    display: block;
 }
 
-* {
-    font-family: 'Noto Sans', sans-serif;
-  }
+textarea {
+    height: 100px;
+    resize: vertical;
+    font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+}

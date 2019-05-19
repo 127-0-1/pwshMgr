@@ -1,25 +1,20 @@
-<div class="container-fluid">
-
-  <h2>Add new job</h2>
-
-
-  <div class="container" class="was-validated">
-    <form [formGroup]="newJobForm" novalidate (ngSubmit)="submitForm(newJobForm.value)">
-      <div class="form-group">
-        <label for="exampleFormControlSelect1">Script</label>
-        <select class="form-control" [formControl]="newJobForm.controls['script']" required>
-          <option *ngFor="let script of scripts" [value]="script._id">{{script.name}}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="exampleFormControlSelect1">Machine</label>
-        <select class="form-control" [formControl]="newJobForm.controls['machine']" required>
-          <option *ngFor="let machine of machines" [value]="machine._id">{{machine.name}}</option>
-        </select>
-      </div>
-      <button type="Start" class="btn btn-secondary" [disabled]="!newJobForm.valid">Submit</button>
-    </form>
-  </div>
-
-
-</div>
+<h2 mat-dialog-title>New job</h2>
+<form [formGroup]="newJobForm" autocomplete="off" class="example-form" (ngSubmit)="submitForm(newJobForm.value)">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline">
+        <mat-label>Machine</mat-label>
+        <mat-select formControlName="machine">
+            <mat-option *ngFor="let machine of machines" [value]="machine._id">{{ machine.name }}</mat-option>
+         </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Script</mat-label>
+        <mat-select formControlName="script">
+            <mat-option *ngFor="let script of scripts" [value]="script._id">{{ script.name }}</mat-option>
+         </mat-select>
+      </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button type="Start" [disabled]="!newJobForm.valid">Submit</button>
+  </mat-dialog-actions>
+</form>

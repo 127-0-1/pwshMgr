@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MachineService } from '../../machine/machine.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Machine, Drive, DriveDetails } from '../../machine/machine.model';
+import { Machine, Drive } from '../../machine/machine.model';
 import { AlertPolicy } from '../alertpolicy.model';
 import { AlertService } from '../alert.service';
 import { Router } from '@angular/router';
@@ -21,9 +21,6 @@ export class NewDiskAlertComponent implements OnInit {
   machines: Machine[];
   selectedMachine: Machine;
   selectedMachineId: String;
-  integrations: SlackIntegration[]
-  drives: DriveDetails
-
   constructor(
     private machineService: MachineService,
     private router: Router,
@@ -40,16 +37,16 @@ export class NewDiskAlertComponent implements OnInit {
     })
   }
 
-  onChange() {
-    this.machineService.getMachineDrives(this.selectedMachineId)
-      .subscribe((drives: DriveDetails) => this.drives = drives)
-  }
+  // onChange() {
+  //   this.machineService.getMachineDrives(this.selectedMachineId)
+  //     .subscribe((drives: DriveDetails) => this.drives = drives)
+  // }
 
   ngOnInit() {
-    this.machineService.getAllMachines()
-      .subscribe((machines: Array<Machine>) => this.machines = machines)
-    this.integrationService.getAllIntegrations()
-      .subscribe((integrations: Array<SlackIntegration>) => this.integrations = integrations)
+    // this.machineService.getAllMachines()
+    //   .subscribe((machines: Array<Machine>) => this.machines = machines)
+    // this.integrationService.getAllIntegrations()
+    //   .subscribe((integrations: Array<SlackIntegration>) => this.integrations = integrations)
   }
 
   submitForm(newDiskSpaceAlert: AlertPolicy) {

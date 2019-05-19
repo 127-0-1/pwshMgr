@@ -35,7 +35,7 @@ export class JobDetailsComponent implements OnInit {
   delete() {
     this.jobService.deleteJob(this.job._id)
       .subscribe()
-      this.router.navigate(['jobs'])
+      this.router.navigate(['main/jobs'])
   }
 
   logName(id) {
@@ -43,13 +43,5 @@ export class JobDetailsComponent implements OnInit {
       this.router.navigate(["jobs/" + id]));
   }
 
-  class(){
-    if (this.job.status == "Completed") {
-      return "table-success"
-    }
-    if (this.job.status == "Failed") {
-      return "table-danger"
-    }
-  }
 
 }

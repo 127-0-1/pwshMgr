@@ -1,23 +1,52 @@
-<div class="container-fluid pt-3">
-  
-  <table class="table table-bordered table-hover table-sm">
-    <thead class="thead-light">
-      <tr>
-        <th>Machine</th>
-        <th>Script</th>
-        <th>Start Date</th>
-        <th>Status</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let job of jobs">
-        <td class="text-dark">{{job.machine.name}}</td>
-        <td class="text-dark">{{job.script.name}}</td>
-        <td>{{job.dateAdded | date:'medium'}}</td>
-        <td>{{job.status}}</td>
-        <td><a [routerLink]="['/jobs', job._id ]" class="text-dark">View details</a></td>
-      </tr>
-    </tbody>
-  </table>
+<div class="table-div" *ngIf="jobs">
+  <div class="customFlexContainerNoSpace">
+    <div>
+      <mat-form-field>
+        <input matInput type='text' placeholder="Search" (keyup)='updateFilter($event)'>
+      </mat-form-field>
+    </div>
+    <div class="customFlexContainer flexGrow3">
+      <div>
+      </div>
+      <div>
+        <button class="goRight" mat-stroked-button (click)="openDialog()" color="primary"><strong>NEW</strong></button>
+        <button class="goRight" mat-stroked-button *ngIf="selected.length > 0" (click)="delete()"
+          color="primary"><strong>DELETE</strong></button>
+      </div>
+    </div>
+  </div>
+  <ngx-datatable
+     *ngIf="tData" 
+     #table 
+     class="material fullscren" 
+     [headerHeight]="50" 
+     [columnMode]="'force'"
+     [rowHeight]="'auto'" 
+     [footerHeight]="50" 
+     [count]="true" 
+     [limit]="10"
+     [rows]="jobs" 
+     [selected]="selected"
+     [selectionType]="'checkbox'" 
+     [selectAllRowsOnPage]="false" 
+     (select)='onSelect($event)'>
+    <ngx-datatable-column [width]="30" [sortable]="false" [canAutoResize]="false" [draggable]="false"
+      [resizeable]="false" [headerCheckboxable]="true" [checkboxable]="true">
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Machine" prop="machine">
+      <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+        <a [routerLink]="['/main/jobs', row._id ]" class="text-dark">{{row.machine.name}}</a>
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Date Added" prop="dateAdded">
+      <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+        {{row.dateAdded | date:'medium'}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Status" prop="status">
+      <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+        {{row.status}}
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
 </div>

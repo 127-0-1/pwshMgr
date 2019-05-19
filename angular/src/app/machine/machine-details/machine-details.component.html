@@ -7,46 +7,39 @@
     <mat-tab-group [@.disabled]="true" (selectedTabChange)="tabClick($event)">
       <mat-tab label="Details">
         <div class="table-container">
-          <table class="mat-table">
-            <tbody>
-              <tr>
-                <th>Name</th>
-                <td></td>
-                <th>Operating System</th>
-                <td>{{machine.operatingSystem}}</td>
-              </tr>
-              <tr>
-                <th>IP Address</th>
-                <td>{{machine.ipAddress}}</td>
-                <th>Public IP</th>
-                <td>{{machine.publicIp}}</td>
-              </tr>
-              <tr>
-                <th>Make</th>
-                <td>{{machine.make}}</td>
-                <th>Model</th>
-                <td>{{machine.model}}</td>
-              </tr>
-              <tr>
-                <th>Serial Number</th>
-                <td>{{machine.serialNumber}}</td>
-                <th>Architecture</th>
-                <td>{{machine.architecture}}</td>
-              </tr>
-              <tr>
-                <th>Domain</th>
-                <td>{{machine.domain}}</td>
-                <th>Date Added</th>
-                <td>{{machine.dateAdded | date:'medium'}}</td>
-              </tr>
-              <tr>
-                <th>Status</th>
-                <td>{{machine.status}}</td>
-                <th>Last Contact</th>
-                <td>{{machine.lastContact | date:'medium'}}</td>
-              </tr>
-            </tbody>
-          </table>
+
+                <h4>Operating System</h4>
+                <p>{{machine.operatingSystem}}</p>
+
+
+                <!-- <h4>IP Address</h4>
+                <p>{{machine.ipAddress}}</p>
+                <h4>Public IP</h4>
+                <p>{{machine.publicIp}}</p> -->
+
+
+                <h4>Make</h4>
+                <p>{{machine.make}}</p>
+                <h4>Model</h4>
+                <p>{{machine.model}}</p>
+
+                <h4>Serial Number</h4>
+                <p>{{machine.serialNumber}}</p>
+                <h4>Architecture</h4>
+                <p>{{machine.architecture}}</p>
+
+                <h4>Domain</h4>
+                <p>{{machine.domain}}</p>
+                <h4>Date Added</h4>
+                <p>{{machine.dateAdded | date:'medium'}}</p>
+
+                <h4>Status</h4>
+                <p>{{machine.status}}</p>
+                <h4>Last Contact</h4>
+                <p>{{machine.lastContact | date:'medium'}}</p>
+
+
+
         </div>
       </mat-tab>
       <mat-tab label="Applications">
@@ -122,9 +115,13 @@
           <table mat-table [dataSource]="groups">
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef> Name </th>
-              <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/groups', element._id ]"
-                  class="text-dark">{{element.name}}</a> </td>
+              <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/groups', element._id ]" class="text-dark">{{element.name}}</a> </td>
+                  
             </ng-container>
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <td mat-cell *matCellDef="let element"> <button mat-stroked-button (click)="removeGroup(element)" >REMOVE</button>  </td>
+          </ng-container> 
             <tr mat-header-row *matHeaderRowDef="groupDisplayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: groupDisplayedColumns;"></tr>
           </table>

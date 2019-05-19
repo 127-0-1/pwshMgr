@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Script } from '../script.model';
 import { ScriptService } from '../script.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Router } from '@angular/router';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-new-script',
@@ -14,20 +15,26 @@ export class NewScriptComponent implements OnInit {
   newScriptForm: FormGroup;
   script: Script
 
-  constructor(private scriptService: ScriptService, private formBuilder: FormBuilder, private router: Router) { 
+  constructor(
+    private scriptService: ScriptService,
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private dialogRef: MatDialogRef<NewScriptComponent>
+  ) {
     this.newScriptForm = this.formBuilder.group({
       'name': ['', [Validators.required]],
       'scriptBody': ['', [Validators.required]]
     });
   }
 
-  ngOnInit() {}
-  
+  ngOnInit() { }
+
 
   submitForm(newScript: Script) {
     this.scriptService.postScript(newScript)
       .subscribe(newScript => {
-        this.router.navigate(['scripts/' + newScript._id])
+        this.router.navigate(['main/scripts/' + newScript._id])
+        this.dialogRef.close()
       });
   }
 

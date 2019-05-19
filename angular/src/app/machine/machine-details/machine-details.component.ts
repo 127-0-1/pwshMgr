@@ -14,9 +14,9 @@ import { Group } from 'src/app/group/group.model';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
-  selector: 'app-machinedetails',
-  templateUrl: './machinedetails.component.html',
-  styleUrls: ['./machinedetails.component.css']
+  selector: 'app-machine-details',
+  templateUrl: './machine-details.component.html',
+  styleUrls: ['./machine-details.component.css']
 })
 export class MachinedetailsComponent implements OnInit, OnDestroy {
 
@@ -37,7 +37,7 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   processDisplayedColumns: string[] = ['name', 'pId'];
   serviceDisplayedColumns: string[] = ['displayName', 'status'];
   driveDisplayedColumns: string[] = ['name', 'usedGb', 'freeGb'];
-  groupDisplayedColumns: string[] = ['name'];
+  groupDisplayedColumns: string[] = ['name', 'actions'];
 
   constructor(
     private machineService: MachineService,
@@ -72,10 +72,20 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     this.router.navigate(['main/machines'])
   }
 
+  removeGroup(group) {
+    console.log(group._id)
+    this.groupService.deleteMachineFromGroup(group._id, this.id).subscribe(result => {
+      this.groupService.getSingleMachineGroups(this.id).subscribe(groups => {
+        this.groups = groups
+      })
+    })
+
+  }
+
   addToGroup() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = false;
-    dialogConfig.data = {machineId: this.id}
+    dialogConfig.data = { machineId: this.id }
     dialogConfig.autoFocus = true;
     dialogConfig.width = '500px'
     dialogConfig.height = '300px'
@@ -101,14 +111,10 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   }
 
   tabClick(tab) {
-    if (tab.tab.textLabel == "Groups"){
-      if(!this.groups){
-        this.groupService.getSingleMachineGroups(this.id).subscribe(groups => {
-          this.groups = groups
-          console.log(this.groups)
-        })
-      }
-      console.log("groups tab selected")
+    if (tab.tab.textLabel == "Groups") {
+      this.groupService.getSingleMachineGroups(this.id).subscribe(groups => {
+        this.groups = groups
+      })
     }
   }
 

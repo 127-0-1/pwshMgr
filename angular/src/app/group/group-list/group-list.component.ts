@@ -20,7 +20,10 @@ export class GroupListComponent implements OnInit {
   tData: boolean = false;
   @ViewChild(DatatableComponent) table: DatatableComponent;
 
-  constructor(private groupService: GroupService, private dialog: MatDialog) { }
+  constructor(
+    private groupService: GroupService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.tData = true;
@@ -37,10 +40,10 @@ export class GroupListComponent implements OnInit {
 
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
-    dialogConfig.position = { top: '10%'}
+    dialogConfig.position = { top: '10%' }
 
     this.dialog.open(NewGroupComponent, dialogConfig);
-}
+  }
 
   updateFilter(event) {
     const val = event.target.value.toLowerCase();

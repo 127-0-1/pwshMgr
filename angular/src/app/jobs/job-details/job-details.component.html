@@ -1,32 +1,31 @@
-<div class="container-fluid pt-3" *ngIf="job">
-    <h5>Job Details</h5>
-  <table class="table table-bordered table-hover table-sm">
-    <tbody>
-      <tr *ngIf="job.script">
-        <th>Script</th>
-        <td>{{job.script.name}}</td>
-      </tr>
-      <tr>
-        <th>Deployed To</th>
-        <td>{{job.machine.name}}</td>
-      </tr>
-      <tr>
-        <th>Date Added</th>
-        <td>{{job.dateAdded | date:'medium'}}</td>
-      </tr>
-      <tr *ngIf="job.finishDate">
-        <th>Finish Date</th>
-        <td>{{job.finishDate | date:'medium'}}</td>
-      </tr>
-      <tr [ngClass]="class()">
-        <th>Status</th>
-        <td>{{job.status}}</td>
-      </tr>
-      <tr *ngIf="job.output">
-        <th>Output</th>
-        <td style="white-space:pre-wrap; word-wrap:break-word">{{job.output}}</td>
-      </tr>
-    </tbody>
-  </table>
-  <button type="button" class="btn btn-secondary btn-space" (click)="delete()">Delete</button>
-</div>
+
+
+<div class="table-div" *ngIf="job">
+  <mat-card>
+    <mat-card-title>Deploy {{job.script.name}} to {{ job.machine.name }}</mat-card-title>
+  </mat-card>
+  <br>
+  <mat-card>
+    <mat-tab-group [@.disabled]="true">
+      <mat-tab label="Details">
+        <h4>Date Added</h4>
+        <p>{{job.dateAdded | date:'medium'}}</p>
+
+      <div *ngIf="job.finishDate">
+          <h4>Finish Date</h4>
+          <p>{{job.finishDate | date:'medium'}}</p>
+      </div>
+
+        <h4>Status</h4>
+        <p>{{job.status}}</p>
+
+      <div *ngIf="job.output">
+        <h4>Output</h4>
+        <p style="white-space:pre-wrap; word-wrap:break-word">{{job.output}}</p>
+      </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+  <br>
+
+  <button mat-stroked-button (click)="delete()" color="primary"><strong>DELETE</strong></button>

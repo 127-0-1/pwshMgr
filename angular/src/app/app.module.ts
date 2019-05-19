@@ -2,10 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
-import { MachinelistComponent } from './machine/machinelist/machinelist.component';
+import { MachinelistComponent } from './machine/machine-list/machine-list.component';
 import { MachineService } from './machine/machine.service';
 import { RouterModule } from '@angular/router';
-import { MachinedetailsComponent } from './machine/machinedetails/machinedetails.component';
+import { MachinedetailsComponent } from './machine/machine-details/machine-details.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -13,10 +13,6 @@ import { UserService } from './users/user.service';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { PageHeaderComponent } from './page-header/page-header.component';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
-import { ApplicationService } from './applications/application.service';
-import { NewApplicationComponent } from './applications/new-application/new-application.component';
-import { ApplicationDetailsComponent } from './applications/application-details/application-details.component';
-import { ApplicationListComponent } from './applications/application-list/application-list.component';
 import { UserListComponent } from './users/user-list/user-list.component';
 import { NewUserComponent } from './users/new-user/new-user.component';
 import { environment } from '../environments/environment';
@@ -60,7 +56,7 @@ import { HomeLayoutComponent } from './home-layout/home-layout.component';
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { ErrorDialogService } from './error-dialog.service';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MachineAddToGroupDialogComponent } from './machine/machinedetails/machine-add-to-group-dialog/machine-add-to-group-dialog.component';
+import { MachineAddToGroupDialogComponent } from './machine/machine-details/machine-add-to-group-dialog/machine-add-to-group-dialog.component';
 
 
 @NgModule({
@@ -69,9 +65,6 @@ import { MachineAddToGroupDialogComponent } from './machine/machinedetails/machi
     MachinelistComponent,
     MachinedetailsComponent,
     PageHeaderComponent,
-    NewApplicationComponent,
-    ApplicationDetailsComponent,
-    ApplicationListComponent,
     UserListComponent,
     NewUserComponent,
     LoginComponent,
@@ -144,11 +137,6 @@ import { MachineAddToGroupDialogComponent } from './machine/machinedetails/machi
         children: [
           { path: '', redirectTo: 'machines', pathMatch: 'full' },
           {
-            path: 'applications/:id',
-            component: ApplicationDetailsComponent,
-            canActivate: [AuthGuard]
-          },
-          {
             path: 'machines/:id',
             component: MachinedetailsComponent,
             canActivate: [AuthGuard]
@@ -214,11 +202,6 @@ import { MachineAddToGroupDialogComponent } from './machine/machinedetails/machi
             canActivate: [AuthGuard]
           },
           {
-            path: 'applications',
-            component: ApplicationListComponent,
-            canActivate: [AuthGuard]
-          },
-          {
             path: 'dashboard',
             component: DashboardComponent,
             canActivate: [AuthGuard]
@@ -244,7 +227,6 @@ import { MachineAddToGroupDialogComponent } from './machine/machinedetails/machi
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     MachineService,
     UserService,
-    ApplicationService,
     ScriptService,
     IntegrationService,
     JobService,
@@ -256,7 +238,9 @@ import { MachineAddToGroupDialogComponent } from './machine/machinedetails/machi
   entryComponents: [
     ErrorDialogComponent,
     NewGroupComponent,
-    MachineAddToGroupDialogComponent
+    MachineAddToGroupDialogComponent,
+    NewScriptComponent,
+    RunScriptJobComponent
   ],
   bootstrap: [AppComponent]
 })
