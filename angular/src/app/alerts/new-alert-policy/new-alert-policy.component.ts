@@ -22,7 +22,7 @@ export class NewAlertPolicyComponent implements OnInit {
   types: any[] = [
     {value: 'Drive', viewValue: 'Drive'},
     {value: 'Service', viewValue: 'Service'},
-    {value: 'Service', viewValue: 'Process'}
+    {value: 'Process', viewValue: 'Process'}
   ];
 
   priorites: any[] = [
