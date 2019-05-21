@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var alertSchema = new Schema({
     name: String,
-    machineId: { type: Schema.Types.ObjectId, ref: 'Machine' },
+    machine: { type: Schema.Types.ObjectId, ref: 'Machine' },
     alertPolicyId: String,
     priority: String,
 }, {timestamps: true} );

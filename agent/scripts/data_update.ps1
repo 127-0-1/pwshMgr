@@ -1,29 +1,3 @@
-param (
-    [Parameter(Mandatory = $true)]
-    $ApiKey,
-
-    [Parameter(Mandatory = $true)]
-    $MachineID,
-
-    [Parameter(Mandatory = $true)]
-    $ManagementNode
-)
-
-$AlertPolicies = (wget "$ManagementNode/api/alertPolicies/machine/$MachineID").Content | ConvertFrom-Json
-
-Function New-PwshMgrAlert {
-    Param(
-        [Parameter(Mandatory = $true)][System.Object]$Policy,
-        [Parameter(Mandatory = $true)][String]$AlertText
-    )
-    return $AlertBody = @{
-        'name'          = $AlertText
-        'machineId'     = $Policy.machineId
-        'alertPolicyId' = $Policy._id
-        'priority'      = $Policy.priority
-    } 
-}
-
 $HostName = hostname
 $Processes = Get-Process | Select-Object @{Name = "name"; Expr = { $_.ProcessName } }, @{Name = "pId"; Expr = { [string]$_.Id } }                          
 $Domain = (Get-WmiObject Win32_ComputerSystem).Domain
@@ -35,62 +9,6 @@ $Applications = Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion
 Where-Object { $_.DisplayName -ne $null } |
 Select-Object @{Name = "name"; Expr = { $_.DisplayName } }, @{Name = "version"; Expr = { $_.DisplayVersion } }      
 $MakeModel = Get-CimInstance Win32_ComputerSystemProduct
-
-$Alerts = @()
-foreach ($Policy in $AlertPolicies) {
-    if ($Policy.type -eq "service") {
-        $ServiceToCheck = $Services | Where-Object { $_.displayName -eq $Policy.item }
-        if ($ServiceToCheck.status -eq "Stopped") {
-            $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
-            if (!$ActiveAlerts) {
-                $AlertText = """$($ServiceToCheck.displayName)"" service is stopped"
-                $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
-            }
-        }
-    }
-    if ($Policy.type -eq "drive") {
-        $DriveToCheck = $Drives | Where-Object { $_.name -eq $Policy.item }
-        if ([Double]$DriveToCheck.freeGB -lt [Double]$Policy.threshold) {
-            $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
-            if (!$ActiveAlerts) {
-                $AlertText = "$($DriveToCheck.name) drive is below $($Policy.threshold)GB. Currently $($DriveToCheck.freeGB)GB"
-                $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
-            }
-
-        }
-    }
-    if ($Policy.type -eq "process" -And $Policy.threshold -eq "is-running") {
-        $Processes = $Processes | Select-Object name
-        foreach ($Process in $Processes) {
-            if ($Process.name -eq $policy.item) {
-                $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
-                if (!$ActiveAlerts) {
-                    $AlertText = """$($policy.item)"" process is running"
-                    $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
-                }
-                break
-            }
-        }
-    }
-    if ($Policy.type -eq "process" -And $Policy.threshold -eq "not-running") {
-        $Processes = $Processes | Select-Object name
-        foreach ($Process in $Processes) {
-            if ($Process.name -eq $policy.item) {
-                $running = $true 
-            }
-        }
-        if (!$running) {
-            $ActiveAlerts = (wget "$ManagementNode/api/alerts/machine/$MachineID/$($Policy._id)").Content | ConvertFrom-Json
-            if (!$ActiveAlerts) {
-                $AlertText = """$($policy.item)"" process is not running"
-                $Alerts += New-PwshMgrAlert -Policy $Policy -AlertText $AlertText
-            }
-        } 
-        else {
-            $running = $null
-        }
-    }
-}
 
 $computerProperties = @{
     'name'            = $HostName
@@ -105,8 +23,6 @@ $computerProperties = @{
     'drives'          = $Drives
     'status'          = "Online"
     'processes'       = $processes
-    'alerts'          = $Alerts
-    'alertPolicies'   = $AlertPolicies
 }
 
 $computerProperties | ConvertTo-Json -Compress

@@ -1,11 +1,11 @@
-export interface MachineId {
+export interface Machine {
     _id: string,
     name: string
 }
 
 export interface Alert {
     _id: string,
-    machineId: MachineId,
+    machine: Machine,
     name: String,
     alertPolicyId: String,
     priority: String,

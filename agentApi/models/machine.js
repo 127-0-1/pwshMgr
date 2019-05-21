@@ -40,7 +40,8 @@ var machineSchema = new Schema({
   pollingCycle: String,
   dateAdded: String,
   lastContact: String,
-  apiKey: String
+  apiKey: String,
+  aesKey: String
 }, {});
 
 

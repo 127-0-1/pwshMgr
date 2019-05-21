@@ -8,7 +8,7 @@ const Machine = require('../models/machine');
 const checkAuth = require("../middleware/check-auth");
 
 router.post('/', checkAuth, async (req, res) => {
-    var existingAlert = await Alert.findOne({machineId: req.body.machineId, alertPolicyId: req.body.alertPolicyId})
+    var existingAlert = await Alert.findOne({machine: req.body.machine, alertPolicyId: req.body.alertPolicyId})
     if (existingAlert) {
         console.log("found existing alert")
     } else {
@@ -16,7 +16,7 @@ router.post('/', checkAuth, async (req, res) => {
     }
     var newAlert = Alert({
         name: req.body.name,
-        machineId: req.body.machineId,
+        machine: req.body.machineId,
         alertPolicyId: req.body.alertPolicyId,
         dateRaised: Date.now(),
         priority: req.body.priority,
@@ -38,7 +38,7 @@ router.put('/:id', checkAuth, validateObjectId, async (req, res) => {
 });
 
 router.get('/', checkAuth, async (req, res) => {
-    const alerts = await Alert.find().populate('machineId', 'name').sort({lastOccurred: 'desc'});
+    const alerts = await Alert.find().populate('machine', 'name').sort({lastOccurred: 'desc'});
     res.send(alerts);
 });
 
@@ -48,7 +48,7 @@ router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {
 });
 
 router.get('/:id', checkAuth, validateObjectId, async (req, res) => {
-    const alert = await Alert.findById(req.params.id).populate('machineId', 'name')
+    const alert = await Alert.findById(req.params.id).populate('machine', 'name')
     if (!alert) return res.status(404).send('The alert with the given ID was not found.')
     res.send(alert)
 });

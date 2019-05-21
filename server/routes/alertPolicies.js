@@ -32,7 +32,7 @@ router.post('/', checkAuth, async (req, res) => {
     }
     if (req.body.type == "Process") {
         var newAlertPolicy = AlertPolicy({
-            name: `"${req.body.item}" process running`,
+            name: `"${req.body.item}" process not running`,
             type: data.type,
             machine: data.machine,
             threshold: data.threshold,

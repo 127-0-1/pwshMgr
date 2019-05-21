@@ -9,9 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aes256": "^1.0.4",
     "axios": "^0.18.0",
     "dotenv": "^7.0.0",
     "node-cron": "^2.0.3",
+    "node-rsa": "^1.0.5",
     "path": "^0.12.7",
     "winston": "^3.2.1"
   }

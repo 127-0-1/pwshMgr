@@ -1,28 +1,12 @@
-<div class="container-fluid pt-3">
-  <table class="table table-bordered table-hover table-sm">
-    <thead class="thead-light">
-      <tr>
-        <th>Machine Name</th>
-        <th>Alert Name</th>
-        <th>Priority</th>
-        <th>Date Raised</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr [ngClass]="runThis(alert)" *ngFor="let alert of alerts">
-          <td>
-              {{alert.machineId.name}}
-            </td>
-        <td>
-          <a [routerLink]="['/alerts', alert._id ]" class="text-dark">{{alert.name}}</a>
-        </td>
-        <td>
-            {{alert.priority}}
-          </td>
-        <td>
-          {{alert.updatedAt | date:'medium'}}
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="table-div">
+  <mat-grid-list cols="4" gutterSize="10px" #grid rowHeight="150px">
+    <mat-grid-tile *ngFor="let alert of alerts" [style.background]="color(alert.priority)">
+      <div style="padding-left:10px; padding-right:10px">
+        <h3>{{alert.name}}</h3>
+      </div>
+      <mat-grid-tile-footer> <a [routerLink]="[ '/main/machines/', alert.machine._id ]">
+          <h3>{{alert.machine.name}}</h3>
+        </a></mat-grid-tile-footer>
+    </mat-grid-tile>
+  </mat-grid-list>
 </div>
