@@ -8,11 +8,11 @@ const app = express();
 const fs = require('fs');
 const NodeRSA = require('node-rsa');
 var aes256 = require('aes256');
+
 const db = process.env.MONGODBPATH
 
 // load key
-const privateKeyString = fs.readFileSync('privkey.pem', 'utf8');
-const privateKey = new NodeRSA(privateKeyString)
+const privateKey = new NodeRSA(fs.readFileSync('privkey.pem', 'utf8'))
 
 // connect to MongoDB
 mongoose
@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // auth middleware
-async function agentAuth (req, res, next) {
+async function agentAuth(req, res, next) {
     try {
         const machine = await Machine.findById(req.params.id)
         const hash = await bcrypt.compare(req.header('api-key'), machine.apiKey);
@@ -45,6 +45,36 @@ async function agentAuth (req, res, next) {
         throw error
     }
 };
+
+async function dataUpdate(machineId, payload) {
+    try {
+        const machine = await Machine.findOne({ _id: machineId })
+        const cipher = aes256.createCipher(machine.aesKey)
+        const decryptedMachineData = JSON.parse(cipher.decrypt(payload))
+        machine.lastContact = Date.now()
+        machine.name = decryptedMachineData.name
+        machine.operatingSystem = decryptedMachineData.operatingSystem
+        machine.architecture = decryptedMachineData.architecture
+        machine.serialNumber = decryptedMachineData.serialNumber
+        machine.applications = decryptedMachineData.applications
+        machine.make = decryptedMachineData.make
+        machine.model = decryptedMachineData.model
+        machine.publicIp = decryptedMachineData.publicIp
+        machine.domain = decryptedMachineData.domain
+        machine.services = decryptedMachineData.services
+        machine.processes = decryptedMachineData.processes
+        machine.drives = decryptedMachineData.drives
+        if (machine.status !== "Maintenance") {
+            machine.status = decryptedMachineData.status
+        }
+        await Machine.findOneAndUpdate({ _id: machineId }, machine, { new: true })
+        console.log("data update finished")
+        return "data updated OK"
+    } catch (error) {
+        console.log(error.message)
+    }
+    
+}
 
 async function processAlerts(machineId) {
     const alertPolicies = await AlertPolicies.find({ machine: machineId })
@@ -77,7 +107,7 @@ async function processAlerts(machineId) {
                             priority: alertPolicy.priority,
                             alertPolicyId: alertPolicy._id
                         });
-                        await newAlert.save()
+                        newAlert.save()
                     }
                 } else {
                     console.log("drive isn't alerting")
@@ -86,7 +116,7 @@ async function processAlerts(machineId) {
                         console.log("no active alert found")
                     } else {
                         console.log("active alert found for drive - need to clear")
-                        await Alert.deleteOne({ alertPolicyId: alertPolicy._id })
+                        Alert.deleteOne({ alertPolicyId: alertPolicy._id })
                     }
                 }
                 break;
@@ -110,7 +140,7 @@ async function processAlerts(machineId) {
                             priority: alertPolicy.priority,
                             alertPolicyId: alertPolicy._id
                         });
-                        await newAlert.save()
+                        newAlert.save()
                     }
                 } else {
                     console.log("service isnt alerting")
@@ -119,7 +149,7 @@ async function processAlerts(machineId) {
                         console.log("no active alert found for service: " + alertPolicy.item)
                     } else {
                         console.log("active alert found for service - need to clear")
-                        await Alert.deleteOne({ alertPolicyId: alertPolicy._id })
+                        Alert.deleteOne({ alertPolicyId: alertPolicy._id })
                     }
                 }
                 break;
@@ -135,7 +165,7 @@ async function processAlerts(machineId) {
                         priority: alertPolicy.priority,
                         alertPolicyId: alertPolicy._id
                     });
-                    await newAlert.save()
+                    newAlert.save()
                 } else {
                     console.log("process running")
                 }
@@ -143,20 +173,45 @@ async function processAlerts(machineId) {
     }
 }
 
-// processAlerts("5ce19b87699cb232384f0fe4")
-
-
+// Authentication route
 app.post('/handshake', async (req, res) => {
-    console.log(req.body)
-    const decryptedPayload = privateKey.decrypt(req.body.payload, 'utf8')
-    const payloadJson = JSON.parse(decryptedPayload)
-    console.log(payloadJson.aesKey)
-    const machine = await Machine.update({ _id: payloadJson.id}, {$set: { aesKey: payloadJson.aesKey}})
-    machine.aesKey = payloadJson.aesKey
-    console.log(machine)
-    res.send("ok");
-});
+    try {
+        // decrypt payload received from machine with server private key
+        const decryptedPayloadJson = JSON.parse(privateKey.decrypt(req.body.payload, 'utf8'))
 
+        // check if machine exists in database
+        const machine = await Machine.findById(decryptedPayloadJson._id)
+        if (!machine) {
+            console.log("failed to find machine - ID doesnt exist")
+            return res.status(404).send("failed to find machine - ID doesnt exist")
+        }
+
+        // check if correct api key was sent
+        const hash = await bcrypt.compare(decryptedPayloadJson.apiKey, machine.apiKey);
+        if (!hash) {
+            console.log("incorrect API key")
+            return res.status(401).send("incorrect api key")
+        }
+
+        // update machine database record with new aes key
+        await Machine.update({ _id: decryptedPayloadJson._id }, { $set: { aesKey: decryptedPayloadJson.aesKey } })
+
+        // build payload to send back to machine
+        const authPayloadToSend = "authenticated-OK"
+        const authPayloadToSendJson = JSON.stringify(authPayloadToSend)
+
+        // encrypt payload with machine aes key
+        var cipher = aes256.createCipher(decryptedPayloadJson.aesKey);
+        const encryptedAuthPayload = cipher.encrypt(authPayloadToSendJson);
+
+        //send payload to machine
+        res.send(encryptedAuthPayload);
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(401).send("failed to authenticate")
+    }
+});
 
 //register
 app.post('/register', async (req, res) => {
@@ -170,34 +225,14 @@ app.post('/register', async (req, res) => {
 })
 
 //data update
-app.post('/data-update/:id', agentAuth, async (req, res) => {
-    const machine = await Machine.findById(req.params.id)
-    machine.lastContact = Date.now()
-    machine.name = req.body.name
-    machine.operatingSystem = req.body.operatingSystem
-    machine.architecture = req.body.architecture
-    machine.serialNumber = req.body.serialNumber
-    machine.applications = req.body.applications
-    machine.make = req.body.make
-    machine.model = req.body.model
-    machine.publicIp = req.body.publicIp
-    machine.domain = req.body.domain
-    machine.services = req.body.services
-    machine.processes = req.body.processes
-    machine.drives = req.body.drives
-    if (machine.status !== "Maintenance") {
-        machine.status = req.body.status
+app.post('/data-update', async (req, res) => {
+    const machine = await dataUpdate(req.body.machineId, req.body.payload)
+    if(!machine) {
+        console.log("data update failed")
+        return res.send("Failed data update")
     }
-    if (req.body.pollingCycle) {
-        machine.pollingCycle = req.body.pollingCycle
-    }
-    const updatedMachine = await Machine.findOneAndUpdate({ _id: req.params.id }, machine, { new: true })
-    res.json(updatedMachine);
-    await processAlerts(req.params.id)
-    console.log("data update finished")
+    res.send("OK")
+    processAlerts(req.body.machineId)
 })
-
-
-
 
 app.listen(3872)

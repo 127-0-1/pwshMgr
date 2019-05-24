@@ -11,19 +11,20 @@ const NodeRSA = require('node-rsa');
 var aes256 = require('aes256');
 const dateUpdateScript = path.join(__dirname, './scripts/data_update.ps1');
 const jobRunnerScript = path.join(__dirname, './scripts/job_runner.ps1');
-const startUpUrl = process.env.MANAGEMENT_NODE + "/" + process.env.ID;
-const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/data-update/" + process.env.ID;
+const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/data-update"
 const handShakeUrl = process.env.MANAGEMENT_NODE + "/handshake"
 const agentId = process.env.ID
 const managementNode = process.env.MANAGEMENT_NODE
 const apiKey = process.env.API_KEY
 
-// load public key
-const publicKeyString = fs.readFileSync('pubkey.pem', 'utf8')
-const publicKey = new NodeRSA(publicKeyString)
-
-// generate new aes key for this session
-const aesKey = crypto.randomBytes(32).toString('hex');
+// wait function
+function sleep(timeout) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, timeout)
+  })
+}
 
 var logger = new (winston.createLogger)({
   transports: [
@@ -32,43 +33,78 @@ var logger = new (winston.createLogger)({
   ]
 });
 
-async function startUp() {
-  var dataToEncrpt = {
-    id: agentId,
-    aesKey: aesKey
-  };
-  var payloadJson = JSON.stringify(dataToEncrpt)
-  const encryptedPayload = publicKey.encrypt(payloadJson, 'base64')
-  var payloadToSend = {
-    payload: encryptedPayload
-  }
-  const handshakeReturn = await axios.post(handShakeUrl, payloadToSend)
-  console.log(handshakeReturn)
+// generate AES session key
+const aesKey = crypto.randomBytes(32).toString('hex')
 
-  // if (!(process.env.ID)) {
-  //   throw new Error("no id found")
-  // }
-  // try {
-  //   const data = await axios.get(startUpUrl)
-  //   return data;
-  // } catch (error) {
-  //   throw new Error(error)
-  // }
+async function handshake() {
+  var auth = false
+  do {
+    try {
+      // checking if settings exist in config file
+      if (!agentId) {
+        throw new Error("no id found in configuration file")
+      }
+      if (!apiKey) {
+        throw new Error("no apikey found in configuration file")
+      }
+      if (!managementNode) {
+        throw new Error("no management node set in configuration file")
+      }
+      // load servers public key
+      const publicKey = new NodeRSA(fs.readFileSync('pubkey.pem', 'utf8'))
+
+      // build payload to send to server
+      const dataToEncrpt = {
+        _id: agentId,
+        aesKey: aesKey,
+        apiKey: apiKey
+      }
+      const payloadJson = JSON.stringify(dataToEncrpt)
+
+      //encrypt payload with servers public key and send
+      const encryptedPayload = publicKey.encrypt(payloadJson, 'base64')
+      const payloadToSend = {
+        payload: encryptedPayload
+      }
+      const handshakeReturn = await axios.post(handShakeUrl, payloadToSend)
+
+      // decrypt response from server with AES session key and check if it was encrypted with
+      // correct AES session key
+      var cipher = aes256.createCipher(aesKey);
+      var decryptedData = cipher.decrypt(handshakeReturn.data)
+      if (!decryptedData.includes("authenticated-OK")) {
+        throw new Error("unable to decrypt server response - failed auth")
+      }
+
+      // if no errors, set auth to true and proceed
+      auth = true
+      return
+    } catch (error) {
+      console.log("An error occurred in handshake. Failed to authenticate.")
+      console.log(error.message)
+      console.log("sleeping for 60 seconds")
+      await sleep(5000)
+    }
+  } while (!auth)
 }
 
-startUp()
+handshake()
+  .then(data => {
+    console.log("auth OK")
+    dataUpdate()
+  })
 
-// async function dataUpdate() {
-//   logger.info((new Date) + " starting data update");
-//   const { stdout, stderr } = await exec(`powershell -noprofile -file ${dateUpdateScript}`);
-//   console.log(stderr)
-//   scriptOutput = JSON.parse(stdout);
-//   console.log(scriptOutput)
-//   const headers = {
-//     'api-key': apiKey
-//   };
-//   const postToManagementNode = await axios.post(dataUpdateUrl, scriptOutput, { headers });
-// }
+
+async function dataUpdate() {
+  const { stdout, stderr } = await exec(`powershell -NoProfile -File ${dateUpdateScript}`);
+  var cipher = aes256.createCipher(aesKey)
+  const encryptedPayload = cipher.encrypt(stdout)
+  const dataToSend = {
+    machineId: agentId,
+    payload: encryptedPayload
+  }
+  const postToManagementNode = await axios.post(dataUpdateUrl, dataToSend);
+}
 
 // async function jobRunner() {
 //   logger.info((new Date) + " starting job runner");
@@ -80,12 +116,6 @@ startUp()
 //     logger.info((new Date) + " " + stderr)
 //   }
 // };
-
-// startUp()
-//   .then(data => {
-//     dataUpdate();
-//     logger.info((new Date) + " successful startup");
-//   });
 
 // // data update
 // cron.schedule('*/5 * * * *', () => {

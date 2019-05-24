@@ -11,7 +11,7 @@ $RegisterData = @{
     'uuid'  = $UUID
 } | ConvertTo-Json
 $parameters = @{
-    Uri             = "$ManagementNode/api/register"
+    Uri             = "$ManagementNode/register"
     Method          = "Post"
     Body            = $RegisterData
     UseBasicParsing = $True
