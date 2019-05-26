@@ -6,6 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": "agent.js",
+  "pkg": {
+    "assets": [
+      "scripts/*.ps1"
+    ]
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

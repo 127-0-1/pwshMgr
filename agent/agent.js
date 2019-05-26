@@ -8,11 +8,12 @@ const cron = require('node-cron');
 const winston = require('winston');
 const fs = require('fs');
 const NodeRSA = require('node-rsa');
-var aes256 = require('aes256');
+const aes256 = require('aes256');
 const dateUpdateScript = path.join(__dirname, './scripts/data_update.ps1');
-const jobRunnerScript = path.join(__dirname, './scripts/job_runner.ps1');
 const dataUpdateUrl = process.env.MANAGEMENT_NODE + "/data-update"
 const handShakeUrl = process.env.MANAGEMENT_NODE + "/handshake"
+const jobRunnerUrl = process.env.MANAGEMENT_NODE + "/job-runner"
+const jobUpdateUrl = process.env.MANAGEMENT_NODE + "/job-update"
 const agentId = process.env.ID
 const managementNode = process.env.MANAGEMENT_NODE
 const apiKey = process.env.API_KEY
@@ -33,8 +34,12 @@ var logger = new (winston.createLogger)({
   ]
 });
 
+// set job runner lock variable
+var jobInProgressLock = false
+
 // generate AES session key
 const aesKey = crypto.randomBytes(32).toString('hex')
+const cipher = aes256.createCipher(aesKey)
 
 async function handshake() {
   var auth = false
@@ -70,7 +75,6 @@ async function handshake() {
 
       // decrypt response from server with AES session key and check if it was encrypted with
       // correct AES session key
-      var cipher = aes256.createCipher(aesKey);
       var decryptedData = cipher.decrypt(handshakeReturn.data)
       if (!decryptedData.includes("authenticated-OK")) {
         throw new Error("unable to decrypt server response - failed auth")
@@ -96,8 +100,10 @@ handshake()
 
 
 async function dataUpdate() {
+  // const sleepSeconds = Math.floor(Math.random() * 100) + 10
+  // console.log(`sleeping for ${sleepSeconds} seconds`)
+  // await sleep(sleepSeconds * 1000)
   const { stdout, stderr } = await exec(`powershell -NoProfile -File ${dateUpdateScript}`);
-  var cipher = aes256.createCipher(aesKey)
   const encryptedPayload = cipher.encrypt(stdout)
   const dataToSend = {
     machineId: agentId,
@@ -106,23 +112,90 @@ async function dataUpdate() {
   const postToManagementNode = await axios.post(dataUpdateUrl, dataToSend);
 }
 
-// async function jobRunner() {
-//   logger.info((new Date) + " starting job runner");
-//   const { stdout, stderr } = await exec(`powershell -file ${jobRunnerScript} -ApiKey "${apiKey}" -ManagementNode "${managementNode}" -MachineID ${agentId}`);
-//   if (stdout) {
-//     logger.info((new Date) + " " + stdout);
-//   }
-//   if (stderr) {
-//     logger.info((new Date) + " " + stderr)
-//   }
-// };
+async function jobRunner() {
+  // if jobInProgressLock is set to true, a job is already running, so this cron cycle needs to be skipped
+  if (jobInProgressLock) {
+    console.log("Job already in progress, skipping this scheduled cycle")
+    return
+  }
 
-// // data update
-// cron.schedule('*/5 * * * *', () => {
-//   dataUpdate();
-// });
+  // set jobInProgressLock to true to prevent multiple jobs launching whilst one is still in progress
+  jobInProgressLock = true
 
-// // // Job runner
-// // cron.schedule('*/1 * * * *', () => {
-// //   jobRunner();
-// // });
+  // build payload with machineId to send to server for job requests
+  const dataToSend = {
+    machineId: agentId
+  }
+
+  // send data to agent api
+  const postToJobRunner = await axios.post(jobRunnerUrl, dataToSend)
+
+  //decrypt response
+  const decryptedPayload = cipher.decrypt(postToJobRunner.data)
+
+  // if response contains "no jobs to process", the rest of the function can be skipped
+  if (decryptedPayload.includes("no jobs to process")) {
+    jobInProgressLock = false
+    console.log("no jobs to process")
+    return
+  }
+
+  // parse response - if this fails, it could be due to an issue with the aes encryption
+  const decryptedPayloadJson = JSON.parse(decryptedPayload)
+
+  // save script to disk for execution
+  fs.writeFileSync(`${decryptedPayloadJson.job.script._id}.ps1`, decryptedPayloadJson.job.script.scriptBody)
+
+  // execute script and capture stdout + stderr
+  const { stdout, stderr } = await exec(`powershell -ExecutionPolicy Bypass -NoProfile -File ${decryptedPayloadJson.job.script._id}.ps1`);
+
+  // check if script failed or succeeded and build payload to send
+  var output = {}
+  if (stdout) {
+    console.log(`stdout: ${stdout}`)
+    output = {
+      status: "Success",
+      output: stdout,
+      jobId: decryptedPayloadJson.job._id
+    }
+  } else {
+    console.log(`stderr: ${stderr}`)
+    output = {
+      status: "Failed",
+      output: stderr,
+      jobId: jobId = decryptedPayloadJson.job._id
+    }
+  }
+  const outputJson = JSON.stringify(output)
+
+  // encrypt payload to send to management node
+  const outputEncrypted = cipher.encrypt(outputJson)
+  const payloadToSend = {
+    machineId: agentId,
+    output: outputEncrypted
+  }
+
+  const postToJobUpdateReturn = await axios.post(jobUpdateUrl, payloadToSend)
+  console.log(postToJobUpdateReturn.data)
+
+  // // delete script once execution has finished
+  // fs.unlinkSync(`${decryptedPayloadJson.job.script._id}.ps1`)
+
+  // // set jobInProgressLock to false, ready for next job
+  // jobInProgressLock = false
+};
+
+var dataUpdateCron = cron.schedule('*/5 * * * *', () => {
+  dataUpdate();
+}, {
+    scheduled: false
+  });
+
+// Job runner
+var jobRunnerCron = cron.schedule('*/1 * * * *', () => {
+  jobRunner().then(output => {
+    console.log(output)
+  });
+}, {
+    scheduled: false
+  });

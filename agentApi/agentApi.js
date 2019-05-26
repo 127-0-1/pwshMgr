@@ -7,11 +7,11 @@ const mongoose = require('mongoose');
 const app = express();
 const fs = require('fs');
 const NodeRSA = require('node-rsa');
-var aes256 = require('aes256');
+const aes256 = require('aes256');
 
 const db = process.env.MONGODBPATH
 
-// load key
+// load private key
 const privateKey = new NodeRSA(fs.readFileSync('privkey.pem', 'utf8'))
 
 // connect to MongoDB
@@ -51,6 +51,7 @@ async function dataUpdate(machineId, payload) {
         const machine = await Machine.findOne({ _id: machineId })
         const cipher = aes256.createCipher(machine.aesKey)
         const decryptedMachineData = JSON.parse(cipher.decrypt(payload))
+        console.log(decryptedMachineData)
         machine.lastContact = Date.now()
         machine.name = decryptedMachineData.name
         machine.operatingSystem = decryptedMachineData.operatingSystem
@@ -73,7 +74,7 @@ async function dataUpdate(machineId, payload) {
     } catch (error) {
         console.log(error.message)
     }
-    
+
 }
 
 async function processAlerts(machineId) {
@@ -227,12 +228,55 @@ app.post('/register', async (req, res) => {
 //data update
 app.post('/data-update', async (req, res) => {
     const machine = await dataUpdate(req.body.machineId, req.body.payload)
-    if(!machine) {
+    if (!machine) {
         console.log("data update failed")
         return res.send("Failed data update")
     }
     res.send("OK")
     processAlerts(req.body.machineId)
+})
+
+// route to send new jobs to agents
+app.post('/job-runner', async (req, res) => {
+
+    //check if there is a job in scheduled state, return only one
+    const machine = await Machine.findOne({ _id: req.body.machineId }).select('aesKey')
+    const job = await Job.findOne({ machine: req.body.machineId, status: "Scheduled" }).populate('script')
+
+    // create cipher with machines aesKey
+    const cipher = aes256.createCipher(machine.aesKey);
+
+    // if no job is found, return "No jobs to process" to agent
+    if (!job) {
+        const encryptedPayload = cipher.encrypt("no jobs to process");
+        return res.send(encryptedPayload)
+    }
+
+    // if job exists, encrypt with machines aes key and send to machine
+    const payload = {
+        job: job
+    };
+    const payloadJson = JSON.stringify(payload)
+    const encryptedPayload = cipher.encrypt(payloadJson)
+    res.send(encryptedPayload)
+    await Job.findByIdAndUpdate(job._id, { status: "Running" })
+})
+
+// route agents contact to update job status and send output
+app.post('/job-update', async (req, res) => {
+
+    // find machine and grab aes key
+    const machine = await Machine.findOne({ _id: req.body.machineId }).select('aesKey')
+
+    // create cipher and decrypt recieved data. Attempt to parse decrypted JSON
+    const cipher = aes256.createCipher(machine.aesKey)
+    const decryptedPayload = cipher.decrypt(req.body.output)
+    const jobResult = JSON.parse(decryptedPayload)
+
+    // find job and update
+    const job = await Job.findOneAndUpdate({ _id: jobResult.jobId }, { status: jobResult.status, output: jobResult.output })
+    res.send("OK")
+
 })
 
 app.listen(3872)
