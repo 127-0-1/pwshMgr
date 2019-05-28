@@ -1,13 +1,28 @@
 <h2 mat-dialog-title>New Alert Policy</h2>
 <form [formGroup]="newAlertPolicyForm" autocomplete="off" class="example-form" (ngSubmit)="submitForm(newAlertPolicyForm.value)">
   <mat-dialog-content>
-    <mat-form-field appearance="outline">
+
+      <mat-form-field appearance="outline">
+          <mat-label>Assignment Type</mat-label>
+          <mat-select formControlName="assignmentType">
+              <mat-option *ngFor="let assignmentType of assignmentTypes" [value]="assignmentType.value">{{assignmentType.viewValue}}</mat-option>
+           </mat-select>
+        </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="newAlertPolicyForm.value.assignmentType == 'Machine'">
         <mat-label>Machine</mat-label>
-        <mat-select formControlName="machine">
+        <mat-select formControlName="assignedTo">
             <mat-option *ngFor="let machine of machines" [value]="machine._id">{{ machine.name }}</mat-option>
          </mat-select>
       </mat-form-field>
 
+      <mat-form-field appearance="outline" *ngIf="newAlertPolicyForm.value.assignmentType == 'Group'">
+          <mat-label>Group</mat-label>
+          <mat-select formControlName="assignedTo">
+              <mat-option *ngFor="let group of groups" [value]="group._id">{{ group.name }}</mat-option>
+           </mat-select>
+        </mat-form-field>
+  
       <mat-form-field appearance="outline">
           <mat-label>Priority</mat-label>
           <mat-select formControlName="priority">

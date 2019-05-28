@@ -99,19 +99,6 @@ router.put('/:id', validateObjectId, async (req, res) => {
     res.status(status.OK).json(updatedMachine);
 });
 
-router.post('/', checkAuth, async (req, res) => {
-    var data = req.body;
-    var newMachine = Machine({
-        ipAddress: data.ipAddress,
-        credential: data.credential,
-        dateAdded: Date.now(),
-        status: "Online",
-        pollingCycle: data.pollingCycle
-    });
-    const machine = await newMachine.save()
-    res.send(machine)
-});
-
 router.get('/jobs/:id', checkAuth, (req, res) => {
     Job.find({ machine: req.params.id }, '_id name dateAdded status', function (err, jobs) {
         if (err) return res.status(status.BAD_REQUEST).json(err);

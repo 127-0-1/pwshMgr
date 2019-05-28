@@ -10,7 +10,7 @@ var jobSchema = new Schema({
     group: String,
     subJob: Boolean,
     masterJob: String,
-    dateAdded: Number,
+    dateAdded: Date,
     output: String,
     type: String,
     script: { type: Schema.Types.ObjectId, ref: 'Script' }

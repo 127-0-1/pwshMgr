@@ -33,11 +33,16 @@
       <ngx-datatable-column [width]="30" [sortable]="false" [canAutoResize]="false" [draggable]="false"
         [resizeable]="false" [headerCheckboxable]="true" [checkboxable]="true">
       </ngx-datatable-column>
-      <ngx-datatable-column name="Assigned To" prop="machine">
+      <ngx-datatable-column name="Assigned To" prop="assignedTo" >
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-          <a [routerLink]="['/main/alertPolicies', row._id ]" class="text-dark">{{row.machine.name}}</a>
+          <a [routerLink]="['/main/alertPolicies', row._id ]" class="text-dark">{{row.assignedTo.name}}</a>
         </ng-template>
       </ngx-datatable-column>
+      <ngx-datatable-column name="Assignment Type" prop="assignmentType">
+          <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+            <a [routerLink]="['/main/alertPolicies', row._id ]" class="text-dark">{{row.assignmentType}}</a>
+          </ng-template>
+        </ngx-datatable-column>
       <ngx-datatable-column name="Name" prop="name">
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
           {{row.name}}

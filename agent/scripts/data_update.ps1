@@ -1,3 +1,4 @@
+$ProgressPreference = "SilentlyContinue"
 $HostName = hostname
 $Processes = Get-Process | Select-Object @{Name = "name"; Expr = { $_.ProcessName } }, @{Name = "pId"; Expr = { [string]$_.Id } }                          
 $Domain = (Get-WmiObject Win32_ComputerSystem).Domain

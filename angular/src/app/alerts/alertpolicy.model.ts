@@ -3,6 +3,11 @@ export interface Machine {
     name: string
 }
 
+export interface Group {
+    _id: string,
+    name: string
+}
+
 export interface AlertPolicy {
     _id: string,
     machine: Machine,
@@ -21,4 +26,6 @@ export interface AlertPolicyView {
     threshold: string,
     type: string,
     priority: string
+    group: Group
+    assignmentType: String
 }

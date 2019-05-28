@@ -6,6 +6,8 @@ var alertSchema = new Schema({
     machine: { type: Schema.Types.ObjectId, ref: 'Machine' },
     alertPolicyId: String,
     priority: String,
+    priorityNumber: String,
+    status: String
 }, {timestamps: true} );
 
 var Alert = mongoose.model('Alert', alertSchema);

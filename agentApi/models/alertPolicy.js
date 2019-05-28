@@ -4,10 +4,16 @@ var Schema = mongoose.Schema;
 var alertPolicySchema = new Schema({
     name: String,
     type: String,
-    machine: { type: Schema.Types.ObjectId, ref: 'Machine' },
+    assignmentType: {
+        type: String,
+        required: true,
+        enum: ['Group', 'Machine']
+    },
+    assignedTo: { type: Schema.Types.ObjectId, refPath: 'assignmentType' },
     threshold: String,
     item: String,
     priority: String,
+    priorityNumber: Number,
     integrations: Array
 });
 
