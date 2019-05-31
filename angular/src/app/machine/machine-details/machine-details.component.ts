@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, OnDestroy, Inject } from '@angular/core';
 import { MachineService } from '../machine.service';
-import { Machine, Job, Application, Process, Drive, Service } from '../machine.model';
+import { Machine, Application, Process, Drive, Service } from '../machine.model';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as io from 'socket.io-client';
@@ -8,10 +8,18 @@ import { JobService } from '../../jobs/jobs.service';
 import { Alert } from '../../alerts/alert.model';
 import { GroupService } from 'src/app/group/group.service';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { MatDialog, MatDialogConfig } from "@angular/material";
+import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material";
 import { MachineAddToGroupDialogComponent } from './machine-add-to-group-dialog/machine-add-to-group-dialog.component';
 import { Group } from 'src/app/group/group.model';
-import { SelectionModel } from '@angular/cdk/collections';
+import { AlertService } from 'src/app/alerts/alert.service';
+import { AlertPolicyView } from 'src/app/alerts/alertpolicy.model';
+import { Job, NewJob } from 'src/app/jobs/job.model';
+import { ScriptService } from 'src/app/script/script.service';
+import { Script } from 'src/app/script/script.model';
+
+export interface DialogData {
+  machineId: string
+}
 
 @Component({
   selector: 'app-machine-details',
@@ -32,18 +40,24 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   refreshing: string;
   groups: Group[]
   jobs: Job[];
+  alertPolicies: AlertPolicyView[];
   alerts: Alert[];
+
   applicationDisplayedColumns: string[] = ['name', 'version'];
   processDisplayedColumns: string[] = ['name', 'pId'];
   serviceDisplayedColumns: string[] = ['displayName', 'status'];
   driveDisplayedColumns: string[] = ['name', 'usedGb', 'freeGb'];
   groupDisplayedColumns: string[] = ['name', 'actions'];
-
+  alertDisplayedColumns: string[] = ['name', 'priority'];
+  alertPoliciesDisplayedColumns: string[] = ['name', 'priority'];
+  jobDisplayedColumns: string[] = ['script.name'];
   constructor(
     private machineService: MachineService,
     private route: ActivatedRoute,
     private router: Router,
     private groupService: GroupService,
+    private alertService: AlertService,
+    private jobService: JobService,
     private dialog: MatDialog
   ) {
     // this.socket = io.connect("http://localhost:8080")
@@ -93,16 +107,6 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     this.dialog.open(MachineAddToGroupDialogComponent, dialogConfig);
   }
 
-  showJobs() {
-    this.machineService.getJobByMachine(this.id)
-      .subscribe((jobs: Array<Job>) => this.jobs = jobs)
-  }
-
-  showAlerts() {
-    this.machineService.getAlertByMachine(this.id)
-      .subscribe((alerts: Array<Alert>) => this.alerts = alerts)
-  }
-
 
   startMaintenance() {
     this.machine.status = "Maintenance"
@@ -116,6 +120,21 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
         this.groups = groups
       })
     }
+    if (tab.tab.textLabel == "Alerts") {
+      this.alertService.getSingleMachineAlerts(this.id).subscribe(alerts => {
+        this.alerts = alerts
+      })
+    }
+    if (tab.tab.textLabel == "Alert Policies") {
+      this.alertService.getSingleMachineAlertPolicies(this.id).subscribe(alertPolicies => {
+        this.alertPolicies = alertPolicies
+      })
+    }
+    if (tab.tab.textLabel == "Jobs") {
+      this.jobService.getSingleMachineJobs(this.id).subscribe(jobs => {
+        this.jobs = jobs
+      })
+    }
   }
 
   stopMaintenance() {
@@ -127,5 +146,166 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     // this.socket.disconnect()
     // console.log("disconneted socket")
+  }
+
+  runJob(): void {
+    const dialogRef = this.dialog.open(RunJobDialog, {
+      width: '250px',
+      data: { machineId: this.id }
+    });
+  }
+
+  newAlertPolicy(): void {
+    const dialogRef = this.dialog.open(NewAlertPolicyDialog, {
+      width: '250px',
+      data: { machineId: this.id }
+    });
+  }
+
+
+
+}
+
+@Component({
+  selector: 'run-job-dialog',
+  templateUrl: 'run-job-dialog.html',
+})
+export class RunJobDialog implements OnInit {
+
+  scripts: Script[]
+  newJobForm: FormGroup
+
+  constructor(
+    public dialogRef: MatDialogRef<RunJobDialog>,
+    private scriptService: ScriptService,
+    private formBuilder: FormBuilder,
+    private jobService: JobService,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+  ) {
+    this.newJobForm = this.formBuilder.group({
+      'script': ['', [Validators.required]]
+    })
+  }
+
+  ngOnInit() {
+    this.scriptService.getAllScripts().subscribe(scripts => {
+      this.scripts = scripts
+      console.log(this.scripts)
+    })
+  }
+
+  submitForm(newJob: NewJob) {
+    newJob.machine = this.data.machineId
+    console.log(newJob)
+    this.jobService.postJob(newJob).subscribe(() => {
+      this.dialogRef.close()
+    })
+  }
+}
+
+
+@Component({
+  selector: 'new-alert-policy-dialog',
+  templateUrl: 'new-alert-policy-dialog.html',
+})
+export class NewAlertPolicyDialog implements OnInit {
+
+  newAlertPolicyForm: FormGroup;
+  machines: Machine[];
+  selectedMachine: Machine;
+  selectedMachineId: String;
+  groups: Group[];
+
+  types: any[] = [
+    { value: 'Drive', viewValue: 'Drive' },
+    { value: 'Service', viewValue: 'Service' },
+    { value: 'Process', viewValue: 'Process' }
+  ];
+
+  assignmentTypes: any[] = [
+    { value: 'Group', viewValue: 'Group' },
+    { value: 'Machine', viewValue: 'Machine' }
+  ]
+
+  priorites: any[] = [
+    { value: 'Low', viewValue: 'Low' },
+    { value: 'Medium', viewValue: 'Medium' },
+    { value: 'High', viewValue: 'High' },
+    { value: 'Urgent', viewValue: 'Urgent' }
+  ];
+
+  drives: any[] = [
+    { value: 'A', viewValue: 'A' },
+    { value: 'B', viewValue: 'B' },
+    { value: 'C', viewValue: 'C' },
+    { value: 'D', viewValue: 'D' },
+    { value: 'E', viewValue: 'E' },
+    { value: 'F', viewValue: 'F' },
+    { value: 'G', viewValue: 'G' },
+    { value: 'H', viewValue: 'H' },
+    { value: 'I', viewValue: 'I' },
+    { value: 'J', viewValue: 'J' },
+    { value: 'K', viewValue: 'K' },
+    { value: 'L', viewValue: 'L' },
+    { value: 'M', viewValue: 'M' },
+    { value: 'N', viewValue: 'N' },
+    { value: 'O', viewValue: 'O' },
+    { value: 'P', viewValue: 'P' },
+    { value: 'Q', viewValue: 'Q' },
+    { value: 'R', viewValue: 'R' },
+    { value: 'S', viewValue: 'S' },
+    { value: 'T', viewValue: 'T' },
+    { value: 'U', viewValue: 'U' },
+    { value: 'V', viewValue: 'V' },
+    { value: 'W', viewValue: 'W' },
+    { value: 'X', viewValue: 'X' },
+    { value: 'Y', viewValue: 'Y' },
+    { value: 'Z', viewValue: 'Z' }
+  ];
+
+
+  constructor(
+    private machineService: MachineService,
+    private alertService: AlertService,
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private groupService: GroupService,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+  ) {
+
+    this.newAlertPolicyForm = this.formBuilder.group({
+      'type': ['', [Validators.required]],
+      'item': ['', [Validators.required]],
+      'priority': ['', [Validators.required]],
+      'threshold': ['', []]
+    })
+
+  }
+
+  ngOnInit() {
+
+  }
+
+  setFormValidators() {
+    const thresholdControl = this.newAlertPolicyForm.get('threshold');
+    this.newAlertPolicyForm.get('type').valueChanges
+      .subscribe(type => {
+        if (type == 'Drive') {
+          thresholdControl.setValidators([Validators.required]);
+        } else if (type != 'Drive') {
+          thresholdControl.setValidators(null);
+        }
+        thresholdControl.updateValueAndValidity();
+      });
+  }
+
+  submitForm(newAlertPolicyForm) {
+    newAlertPolicyForm.assignedTo = this.data.machineId
+    newAlertPolicyForm.assignmentType = "Machine"
+    console.log(newAlertPolicyForm)
+    this.alertService.postAlertPolicy(newAlertPolicyForm)
+      .subscribe(alertPolicy => {
+        this.router.navigate(['main/alertpolicies/' + alertPolicy._id])
+      });
   }
 }

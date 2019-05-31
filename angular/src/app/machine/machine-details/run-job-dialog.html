@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Run job</h2>
+<form [formGroup]="newJobForm" autocomplete="off" class="example-form" (ngSubmit)="submitForm(newJobForm.value)">
+  <mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Scripts</mat-label>
+        <mat-select formControlName="script">
+            <mat-option *ngFor="let script of scripts" [value]="script._id">{{ script.name }}</mat-option>
+         </mat-select>
+      </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button type="Start" [disabled]="!newJobForm.valid">Submit</button>
+  </mat-dialog-actions>
+</form>

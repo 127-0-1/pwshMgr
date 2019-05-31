@@ -19,12 +19,6 @@ export interface Process {
     pId: String
 }
 
-export interface Job {
-    _id: string,
-    name: String,
-    dateAdded: String
-}
-
 export interface Machine {
     _id: string,
     name: string,

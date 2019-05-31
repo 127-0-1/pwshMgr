@@ -7,9 +7,18 @@ const status = require('http-status');
 const Machine = require('../models/machine');
 const checkAuth = require("../middleware/check-auth");
 
-router.get('/', checkAuth, async (req, res) => {
-    const alerts = await Alert.find({status: "Active"}).populate('machine', 'name').sort({priorityNumber: 'asc'});
-    res.send(alerts);
+router.get('/', async (req, res) => {
+    if (req.query.machine) {
+        if (!mongoose.Types.ObjectId.isValid(req.query.machine)) {
+            return res.status(404).send('Invalid machine ID.');
+        }
+        const machineId = new mongoose.Types.ObjectId(req.query.machine)
+        const alerts = await Alert.find({ status: "Active", machine: machineId }).sort({ priorityNumber: 'asc' });
+        res.send(alerts);
+    } else {
+        const alerts = await Alert.find({ status: "Active" }).populate('machine', 'name').sort({ priorityNumber: 'asc' });
+        res.send(alerts);
+    }
 });
 
 router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {

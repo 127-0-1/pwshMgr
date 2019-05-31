@@ -29,5 +29,9 @@ export class ScriptService {
     deleteScript(scriptID) {
       return this.http.delete('http://localhost:8080/api/scripts/' + scriptID);
     }
+
+    deleteMultipleScripts(scripts){
+      return this.http.post('http://localhost:8080/api/scripts/multiple/delete', scripts)
+    }
     
 }

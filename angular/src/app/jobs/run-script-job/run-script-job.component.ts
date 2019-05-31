@@ -6,7 +6,7 @@ import { JobService } from '../jobs.service';
 import { MachineService } from '../../machine/machine.service';
 import { ScriptService } from '../../script/script.service';
 import { Router } from '@angular/router';
-import { Job } from '../job.model';
+import { Job, NewJob } from '../job.model';
 import { MatDialogRef } from "@angular/material";
 
 @Component({
@@ -41,8 +41,7 @@ export class RunScriptJobComponent implements OnInit {
       .subscribe((scripts: Array<Script>) => this.scripts = scripts)
   }
 
-  submitForm(newJob: Job) {
-    newJob.subJob = false
+  submitForm(newJob: NewJob) {
     this.jobService.postJob(newJob)
       .subscribe(newJob => {
         this.router.navigate(['main/jobs/' + newJob._id])

@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Add machines to group</h2>
+
+
+<ngx-datatable
+*ngIf="tData" 
+#table 
+class="material fullscren" 
+[headerHeight]="50" 
+[columnMode]="'force'"
+[rowHeight]="'auto'" 
+[footerHeight]="50" 
+[count]="true" 
+[limit]="10"
+[rows]="machines" 
+[selected]="selected"
+[selectionType]="'checkbox'" 
+[selectAllRowsOnPage]="false" 
+(select)='onSelect($event)'>
+<ngx-datatable-column [width]="30" [sortable]="false" [canAutoResize]="false" [draggable]="false"
+ [resizeable]="false" [headerCheckboxable]="true" [checkboxable]="true">
+</ngx-datatable-column>
+<ngx-datatable-column name="Name" prop="name">
+ <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+   {{row.name}}
+ </ng-template>
+</ngx-datatable-column>
+<ngx-datatable-column name="Operating System" prop="operatingSystem">
+    <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+      {{row.operatingSystem}}
+    </ng-template>
+   </ngx-datatable-column>
+</ngx-datatable>
+
+  <mat-dialog-actions>
+    <button mat-raised-button (click)="addMachinesToGroup()">Add</button>
+  </mat-dialog-actions>

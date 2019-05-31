@@ -135,7 +135,7 @@ async function processAlerts(machineId) {
                     .findOne({ _id: machineId })
                     .select({ drives: { $elemMatch: { name: alertPolicy.item } } })
                 if (!drive.drives.length) {
-                    logger.info(`${alertPolicy.item} + " drive doesnt exist on machine ${machineId}`)
+                    logger.info(`${alertPolicy.item} drive doesnt exist on machine ${machineId}`)
                     continue
                 }
                 const threshold = new Number(alertPolicy.threshold)
@@ -161,7 +161,7 @@ async function processAlerts(machineId) {
                         .findOne({ alertPolicyId: alertPolicy._id, machine: machineId, status: "Active" })
                     if (activeAlert) {
                         logger.info(`active alert found for drive ${alertPolicy.item} on machine ${machineId} - need to clear`)
-                        await Alert.updateOne({ alertPolicyId: alertPolicy._id, machine: machineId }, { $set: { status: "Resolved" } })
+                        await Alert.updateOne({ _id: activeAlert._id }, { $set: { status: "Resolved" } })
                     }
                 }
                 break;
@@ -170,7 +170,7 @@ async function processAlerts(machineId) {
                     .findOne({ _id: machineId })
                     .select({ services: { $elemMatch: { displayName: alertPolicy.item } } })
                 if (!service.services.length) {
-                    logger.info(`${alertPolicy.item} + " service doesn't exist on machine ${machineId}`)
+                    logger.info(`${alertPolicy.item} service doesn't exist on machine ${machineId}`)
                     continue
                 }
                 if (service.services[0].status == "Stopped") {
@@ -190,11 +190,11 @@ async function processAlerts(machineId) {
                     }
                 } else {
                     const activeAlert = await Alert
-                        .findOne({ alertPolicyId: alertPolicy._id, status: "Active", machine: machineId })
+                        .findOne({ alertPolicyId: alertPolicy._id, machine: machineId, status: "Active", })
                     if (activeAlert) {
                         logger.info(`active alert found for service ${alertPolicy.item} on machine ${machineId} - need to clear`)
                         await Alert
-                            .updateOne({ alertPolicyId: alertPolicy._id }, { $set: { status: "Resolved" } })
+                            .updateOne({ _id: activeAlert._id }, { $set: { status: "Resolved" } })
                     }
                 }
                 break;
@@ -219,11 +219,11 @@ async function processAlerts(machineId) {
                     }
                 } else {
                     const activeAlert = await Alert
-                        .findOne({ alertPolicyId: alertPolicy._id, status: "Active" })
+                        .findOne({ alertPolicyId: alertPolicy._id, machine: machineId, status: "Active" })
                     if (activeAlert) {
                         logger.info(`active alert found for process ${alertPolicy.item} not running on machine ${machineId} - need to clear`)
                         await Alert
-                            .updateOne({ alertPolicyId: alertPolicy._id, machine: machineId }, { $set: { status: "Resolved" } })
+                            .updateOne({ _id: activeAlert._id }, { $set: { status: "Resolved" } })
                     }
                 }
         }

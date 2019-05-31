@@ -27,11 +27,13 @@ export class AuthInterceptor implements HttpInterceptor {
     }
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+        console.log("this is coming from the auth interceptor")
         console.log(error)
           let data = {};
           data = {
-              reason: error.error.message,
-              status: error.status
+              reason: error.message,
+              status: error.status,
+              serverError: error.error.message
           };
           this.errorDialogService.openDialog(data);
           return throwError(error);

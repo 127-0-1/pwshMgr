@@ -1,21 +1,21 @@
-<div class="container-fluid pt-3">
-  <table class="table table-bordered table-hover table-sm">
-    <tbody>
-      <tr>
-        <th>Device Name</th>
-        <td>{{alertPolicy.machine.name}}</td>
-      </tr>
-      <tr>
-        <th>Alert Policy Name</th>
-        <td>{{alertPolicy.name}}</td>
-      </tr>
-      <tr>
-        <th>Priority</th>
-        <td>{{alertPolicy.priority}}</td>
-      </tr>
-    </tbody>
-  </table>
-  <button type="button" class="btn btn-secondary btn-space" (click)="deleteAlertPolicy()">Delete</button>
+<div class="table-div" *ngIf="alertPolicy">
+  <mat-card>
+    <mat-card-title>{{alertPolicy.name}}</mat-card-title>
+  </mat-card>
   <br>
+  <mat-card>
+    <mat-tab-group [@.disabled]="true">
+      <mat-tab label="Details">
+        <h4>Device Name</h4>
+        <p>{{alertPolicy.assignedTo.name}}</p>
+
+
+          <h4>Priority</h4>
+          <p>{{alertPolicy.priority}}</p>
+
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
   <br>
-</div>
+
+  <button mat-stroked-button (click)="delete()" color="primary"><strong>DELETE</strong></button>

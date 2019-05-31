@@ -23,3 +23,9 @@ export interface Job {
         script: Script,
         type: String
 }
+
+export interface NewJob {
+        script: String,
+        machine: String,
+        _id: String
+}

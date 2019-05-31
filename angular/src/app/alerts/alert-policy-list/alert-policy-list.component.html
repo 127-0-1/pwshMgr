@@ -35,12 +35,12 @@
       </ngx-datatable-column>
       <ngx-datatable-column name="Assigned To" prop="assignedTo" >
         <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-          <a [routerLink]="['/main/alertPolicies', row._id ]" class="text-dark">{{row.assignedTo.name}}</a>
+          <a [routerLink]="['/main/alertpolicies', row._id ]" class="text-dark">{{row.assignedTo.name}}</a>
         </ng-template>
       </ngx-datatable-column>
       <ngx-datatable-column name="Assignment Type" prop="assignmentType">
           <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
-            <a [routerLink]="['/main/alertPolicies', row._id ]" class="text-dark">{{row.assignmentType}}</a>
+            <a [routerLink]="['/main/alertpolicies', row._id ]" class="text-dark">{{row.assignmentType}}</a>
           </ng-template>
         </ngx-datatable-column>
       <ngx-datatable-column name="Name" prop="name">

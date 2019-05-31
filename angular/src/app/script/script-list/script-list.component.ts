@@ -54,6 +54,20 @@ export class ScriptListComponent implements OnInit {
     this.table.offset = 0
   }
 
+  delete() {
+    this.tData = false;
+    let result = this.selected.map(a => a._id);
+    this.scriptService.deleteMultipleScripts(result).subscribe(() => {
+      this.scriptService.getAllScripts()
+        .subscribe((scripts: Array<Script>) => {
+          this.scripts = scripts
+          this.temp = [...scripts]
+          this.tData = true
+          this.selected = []
+        });
+    })
+  }
+
   onSelect({ selected }) {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);

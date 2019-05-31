@@ -9,5 +9,6 @@ export interface Alert {
     name: String,
     alertPolicyId: String,
     priority: String,
-    createdAt: String
+    createdAt: String,
+    priorityNumber: Number
 }

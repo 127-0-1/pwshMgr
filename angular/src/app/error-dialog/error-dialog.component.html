@@ -7,6 +7,7 @@
     <p>
       Status: {{data.status}}
     </p>
+    <p>Server message: {{data.serverError}}</p>
     <p *ngIf="data.reason ==='You are not authenticated!'">
       <button mat-button (click)="onNoClick()" [routerLink]="[ '/login' ]">LOGIN</button>
     </p>

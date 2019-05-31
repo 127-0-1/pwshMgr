@@ -27,6 +27,14 @@ router.get('/', checkAuth, async (req, res) => {
     res.send(scripts);
 });
 
+// delete multiple
+router.post('/multiple/delete', async (req,res) => {
+    console.log(req.body)
+    const result = await Script.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
+    console.log(result)
+    res.status(status.OK).json({message: 'SUCCESS'})
+})
+
 
 router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {
     await Script.findByIdAndRemove(req.params.id);

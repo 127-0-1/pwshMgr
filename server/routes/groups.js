@@ -61,6 +61,16 @@ router.get('/:id/:machineid', validateObjectId, async (req, res) => {
     res.send(group)
 });
 
+// add multiple machines to group
+router.post('/add-multiple', async (req, res) => {
+    console.log(req.body)
+    const group = await Group.findByIdAndUpdate({_id: req.body.groupId}, { $addToSet: { machines: req.body.machines } }, { safe: true, upsert: true, new: true })
+        .populate('machines', 'name')
+    if (!group) return res.status(404).send('The group with the given ID was not found.')
+    var message = {message: "OK"}
+    res.status(200).json(message)
+});
+
 // remove machine from group
 router.delete('/:id/:machineid', validateObjectId, async (req, res) => {
     const group = await Group.findByIdAndUpdate({_id: req.params.id}, { $pull: { machines: req.params.machineid } }, { safe: true, upsert: true, new: true })

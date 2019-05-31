@@ -1,3 +1,37 @@
+
 * {
-    font-family: 'Noto Sans', sans-serif;
-  }
+  font-family: 'Noto Sans', sans-serif;
+}
+
+
+.table-div{
+  padding:0.5em;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table-container {
+  
+  max-height: 600px;
+  overflow: auto;
+}
+
+
+.mat-header-row {
+  height: 30px;
+  background-color: lightgray
+}
+
+button {
+margin-right: 5px;  
+}
+
+a { color: inherit;
+  text-decoration: none; } 
+a:hover, a:focus, a:active {
+  text-decoration: none;
+  color: inherit;
+}

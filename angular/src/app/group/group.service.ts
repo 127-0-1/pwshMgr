@@ -34,6 +34,10 @@ export class GroupService {
     return this.http.get('http://localhost:8080/api/groups/' + groupID + '/' + machineId)
   }
 
+  addMultipleMachinesToGroup(data) {
+    return this.http.post('http://localhost:8080/api/groups/add-multiple', data)
+  }
+
   
   getSingleMachineGroups(machineId:String): Observable<Group[]>{
     return this.http.get<Group[]>('http://localhost:8080/api/groups/machine' + '/' + machineId)

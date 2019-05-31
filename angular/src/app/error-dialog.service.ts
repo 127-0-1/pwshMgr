@@ -10,7 +10,7 @@ export class ErrorDialogService {
             width: '300px',
             data: data
         });
-
+        console.log(data)
         dialogRef.afterClosed().subscribe(result => {
         });
     }

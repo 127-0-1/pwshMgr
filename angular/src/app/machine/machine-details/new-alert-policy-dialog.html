@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>New Alert Policy</h2>
+<form [formGroup]="newAlertPolicyForm" autocomplete="off" class="example-form" (ngSubmit)="submitForm(newAlertPolicyForm.value)">
+  <mat-dialog-content>
+  
+      <mat-form-field appearance="outline">
+          <mat-label>Priority</mat-label>
+          <mat-select formControlName="priority">
+              <mat-option *ngFor="let priority of priorites" [value]="priority.value">{{priority.viewValue}}</mat-option>
+           </mat-select>
+        </mat-form-field>
+
+      <mat-form-field appearance="outline">
+          <mat-label>Policy Type</mat-label>
+          <mat-select formControlName="type">
+              <mat-option *ngFor="let type of types" [value]="type.value">{{type.viewValue}}</mat-option>
+           </mat-select>
+        </mat-form-field>
+
+        <!-- if drive -->
+        <mat-form-field appearance="outline" *ngIf="newAlertPolicyForm.value.type == 'Drive'">
+            <mat-label>Drive</mat-label>
+            <mat-select formControlName="item">
+                <mat-option *ngFor="let drive of drives" [value]="drive.value">{{drive.viewValue}}</mat-option>
+             </mat-select>
+          </mat-form-field>
+
+        <!-- if drive -->
+        <mat-form-field appearance="outline" *ngIf="newAlertPolicyForm.value.type == 'Drive'">
+            <mat-label>Alert when free space below (GB)</mat-label>
+            <input matInput formControlName="threshold">
+          </mat-form-field>
+
+          <!-- if service -->
+          <mat-form-field appearance="outline" *ngIf="newAlertPolicyForm.value.type == 'Service'">
+              <mat-label>Service Name</mat-label>
+              <input matInput formControlName="item">
+            </mat-form-field>
+
+            <!-- if process -->
+            <mat-form-field appearance="outline" *ngIf="newAlertPolicyForm.value.type == 'Process'">
+                <mat-label>Process Name</mat-label>
+                <input matInput formControlName="item">
+              </mat-form-field>
+
+
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button type="Start" [disabled]="!newAlertPolicyForm.valid">Submit</button>
+  </mat-dialog-actions>
+</form>

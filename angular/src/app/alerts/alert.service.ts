@@ -20,6 +20,14 @@ export class AlertService {
     return this.http.get<Alert[]>('http://localhost:8080/api/alerts');
   }
 
+  getSingleMachineAlerts(machineId): Observable<Alert[]>{
+    return this.http.get<Alert[]>(`http://localhost:8080/api/alerts?machine=${machineId}`)
+  }
+
+  getSingleMachineAlertPolicies(machineId): Observable<AlertPolicyView[]>{
+    return this.http.get<AlertPolicyView[]>(`http://localhost:8080/api/alertPolicies?machine=${machineId}`)
+  }
+
   postAlertPolicy(alertpolicy: AlertPolicy): Observable<AlertPolicy>{
     return this.http.post<AlertPolicy>('http://localhost:8080/api/alertpolicies', alertpolicy)
   }

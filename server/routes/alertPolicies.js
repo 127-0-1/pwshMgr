@@ -64,9 +64,26 @@ router.get('/:id', checkAuth, validateObjectId, async (req, res) => {
     res.send(alertPolicy)
 });
 
-router.get('/', checkAuth, async (req, res) => {
-    const alertPolicies = await AlertPolicy.find().populate('assignedTo', 'name');
-    res.send(alertPolicies);
+router.get('/', async (req, res) => {
+    if (req.query.machine) {
+        if (!mongoose.Types.ObjectId.isValid(req.query.machine)) {
+            return res.status(404).send("Invalid machine Id")
+        }
+        const machineId = new mongoose.Types.ObjectId(req.query.machine)
+        // find groups machine is a member of
+        const groups = await Group.find({ machines: machineId }).select('_id')
+        //map group _id's to array
+        var idArray = groups.map(group => new mongoose.Types.ObjectId(group._id))
+        //add machineId to array
+        idArray.push(new mongoose.Types.ObjectId(machineId))
+        // search for alertpolices with idArray
+        const alertPolicies = await AlertPolicy.find({ assignedTo: { $in: idArray } })
+        res.send(alertPolicies)
+    } else {
+        const alertPolicies = await AlertPolicy.find().populate('assignedTo', 'name');
+        res.send(alertPolicies);
+    }
+
 });
 
 router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {

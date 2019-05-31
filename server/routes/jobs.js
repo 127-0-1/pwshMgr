@@ -8,21 +8,21 @@ const status = require('http-status');
 const checkAuth = require("../middleware/check-auth");
 
 router.post('/', checkAuth, async (req, res) => {
-        var newJob = Job({
-            machine: req.body.machine,
-            script: req.body.script,
-            status: "Scheduled",
-            dateAdded: Date.now(),
-            output: null,
-        })
+    var newJob = Job({
+        machine: req.body.machine,
+        script: req.body.script,
+        status: "Scheduled",
+        dateAdded: Date.now(),
+        output: null,
+    })
     await newJob.save()
     res.status(status.OK).json(newJob);
 });
 
-router.post('/multiple/delete', async (req,res) => {
-    const result = await Job.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
+router.post('/multiple/delete', async (req, res) => {
+    const result = await Job.remove({ _id: { $in: (req.body).map(mongoose.Types.ObjectId) } });
     console.log(result)
-    res.status(status.OK).json({message: 'SUCCESS'})
+    res.status(status.OK).json({ message: 'SUCCESS' })
 })
 
 
@@ -47,9 +47,18 @@ router.get('/:id', validateObjectId, async (req, res) => {
     res.send(job)
 });
 
-router.get('/', checkAuth, async (req, res) => {
-    const jobs = await Job.find().populate('machine', 'name').populate('script', 'name');
-    res.send(jobs);
+router.get('/', async (req, res) => {
+    if (req.query.machine) {
+        if (!mongoose.Types.ObjectId.isValid(req.query.machine)) {
+            return res.status(404).send('Invalid machine ID.');
+        }
+        const machineId = new mongoose.Types.ObjectId(req.query.machine)
+        const jobs = await Job.find({ machine: machineId }).populate('script', 'name').select('-output');
+        res.send(jobs);
+    } else {
+        const jobs = await Job.find().populate('machine', 'name').populate('script', 'name');
+        res.send(jobs);
+    }
 });
 
 router.put('/', checkAuth, (req, res) => {
@@ -78,7 +87,7 @@ router.put('/', checkAuth, (req, res) => {
         }
     }
 
-    Job.findByIdAndUpdate({_id: req.params.id}, jobToUpdate, function (err, job) {
+    Job.findByIdAndUpdate({ _id: req.params.id }, jobToUpdate, function (err, job) {
         Job.findById(id, function (err, jobFounded) {
             req.io.sockets.in(id).emit('jobUpdate', jobFounded)
             console.log(id)

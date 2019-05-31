@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
-import { Job } from './job.model'
+import { Job, NewJob } from './job.model'
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +12,17 @@ export class JobService {
     getAllJobs(): Observable<Job[]> {
       return this.http.get<Job[]>('http://localhost:8080/api/jobs');
     }
+
+    getSingleMachineJobs(machineId): Observable<Job[]> {
+      return this.http.get<Job[]>(`http://localhost:8080/api/jobs?machine=${machineId}`);
+    }
   
     getJobById(jobID): Observable<Job> {
       return this.http.get<Job>('http://localhost:8080/api/jobs/' + jobID)
     }
   
-    postJob(job: Job): Observable<Job> {
-      return this.http.post<Job>('http://localhost:8080/api/jobs', job);
+    postJob(job: NewJob): Observable<NewJob> {
+      return this.http.post<NewJob>('http://localhost:8080/api/jobs', job);
     }
   
     updateJob(job: Job) {
