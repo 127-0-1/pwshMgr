@@ -17,7 +17,7 @@ export class ScriptListComponent implements OnInit {
   temp: Script[]
   selected = [];
   tData: boolean = false;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
 
   constructor(
     private scriptService: ScriptService,

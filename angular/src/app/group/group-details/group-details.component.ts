@@ -78,7 +78,7 @@ export class AddMachinesToGroupDialog implements OnInit {
   machines: Machine[]
   selected = [];
   tData: boolean = false;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
 
   constructor(
     private machineService: MachineService,

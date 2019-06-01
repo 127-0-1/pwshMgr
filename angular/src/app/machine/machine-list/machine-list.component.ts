@@ -18,7 +18,7 @@ export class MachinelistComponent implements OnInit {
   temp: Machine[]
   selected = [];
   tData: boolean = false;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
 
   constructor(private machineService: MachineService) {
   }
@@ -55,17 +55,19 @@ export class MachinelistComponent implements OnInit {
   }
 
   delete() {
-    this.tData = false;
-    let result = this.selected.map(a => a._id);
-    this.machineService.deleteMultiple(result).subscribe(() => {
-      this.machineService.getAllMachines()
-        .subscribe((machines: Array<Machine>) => {
-          this.machines = machines
-          this.temp = [...machines]
-          this.tData = true
-          this.selected = []
-        });
-    })
+    if (confirm("Are you sure to delete?")) {
+      this.tData = false;
+      let result = this.selected.map(a => a._id);
+      this.machineService.deleteMultiple(result).subscribe(() => {
+        this.machineService.getAllMachines()
+          .subscribe((machines: Array<Machine>) => {
+            this.machines = machines
+            this.temp = [...machines]
+            this.tData = true
+            this.selected = []
+          });
+      })
+    }
   }
 
   onSelect({ selected }) {

@@ -18,7 +18,7 @@ export class JobListComponent implements OnInit {
   temp: Job[]
   selected = [];
   tData: boolean = false;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
 
   constructor(
     private jobService: JobService,

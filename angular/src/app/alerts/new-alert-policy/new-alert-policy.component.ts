@@ -7,6 +7,7 @@ import { Machine } from '../../machine/machine.model';
 import { AlertPolicy } from '../alertpolicy.model';
 import { Group } from 'src/app/group/group.model';
 import { GroupService } from 'src/app/group/group.service';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-new-alert-policy',
@@ -71,6 +72,7 @@ export class NewAlertPolicyComponent implements OnInit {
 
 
   constructor(
+    private dialogRef: MatDialogRef<NewAlertPolicyComponent>,
     private machineService: MachineService,
     private alertService: AlertService,
     private router: Router,
@@ -115,6 +117,8 @@ export class NewAlertPolicyComponent implements OnInit {
     this.alertService.postAlertPolicy(newAlertPolicyForm)
       .subscribe(alertPolicy => {
         this.router.navigate(['main/alertpolicies/' + alertPolicy._id])
+        this.dialogRef.close()
       });
+
   }
 }

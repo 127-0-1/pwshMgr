@@ -17,7 +17,7 @@ export interface Tile {
   styleUrls: ['./alert-list.component.css']
 })
 export class AlertListComponent implements OnInit, AfterContentInit {
-  @ViewChild('grid') grid: MatGridList;
+  @ViewChild('grid', { static: true }) grid: MatGridList;
   alerts: Alert[]
 
   gridByBreakpoint = {

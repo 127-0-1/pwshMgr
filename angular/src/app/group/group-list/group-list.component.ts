@@ -18,7 +18,7 @@ export class GroupListComponent implements OnInit {
   temp: Group[]
   selected = [];
   tData: boolean = false;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
 
   constructor(
     private groupService: GroupService,

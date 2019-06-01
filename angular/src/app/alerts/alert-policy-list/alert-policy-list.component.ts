@@ -19,7 +19,7 @@ export class AlertPolicyListComponent implements OnInit {
   temp: AlertPolicyView[]
   selected = [];
   tData: boolean = false;
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
 
 
   constructor(
