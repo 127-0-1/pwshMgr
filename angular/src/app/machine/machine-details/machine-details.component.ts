@@ -81,9 +81,11 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   }
 
   deleteMachine() {
-    this.machineService.deleteMachine(this.machine._id)
-      .subscribe()
-    this.router.navigate(['main/machines'])
+    if (confirm("Are you sure to delete?")) {
+      this.machineService.deleteMachine(this.machine._id)
+        .subscribe()
+      this.router.navigate(['main/machines'])
+    }
   }
 
   removeGroup(group) {

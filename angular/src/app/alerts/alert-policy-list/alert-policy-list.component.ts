@@ -25,7 +25,7 @@ export class AlertPolicyListComponent implements OnInit {
   constructor(
     private alertService: AlertService,
     private dialog: MatDialog
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.tData = true;
@@ -58,17 +58,19 @@ export class AlertPolicyListComponent implements OnInit {
   }
 
   delete() {
-    this.tData = false;
-    let result = this.selected.map(a => a._id);
-    this.alertService.deleteMultipleAlertPolicies(result).subscribe(() => {
-      this.alertService.getAllAlertPolicies()
-        .subscribe((alertPolicies: Array<AlertPolicyView>) => {
-          this.alertPolicies = alertPolicies
-          this.temp = [...alertPolicies]
-          this.tData = true
-          this.selected = []
-        });
-    })
+    if (confirm("Are you sure to delete?")) {
+      this.tData = false;
+      let result = this.selected.map(a => a._id);
+      this.alertService.deleteMultipleAlertPolicies(result).subscribe(() => {
+        this.alertService.getAllAlertPolicies()
+          .subscribe((alertPolicies: Array<AlertPolicyView>) => {
+            this.alertPolicies = alertPolicies
+            this.temp = [...alertPolicies]
+            this.tData = true
+            this.selected = []
+          });
+      })
+    }
   }
 
   onSelect({ selected }) {

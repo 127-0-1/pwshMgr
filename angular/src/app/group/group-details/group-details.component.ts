@@ -43,9 +43,11 @@ export class GroupDetailsComponent implements OnInit {
   }
 
   deleteGroup() {
-    this.groupService.deleteGroup(this.group._id)
+    if(confirm("Are you sure to delete?")) {
+      this.groupService.deleteGroup(this.group._id)
       .subscribe()
     this.router.navigate(['main/groups'])
+    }
   }
 
   addMachineToGroup() {
@@ -82,6 +84,7 @@ export class AddMachinesToGroupDialog implements OnInit {
     private machineService: MachineService,
     private groupService: GroupService,
     private dialog: MatDialog,
+    public dialogRef: MatDialogRef<AddMachinesToGroupDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) { }
 
@@ -102,7 +105,7 @@ export class AddMachinesToGroupDialog implements OnInit {
       groupId: this.data.groupId
     }
     this.groupService.addMultipleMachinesToGroup(postData).subscribe(result => {
-      
+      this.dialogRef.close()
     })
     // this.groupService.deleteMultipleGroups(result).subscribe(() => {
     //   this.groupService.getAllGroups()

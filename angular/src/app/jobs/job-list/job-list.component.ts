@@ -23,7 +23,7 @@ export class JobListComponent implements OnInit {
   constructor(
     private jobService: JobService,
     private dialog: MatDialog
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.tData = true;
@@ -31,29 +31,30 @@ export class JobListComponent implements OnInit {
       this.jobs = jobs
       this.temp = [...jobs]
     })
-    }
-    openDialog() {
+  }
+  openDialog() {
 
-      const dialogConfig = new MatDialogConfig();
-  
-      dialogConfig.disableClose = false;
-      dialogConfig.autoFocus = true;
-      dialogConfig.position = { top: '10%' }
-  
-      this.dialog.open(RunScriptJobComponent, dialogConfig);
-    }
+    const dialogConfig = new MatDialogConfig();
 
-    updateFilter(event) {
-      const val = event.target.value.toLowerCase();
-      const temp = this.temp.filter(function (d) {
-        console.log(d)
-        return d.machine.name.toLowerCase().indexOf(val) !== -1 || !val;
-      });
-      this.jobs = temp
-      this.table.offset = 0
-    }
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.position = { top: '10%' }
 
-    delete() {
+    this.dialog.open(RunScriptJobComponent, dialogConfig);
+  }
+
+  updateFilter(event) {
+    const val = event.target.value.toLowerCase();
+    const temp = this.temp.filter(function (d) {
+      console.log(d)
+      return d.machine.name.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+    this.jobs = temp
+    this.table.offset = 0
+  }
+
+  delete() {
+    if (confirm("Are you sure to delete?")) {
       this.tData = false;
       let result = this.selected.map(a => a._id);
       this.jobService.deleteMultipleJobs(result).subscribe(() => {
@@ -66,9 +67,10 @@ export class JobListComponent implements OnInit {
           });
       })
     }
-  
-    onSelect({ selected }) {
-      this.selected.splice(0, this.selected.length);
-      this.selected.push(...selected);
-    }
+  }
+
+  onSelect({ selected }) {
+    this.selected.splice(0, this.selected.length);
+    this.selected.push(...selected);
+  }
 }

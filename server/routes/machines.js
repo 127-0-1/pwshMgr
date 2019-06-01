@@ -30,7 +30,7 @@ router.get('/nonmaintenance', async (req, res) => {
 });
 
 router.get('/:id', validateObjectId, async (req, res) => {
-    const machine = await Machine.findById(req.params.id);
+    const machine = await Machine.findById(req.params.id).select('-applications -services -drives -aesKey -processes -apiKey');
     if (!machine) return res.status(404).send('The machine with the given ID was not found.');
     res.send(machine);
 });

@@ -55,17 +55,19 @@ export class ScriptListComponent implements OnInit {
   }
 
   delete() {
-    this.tData = false;
-    let result = this.selected.map(a => a._id);
-    this.scriptService.deleteMultipleScripts(result).subscribe(() => {
-      this.scriptService.getAllScripts()
-        .subscribe((scripts: Array<Script>) => {
-          this.scripts = scripts
-          this.temp = [...scripts]
-          this.tData = true
-          this.selected = []
-        });
-    })
+    if (confirm("Are you sure to delete?")) {
+      this.tData = false;
+      let result = this.selected.map(a => a._id);
+      this.scriptService.deleteMultipleScripts(result).subscribe(() => {
+        this.scriptService.getAllScripts()
+          .subscribe((scripts: Array<Script>) => {
+            this.scripts = scripts
+            this.temp = [...scripts]
+            this.tData = true
+            this.selected = []
+          });
+      })
+    }
   }
 
   onSelect({ selected }) {

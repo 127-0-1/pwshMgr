@@ -14,21 +14,20 @@ export class ScriptDetailsComponent implements OnInit {
   id: String
 
   constructor(private scriptService: ScriptService,
-              private route: ActivatedRoute,
-              private router: Router) { }
+    private route: ActivatedRoute,
+    private router: Router) { }
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
-
     this.scriptService.getScriptById(this.id)
-    .subscribe(script => {this.script = script})
+      .subscribe(script => { this.script = script })
   }
 
-
-  deleteScript(){
-    this.scriptService.deleteScript(this.script._id)
-    .subscribe()
-    this.router.navigate(['main/scripts'])
+  deleteScript() {
+    if (confirm("Are you sure to delete?")) {
+      this.scriptService.deleteScript(this.script._id)
+        .subscribe()
+      this.router.navigate(['main/scripts'])
+    }
   }
-
 }

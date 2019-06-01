@@ -55,17 +55,21 @@ export class GroupListComponent implements OnInit {
   }
 
   delete() {
-    this.tData = false;
-    let result = this.selected.map(a => a._id);
-    this.groupService.deleteMultipleGroups(result).subscribe(() => {
-      this.groupService.getAllGroups()
-        .subscribe((groups: Array<Group>) => {
-          this.groups = groups
-          this.temp = [...groups]
-          this.tData = true
-          this.selected = []
-        });
-    })
+    if (confirm("Are you sure to delete?")) {
+      this.tData = false;
+      let result = this.selected.map(a => a._id);
+      this.groupService.deleteMultipleGroups(result).subscribe(() => {
+        this.groupService.getAllGroups()
+          .subscribe((groups: Array<Group>) => {
+            this.groups = groups
+            this.temp = [...groups]
+            this.tData = true
+            this.selected = []
+          });
+      })
+
+    }
+
   }
 
   onSelect({ selected }) {

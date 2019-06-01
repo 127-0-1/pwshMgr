@@ -33,9 +33,11 @@ export class JobDetailsComponent implements OnInit {
 
 
   delete() {
-    this.jobService.deleteJob(this.job._id)
-      .subscribe()
+    if (confirm("Are you sure to delete?")) {
+      this.jobService.deleteJob(this.job._id)
+        .subscribe()
       this.router.navigate(['main/jobs'])
+    }
   }
 
   logName(id) {
