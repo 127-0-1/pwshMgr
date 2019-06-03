@@ -4,10 +4,12 @@ import { GroupService } from '../group.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MachineService } from 'src/app/machine/machine.service';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material/table';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { AlertPolicyView } from 'src/app/alerts/alertpolicy.model';
+import { AlertService } from 'src/app/alerts/alert.service';
 
 export interface DialogData {
   groupId: string
@@ -24,13 +26,16 @@ export class GroupDetailsComponent implements OnInit {
   id: String
   machines: Machine[]
   selectedMachine: String
+  alertPolicies: AlertPolicyView[];
   machineDisplayedColumns: string[] = ['name', 'operatingSystem', 'status'];
+  alertPoliciesDisplayedColumns: string[] = ['name', 'priority'];
 
 
   constructor(private groupService: GroupService,
     private route: ActivatedRoute,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private alertService: AlertService
     ) { }
 
   ngOnInit() {
@@ -59,6 +64,17 @@ export class GroupDetailsComponent implements OnInit {
     dialogConfig.height = '700px'
     dialogConfig.position = { top: '10%' }
     this.dialog.open(AddMachinesToGroupDialog, dialogConfig);
+  }
+
+  tabClick(tab) {
+    if (tab.tab.textLabel == "Alert Policies") {
+      console.log("alert policies selected")
+      
+      this.alertService.getSingleMachineAlertPolicies(this.id).subscribe(alertPolicies => {
+        this.alertPolicies = alertPolicies
+        console.log(this.alertPolicies)
+      })
+    }
   }
 
   deleteFromGroup(machineId){

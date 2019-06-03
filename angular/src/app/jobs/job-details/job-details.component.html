@@ -8,19 +8,22 @@
       <mat-tab label="Details">
         <h4>Date Added</h4>
         <p>{{job.dateAdded | date:'medium'}}</p>
-
-      <div *ngIf="job.finishDate">
+        <div *ngIf="job.startDate">
+          <h4>Start Date</h4>
+          <p>{{job.startDate | date:'medium'}}</p>
+        </div>
+        <div *ngIf="job.finishDate">
           <h4>Finish Date</h4>
           <p>{{job.finishDate | date:'medium'}}</p>
-      </div>
+        </div>
 
         <h4>Status</h4>
         <p>{{job.status}}</p>
 
-      <div *ngIf="job.output">
-        <h4>Output</h4>
-        <p style="white-space:pre-wrap; word-wrap:break-word">{{job.output}}</p>
-      </div>
+        <div *ngIf="job.output">
+          <h4>Output</h4>
+          <p style="white-space:pre-wrap; word-wrap:break-word">{{job.output}}</p>
+        </div>
       </mat-tab>
     </mat-tab-group>
   </mat-card>

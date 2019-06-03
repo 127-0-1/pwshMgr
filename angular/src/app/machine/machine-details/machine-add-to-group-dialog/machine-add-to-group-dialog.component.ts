@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { GroupService } from 'src/app/group/group.service';
 import { Group } from 'src/app/group/group.model';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 
 export interface DialogData {

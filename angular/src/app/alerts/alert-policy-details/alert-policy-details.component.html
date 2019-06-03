@@ -6,16 +6,16 @@
   <mat-card>
     <mat-tab-group [@.disabled]="true">
       <mat-tab label="Details">
-        <h4>Device Name</h4>
+        <h4>Assigned To</h4>
         <p>{{alertPolicy.assignedTo.name}}</p>
-
-
-          <h4>Priority</h4>
-          <p>{{alertPolicy.priority}}</p>
-
+        <h4>Assignment Type</h4>
+        <p>{{alertPolicy.assignmentType}}</p>
+        <h4>Priority</h4>
+        <p>{{alertPolicy.priority}}</p>
+        <h4>Date Added</h4>
+        <p>{{alertPolicy.dateCreated | date:'medium'}}</p>
       </mat-tab>
     </mat-tab-group>
   </mat-card>
   <br>
-
   <button mat-stroked-button (click)="delete()" color="primary"><strong>DELETE</strong></button>

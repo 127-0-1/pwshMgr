@@ -2,7 +2,7 @@ import { Component, OnInit, AfterContentInit, ViewChild } from '@angular/core';
 import { AlertService } from '../alert.service';
 import { Alert } from '../alert.model';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { MatGridList } from '@angular/material';
+import { MatGridList } from '@angular/material/grid-list';
 
 export interface Tile {
   color: string;

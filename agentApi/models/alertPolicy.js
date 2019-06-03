@@ -14,7 +14,8 @@ var alertPolicySchema = new Schema({
     item: String,
     priority: String,
     priorityNumber: Number,
-    integrations: Array
+    integrations: Array,
+    dateCreated: Date
 });
 
 var AlertPolicy = mongoose.model('AlertPolicy', alertPolicySchema);

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Script } from '../script.model';
 import { ScriptService } from '../script.service';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { MatDialog, MatDialogConfig } from "@angular/material";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { FormControl } from '@angular/forms';
 import { NewScriptComponent } from '../new-script/new-script.component';
 

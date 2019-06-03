@@ -1,27 +1,39 @@
 <mat-toolbar color="primary">
   pwshMgr
 </mat-toolbar>
-
-
 <mat-card class="example-card">
-    <form [formGroup]="loginForm" class="form-signin">
-      <div>
-        <mat-form-field appearance="outline">
-          <mat-label><mat-icon>alternate_email</mat-icon> Email</mat-label>
-          <input matInput type="email" formControlName="email">
-          <mat-error>Enter a valid email address</mat-error>
-        </mat-form-field>
+  <form [formGroup]="loginForm" class="form-signin">
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>
+          <mat-icon>alternate_email</mat-icon> Email
+        </mat-label>
+        <input matInput type="email" formControlName="email">
+        <mat-error>Enter a valid email address</mat-error>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-form-field appearance="outline">
+        <mat-label>
+          <mat-icon>lock</mat-icon> Password
+        </mat-label>
+        <input matInput type="password" formControlName="password" name="password" class="form-control">
+        <mat-error>Enter a password</mat-error>
+      </mat-form-field>
+    </div>
+    <mat-card-actions>
+      <div layout="row" style="  display: flex;
+      align-items: center;
+      justify-content: center;">
+        <button mat-stroked-button (click)="onLogin(loginForm)" [style.width]="'220px'" [disabled]="!loginForm.valid"
+          color="primary"><strong>LOGIN</strong></button>
       </div>
-      <div>
-        <mat-form-field appearance="outline">
-          <mat-label><mat-icon>lock</mat-icon> Password</mat-label>
-          <input matInput type="password" formControlName="password" name="password" class="form-control">
-          <mat-error>Enter a password</mat-error>
-        </mat-form-field>
-      </div>
-      <mat-card-actions>
-        <button mat-raised-button (click)="onLogin(loginForm)" [style.width]="'220px'"
-        [disabled]="!loginForm.valid" color="primary">LOGIN</button>
-      </mat-card-actions>
-    </form>
-  </mat-card>
+      <br>
+      <div layout="row" style="  display: flex;
+      align-items: center;
+      justify-content: center;">
+      <button mat-stroked-button (click)="resetPassword()" [style.width]="'220px'" color="primary"><strong>RESET
+          PASSWORD</strong></button></div>
+    </mat-card-actions>
+  </form>
+</mat-card>

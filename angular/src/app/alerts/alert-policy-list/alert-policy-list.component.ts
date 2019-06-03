@@ -3,7 +3,7 @@ import { AlertService } from '../alert.service';
 import { AlertPolicyView } from '../alertpolicy.model';
 import { FormControl } from '@angular/forms';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { MatDialog, MatDialogConfig } from "@angular/material";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { NewAlertPolicyComponent } from '../new-alert-policy/new-alert-policy.component';
 
 

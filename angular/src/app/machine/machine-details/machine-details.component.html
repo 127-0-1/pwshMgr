@@ -161,8 +161,8 @@
 
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="alertDisplayedColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: alertDisplayedColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="alertPoliciesDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: alertPoliciesDisplayedColumns;"></tr>
           </table>
         </div>
       </mat-tab>
@@ -171,8 +171,18 @@
           <table mat-table [dataSource]="jobs">
             <ng-container matColumnDef="script.name">
               <th mat-header-cell *matHeaderCellDef> Script Name </th>
-              <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/alertpolicies', element._id ]"
+              <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/jobs', element._id ]"
                   class="text-dark">{{element.script.name}}</a> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <td mat-cell *matCellDef="let element">{{element.status}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dateAdded">
+              <th mat-header-cell *matHeaderCellDef> Date Added </th>
+              <td mat-cell *matCellDef="let element"> {{element.dateAdded | date:'medium'}}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="jobDisplayedColumns; sticky: true"></tr>

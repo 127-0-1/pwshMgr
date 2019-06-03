@@ -1,34 +1,54 @@
 <div class="table-div" *ngIf="group">
-    <mat-card>
-        <mat-card-title>{{group.name}}</mat-card-title>
-      </mat-card>
-      <br>
-<mat-card>
-  <mat-tab-group [@.disabled]="true">
-    <mat-tab label="Members">
+  <mat-card>
+    <mat-card-title>{{group.name}}</mat-card-title>
+  </mat-card>
+  <br>
+  <mat-card>
+    <mat-tab-group [@.disabled]="true" (selectedTabChange)="tabClick($event)">
+      <mat-tab label="Members">
         <div class="table-container">
-            <table mat-table [dataSource]="machines">
-              <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef> Name </th>
-                <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/machines', element._id ]" class="text-dark">{{element.name}} </a></td>
-              </ng-container>
-              <ng-container matColumnDef="operatingSystem">
-                <th mat-header-cell *matHeaderCellDef> Operating System </th>
-                <td mat-cell *matCellDef="let element"> {{element.operatingSystem}} </td>
-              </ng-container>
-              <ng-container matColumnDef="status">
-                  <th mat-header-cell *matHeaderCellDef> Status </th>
-                  <td mat-cell *matCellDef="let element"> {{element.status}} </td>
-                </ng-container>
-              <tr mat-header-row *matHeaderRowDef="machineDisplayedColumns; sticky: true"></tr>
-              <tr mat-row *matRowDef="let row; columns: machineDisplayedColumns;"></tr>
-            </table>
-          </div>
-    </mat-tab>
-    <mat-tab label="Alert Policies"></mat-tab>
-  </mat-tab-group>
-</mat-card>
-<br>
+          <table mat-table [dataSource]="machines">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/machines', element._id ]"
+                  class="text-dark">{{element.name}} </a></td>
+            </ng-container>
+            <ng-container matColumnDef="operatingSystem">
+              <th mat-header-cell *matHeaderCellDef> Operating System </th>
+              <td mat-cell *matCellDef="let element"> {{element.operatingSystem}} </td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="machineDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: machineDisplayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+      <mat-tab label="Alert Policies">
+        <div class="table-container">
+          <table mat-table [dataSource]="alertPolicies">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Name </th>
+              <td mat-cell *matCellDef="let element"> <a [routerLink]="['/main/alertpolicies', element._id ]"
+                  class="text-dark">{{element.name}}</a> </td>
+
+            </ng-container>
+            <ng-container matColumnDef="priority">
+              <th mat-header-cell *matHeaderCellDef> Priority </th>
+              <td mat-cell *matCellDef="let element"> {{element.priority}} </td>
+
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="alertPoliciesDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: alertPoliciesDisplayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+  <br>
 
   <button mat-stroked-button (click)="deleteGroup()" color="primary"><strong>DELETE</strong></button>
   <button mat-stroked-button (click)="addMachineToGroup()" color="primary"><strong>ADD MACHINES</strong></button>

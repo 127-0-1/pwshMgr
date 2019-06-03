@@ -103,9 +103,8 @@ async function handshake() {
 handshake()
   .then(() => {
     logger.info("authenticated OK")
-    // jobRunnerCron.start()
-    // dataUpdateCron.start()
-    dataUpdate()
+    jobRunnerCron.start()
+    dataUpdateCron.start()
   })
 
 
@@ -159,10 +158,10 @@ async function dataUpdate() {
 }
 
 async function jobRunner() {
-    // sleep for randomised amount of seconds to prevent all agents hitting server at once. 10-30 seconds
-    const sleepSeconds = Math.floor(Math.random() * 20) + 10
-    logger.info(`starting job runner - sleeping for ${sleepSeconds} seconds`)
-    await sleep(sleepSeconds * 1000)
+  // sleep for randomised amount of seconds to prevent all agents hitting server at once. 10-30 seconds
+  // const sleepSeconds = Math.floor(Math.random() * 20) + 10
+  // logger.info(`starting job runner - sleeping for ${sleepSeconds} seconds`)
+  await sleep(30000)
   try {
     // if jobInProgressLock is set to true, a job is already running, so this cron cycle needs to be skipped
     if (jobInProgressLock) {
@@ -201,7 +200,6 @@ async function jobRunner() {
 
     // execute script and capture stdout + stderr
     const { stdout, stderr } = await exec(`powershell -ExecutionPolicy Bypass -NoProfile -File ${decryptedPayloadJson.job.script._id}.ps1`);
-
     // check if script failed or succeeded and build payload to send
     var output = {}
     if (stdout) {
@@ -210,10 +208,17 @@ async function jobRunner() {
         output: stdout,
         jobId: decryptedPayloadJson.job._id
       }
-    } else {
+    } else if (stderr) {
       output = {
         status: "Failed",
         output: stderr,
+        jobId: jobId = decryptedPayloadJson.job._id
+      }
+    } else {
+      //no stdout or stderr, job passed OK with no output
+      output = {
+        status: "Success",
+        output: "No output from script",
         jobId: jobId = decryptedPayloadJson.job._id
       }
     }
@@ -238,7 +243,7 @@ async function jobRunner() {
   }
 };
 
-var dataUpdateCron = cron.schedule('*/5 * * * *', () => {
+var dataUpdateCron = cron.schedule('*/1 * * * *', () => {
   dataUpdate()
     .then(() => {
       logger.info(`data update completed`)
@@ -251,7 +256,7 @@ var dataUpdateCron = cron.schedule('*/5 * * * *', () => {
   });
 
 // Job runner
-var jobRunnerCron = cron.schedule('*/2 * * * *', () => {
+var jobRunnerCron = cron.schedule('*/1 * * * *', () => {
   jobRunner()
     .then(() => {
       logger.info(`job runner completed`)

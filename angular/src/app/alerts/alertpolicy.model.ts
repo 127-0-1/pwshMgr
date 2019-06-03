@@ -28,4 +28,5 @@ export interface AlertPolicyView {
     priority: string
     group: Group
     assignmentType: String
+    dateCreated: Date
 }

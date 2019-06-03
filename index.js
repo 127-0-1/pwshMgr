@@ -3,9 +3,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const api = require('./server/routes/api');
 const app = express();
+const nodemailer = require("nodemailer");
 const io = require('socket.io').listen(app.listen(process.env.PORT || 8080));
 const bcrypt = require("bcryptjs");
 const User = require('./server/models/user');
+
 
 bcrypt.hash(process.env.ADMINPW, 10)
   .then(hash => {

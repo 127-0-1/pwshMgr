@@ -7,7 +7,7 @@ import { Machine } from '../../machine/machine.model';
 import { AlertPolicy } from '../alertpolicy.model';
 import { Group } from 'src/app/group/group.model';
 import { GroupService } from 'src/app/group/group.service';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-new-alert-policy',

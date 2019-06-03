@@ -7,7 +7,7 @@ import { MachineService } from '../../machine/machine.service';
 import { ScriptService } from '../../script/script.service';
 import { Router } from '@angular/router';
 import { Job, NewJob } from '../job.model';
-import { MatDialogRef } from "@angular/material";
+import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-run-script-job',

@@ -7,8 +7,8 @@ import * as io from 'socket.io-client';
 import { JobService } from '../../jobs/jobs.service';
 import { Alert } from '../../alerts/alert.model';
 import { GroupService } from 'src/app/group/group.service';
-import { MAT_DIALOG_DATA } from '@angular/material';
-import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material";
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material/dialog";
 import { MachineAddToGroupDialogComponent } from './machine-add-to-group-dialog/machine-add-to-group-dialog.component';
 import { Group } from 'src/app/group/group.model';
 import { AlertService } from 'src/app/alerts/alert.service';
@@ -20,6 +20,7 @@ import { Script } from 'src/app/script/script.model';
 export interface DialogData {
   machineId: string
 }
+
 
 @Component({
   selector: 'app-machine-details',
@@ -42,6 +43,7 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   jobs: Job[];
   alertPolicies: AlertPolicyView[];
   alerts: Alert[];
+  option: String
 
   applicationDisplayedColumns: string[] = ['name', 'version'];
   processDisplayedColumns: string[] = ['name', 'pId'];
@@ -50,7 +52,7 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   groupDisplayedColumns: string[] = ['name', 'actions'];
   alertDisplayedColumns: string[] = ['name', 'priority'];
   alertPoliciesDisplayedColumns: string[] = ['name', 'priority'];
-  jobDisplayedColumns: string[] = ['script.name'];
+  jobDisplayedColumns: string[] = ['script.name', 'status', 'dateAdded'];
   constructor(
     private machineService: MachineService,
     private route: ActivatedRoute,
@@ -68,10 +70,6 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     this.machineService.getMachineById(this.id)
       .subscribe(machine => {
         this.machine = machine
-        this.applications = machine.applications
-        this.processes = machine.processes
-        this.drives = machine.drives
-        this.services = machine.services
       });
     // this.socket.emit('room', this.id)
     // this.socket.on('machineUpdate', (machine: Machine) => {
@@ -137,6 +135,36 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
         this.jobs = jobs
       })
     }
+    if (tab.tab.textLabel == "Applications") {
+      this.option = "applications"
+      
+      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(applications => {
+        this.applications = applications.applications
+        console.log(applications)
+      })
+    }
+    if (tab.tab.textLabel == "Drives") {
+      this.option = "drives"
+      
+      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(drives => {
+        this.drives = drives.drives
+        console.log(drives)
+      })
+    }
+    if (tab.tab.textLabel == "Services") {
+      this.option = "services"
+      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(services => {
+        this.services = services.services
+        console.log(services)
+      })
+    }
+    if (tab.tab.textLabel == "Processes") {
+      this.option = "processes"
+      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(processes => {
+        this.processes = processes.processes
+        console.log(processes)
+      })
+    }
   }
 
   stopMaintenance() {
@@ -151,17 +179,24 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   }
 
   runJob(): void {
-    const dialogRef = this.dialog.open(RunJobDialog, {
-      width: '250px',
-      data: { machineId: this.id }
-    });
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.data = { machineId: this.id }
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '500px'
+    dialogConfig.height = '300px'
+    dialogConfig.position = { top: '10%' }
+    this.dialog.open(RunJobDialog, dialogConfig);
   }
 
   newAlertPolicy(): void {
-    const dialogRef = this.dialog.open(NewAlertPolicyDialog, {
-      width: '250px',
-      data: { machineId: this.id }
-    });
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = '900px'
+    dialogConfig.height = '600px'
+    dialogConfig.disableClose = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.position = { top: '5%' }
+    this.dialog.open(NewAlertPolicyDialog, dialogConfig);
   }
 
 
@@ -171,6 +206,7 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
 @Component({
   selector: 'run-job-dialog',
   templateUrl: 'run-job-dialog.html',
+  styleUrls: ['./run-job-dialog.css']
 })
 export class RunJobDialog implements OnInit {
 
@@ -209,6 +245,7 @@ export class RunJobDialog implements OnInit {
 @Component({
   selector: 'new-alert-policy-dialog',
   templateUrl: 'new-alert-policy-dialog.html',
+  styleUrls: ['./new-alert-policy-dialog.css']
 })
 export class NewAlertPolicyDialog implements OnInit {
 

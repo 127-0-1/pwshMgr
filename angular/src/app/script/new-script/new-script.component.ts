@@ -3,7 +3,7 @@ import { Script } from '../script.model';
 import { ScriptService } from '../script.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-new-script',

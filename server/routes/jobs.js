@@ -53,10 +53,10 @@ router.get('/', async (req, res) => {
             return res.status(404).send('Invalid machine ID.');
         }
         const machineId = new mongoose.Types.ObjectId(req.query.machine)
-        const jobs = await Job.find({ machine: machineId }).populate('script', 'name').select('-output');
+        const jobs = await Job.find({ machine: machineId }).populate('script', 'name').select('-output').sort({ dateAdded: 'desc' });
         res.send(jobs);
     } else {
-        const jobs = await Job.find().populate('machine', 'name').populate('script', 'name');
+        const jobs = await Job.find().populate('machine', 'name').populate('script', 'name').sort({ dateAdded: 'desc' });;
         res.send(jobs);
     }
 });

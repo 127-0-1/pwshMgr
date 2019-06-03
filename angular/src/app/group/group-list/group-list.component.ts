@@ -3,7 +3,7 @@ import { Group } from '../group.model';
 import { GroupService } from '../group.service';
 import { FormControl } from '@angular/forms';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { MatDialog, MatDialogConfig } from "@angular/material";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { NewGroupComponent } from '../new-group/new-group.component';
 
 @Component({
@@ -35,13 +35,12 @@ export class GroupListComponent implements OnInit {
   }
 
   openDialog() {
-
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
+    dialogConfig.width = '500px'
+    dialogConfig.height = '300px'
     dialogConfig.position = { top: '10%' }
-
     this.dialog.open(NewGroupComponent, dialogConfig);
   }
 

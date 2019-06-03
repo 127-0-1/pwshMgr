@@ -71,11 +71,19 @@ async function jobUpdate(machineId, jobData) {
         const machine = await Machine.findOne({ _id: machineId }).select('aesKey')
 
         // decrypt recieved data. Attempt to parse decrypted JSON
-        const decryptedData = decrypt(machine.aesKey, jobData)
-        const decryptedDataJson = JSON.parse(decryptedData)
+        const decryptedDataJson = JSON.parse(decrypt(machine.aesKey, jobData))
+        console.log(decryptedDataJson)
 
+        decryptedDataJson.finishDate = Date.now()
         // find job and update
-        await Job.findOneAndUpdate({ _id: decryptedDataJson.jobId }, { status: decryptedDataJson.status, output: decryptedDataJson.output })
+        await Job.findOneAndUpdate({ _id: decryptedDataJson.jobId }, {
+            status: decryptedDataJson.status,
+            output: decryptedDataJson.output,
+            finishDate: decryptedDataJson.finishDate
+        })
+
+
+
         return
     } catch (error) {
         throw error
@@ -317,7 +325,10 @@ app.post('/job-runner', async (req, res) => {
     const payloadJson = JSON.stringify(payload)
     const encryptedPayload = cipher.encrypt(payloadJson)
     res.send(encryptedPayload)
-    await Job.findByIdAndUpdate(job._id, { status: "Running" })
+    const startDate = Date.now()
+    await Job.findByIdAndUpdate(job._id, { 
+        status: "Running", 
+        startDate: startDate })
 })
 
 // route agents contact to update job status and send output

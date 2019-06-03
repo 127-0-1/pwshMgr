@@ -3,7 +3,7 @@ import { Job } from '../../jobs/job.model'
 import { JobService } from '../../jobs/jobs.service'
 import { FormControl } from '@angular/forms';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { MatDialog, MatDialogConfig } from "@angular/material";
+import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { RunScriptJobComponent } from '../run-script-job/run-script-job.component';
 
 @Component({
@@ -33,13 +33,12 @@ export class JobListComponent implements OnInit {
     })
   }
   openDialog() {
-
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = false;
     dialogConfig.autoFocus = true;
+    dialogConfig.width = '500px'
+    dialogConfig.height = '400px'
     dialogConfig.position = { top: '10%' }
-
     this.dialog.open(RunScriptJobComponent, dialogConfig);
   }
 

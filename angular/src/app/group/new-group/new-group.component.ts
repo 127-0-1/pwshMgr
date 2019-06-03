@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Group } from '../group.model';
 import { GroupService } from '../group.service';
 import { Router } from '@angular/router';
-import { MatDialogRef } from "@angular/material";
+import { MatDialogRef } from "@angular/material/dialog";
 
 @Component({
   selector: 'app-new-group',

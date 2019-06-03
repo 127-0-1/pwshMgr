@@ -1,7 +1,7 @@
-:host {
+/* :host {
   justify-content: center;
   margin: 100px 0px;
-}
+} */
 
 .mat-form-field {
   width: 100%;
@@ -9,16 +9,14 @@
 }
 
 mat-card-title,
-mat-card-content,
-mat-card-actions {
+mat-card-content {
   display: flex;
   justify-content: center;
 }
 
 .button {
-  display: flex;
+  display: block;
   justify-content: center;
-  color: primary;
 }
 
 .mat-toolbar.mat-primary {

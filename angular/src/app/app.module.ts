@@ -12,7 +12,7 @@ import { PageHeaderComponent } from './page-header/page-header.component';
 import { UserListComponent } from './users/user-list/user-list.component';
 import { NewUserComponent } from './users/new-user/new-user.component';
 import { environment } from '../environments/environment';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent, ResetPasswordDialog } from './login/login.component';
 import { ScriptService } from './script/script.service';
 import { NewScriptComponent } from './script/new-script/new-script.component';
 import { AlertPolicyListComponent } from './alerts/alert-policy-list/alert-policy-list.component';
@@ -41,7 +41,24 @@ import { GroupDetailsComponent, AddMachinesToGroupDialog } from './group/group-d
 import { NewGroupComponent } from './group/new-group/new-group.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTableModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule, MatDialogContainer, MatDatepickerModule, MatCardModule, MatIconModule, MatInputModule, MatButtonModule, MatSelectModule, MatSnackBarModule, MatToolbarModule, MatGridListModule, MatSidenavModule, MatListModule, MatDialogContent, MatDialogModule, MatTabsModule, MatCheckboxModule } from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogContainer, MatDialogContent, MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { NavigationComponent } from './navigation/navigation.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { LoginLayoutComponent } from './login-layout/login-layout.component';
@@ -87,7 +104,8 @@ import { MachineAddToGroupDialogComponent } from './machine/machine-details/mach
     MachineAddToGroupDialogComponent,
     RunJobDialog,
     NewAlertPolicyDialog,
-    AddMachinesToGroupDialog
+    AddMachinesToGroupDialog,
+    ResetPasswordDialog
   ],
   imports: [
     BrowserModule,
@@ -234,7 +252,8 @@ import { MachineAddToGroupDialogComponent } from './machine/machine-details/mach
     NewAlertPolicyComponent,
     RunJobDialog,
     NewAlertPolicyDialog,
-    AddMachinesToGroupDialog
+    AddMachinesToGroupDialog,
+    ResetPasswordDialog
   ],
   bootstrap: [AppComponent]
 })

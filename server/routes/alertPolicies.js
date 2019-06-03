@@ -46,6 +46,7 @@ router.post('/', checkAuth, async (req, res) => {
         priority: data.priority,
         priorityNumber: priorityNumber,
         assignmentType: data.assignmentType,
+        dateCreated: Date.now()
     });
     await newAlertPolicy.save()
     res.status(status.OK).json(newAlertPolicy);

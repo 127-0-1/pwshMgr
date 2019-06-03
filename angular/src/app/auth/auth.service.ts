@@ -122,6 +122,10 @@ export class AuthService {
     localStorage.removeItem("userId");
   }
 
+  resetPassword(email){
+    return this.http.post<any>("http://localhost:8080/api/users/reset-password", email)
+  }
+
   private getAuthData() {
     const token = localStorage.getItem("token");
     const expirationDate = localStorage.getItem("expiration");
