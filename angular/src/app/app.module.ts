@@ -67,7 +67,7 @@ import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { ErrorDialogService } from './error-dialog.service';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MachineAddToGroupDialogComponent } from './machine/machine-details/machine-add-to-group-dialog/machine-add-to-group-dialog.component';
-
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +105,8 @@ import { MachineAddToGroupDialogComponent } from './machine/machine-details/mach
     RunJobDialog,
     NewAlertPolicyDialog,
     AddMachinesToGroupDialog,
-    ResetPasswordDialog
+    ResetPasswordDialog,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -137,7 +138,8 @@ import { MachineAddToGroupDialogComponent } from './machine/machine-details/mach
       {
         path: 'login', component: LoginLayoutComponent, data: { title: 'First Component' },
         children: [
-          { path: '', component: LoginComponent }
+          { path: '', component: LoginComponent },
+          { path: 'reset-password/:token', component: ResetPasswordComponent }
         ]
       },
       {

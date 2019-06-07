@@ -66,6 +66,7 @@ export class ResetPasswordDialog {
   resetPasswordForm: FormGroup
   resetPasswordReturn: ResetPasswordReturn
   success: Boolean
+  loading: Boolean
 
   constructor(
     private formBuilder: FormBuilder,
@@ -81,15 +82,21 @@ export class ResetPasswordDialog {
   }
 
   submitForm(resetPasswordForm) {
-    this.authService.resetPassword(resetPasswordForm).subscribe(data => {
-      if (data.message === "SUCCESS") {
-        console.log("this was OK")
-        this.success = true
-      }
-    })
+    this.loading = true
+    this.authService.requestPasswordReset(resetPasswordForm).subscribe(
+      data => {
+        if (data.message === "SUCCESS") {
+          console.log("this was OK")
+          this.loading = false
+          this.success = true
+        }
+      },
+      err => {
+        this.loading = false
+      })
   }
-
-  closeDialog(){
+  
+  closeDialog() {
     this.dialogRef.close()
   }
 }
