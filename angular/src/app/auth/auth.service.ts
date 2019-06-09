@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Output, EventEmitter } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
@@ -12,8 +12,11 @@ export class AuthService {
   private tokenTimer: any;
   private userId: string;
   private authStatusListener = new Subject<boolean>();
+  getLoggedInName: EventEmitter<any>
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { 
+    this.getLoggedInName = new EventEmitter();
+  }
 
   getToken() {
     const token = localStorage.getItem("token");
@@ -68,8 +71,8 @@ export class AuthService {
           const expirationDate = new Date(
             now.getTime() + expiresInDuration * 1000
           );
-          console.log(expirationDate);
-          this.saveAuthData(token, expirationDate, this.userId);
+          this.getLoggedInName.emit(email);
+          this.saveAuthData(token, expirationDate, this.userId, email);
           this.router.navigate(["/main/machines"]);
         }
       }, error => {
@@ -110,16 +113,18 @@ export class AuthService {
     }, duration * 1000);
   }
 
-  private saveAuthData(token: string, expirationDate: Date, userId: string) {
+  private saveAuthData(token: string, expirationDate: Date, userId: string, email: string) {
     localStorage.setItem("token", token);
     localStorage.setItem("expiration", expirationDate.toISOString());
     localStorage.setItem("userId", userId);
+    localStorage.setItem("email", email)
   }
 
   private clearAuthData() {
     localStorage.removeItem("token");
     localStorage.removeItem("expiration");
     localStorage.removeItem("userId");
+    localStorage.removeItem("email");
   }
 
   requestPasswordReset(email){

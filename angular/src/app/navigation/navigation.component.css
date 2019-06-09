@@ -30,3 +30,8 @@ mat-sidenav-container {
   .mat-nav-list a.active {
     background: lightgray;
 }
+
+
+.spacer {
+  flex: 1 1 auto;
+}

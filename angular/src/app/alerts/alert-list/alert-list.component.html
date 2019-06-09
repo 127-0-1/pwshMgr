@@ -1,10 +1,11 @@
 <div class="table-div">
+  <h2 *ngIf="noAlerts">No alerts found</h2>
   <mat-grid-list cols="4" gutterSize="10px" #grid rowHeight="150px">
     <mat-grid-tile *ngFor="let alert of alerts" [style.background]="color(alert.priority)">
       <div style="padding-left:10px; padding-right:10px">
         <h3>{{alert.name}}</h3>
       </div>
-      <mat-grid-tile-footer> <a [routerLink]="[ '/main/machines/', alert.machine._id ]">
+      <mat-grid-tile-footer> <a [routerLink]="[ '/main/alerts/', alert._id ]">
           <h3>{{alert.machine.name}}</h3>
         </a></mat-grid-tile-footer>
     </mat-grid-tile>

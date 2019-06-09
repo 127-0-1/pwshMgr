@@ -19,30 +19,28 @@ export interface Tile {
 export class AlertListComponent implements OnInit, AfterContentInit {
   @ViewChild('grid', { static: true }) grid: MatGridList;
   alerts: Alert[]
-
+  noAlerts: Boolean
   gridByBreakpoint = {
     xl: 6,
     lg: 4,
     md: 2
   }
 
-  constructor(private alertService: AlertService, private mediaObserver: MediaObserver) { }
+  constructor(private alertService: AlertService, private mediaObserver: MediaObserver) {
+    this.alertService.getAllAlerts()
+      .subscribe((alerts: Array<Alert>) => {
+        this.alerts = alerts
+        if (!Array.isArray(this.alerts) || !this.alerts.length) {
+          this.noAlerts = true
+        }
+      });
+  }
 
   ngOnInit() {
-    this.alertService.getAllAlerts()
-      .subscribe((alerts: Array<Alert>) => this.alerts = alerts);
+
   }
 
-  runThis(alert) {
-    if (alert.priority == "High") {
-      return "table-warning"
-    }
-    if (alert.priority == "Urgent") {
-      return "table-danger"
-    }
-  }
-
-  color(alert){
+  color(alert) {
     switch (alert) {
       case "Low":
         return "#00BFFF"

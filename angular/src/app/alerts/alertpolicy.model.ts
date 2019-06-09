@@ -15,7 +15,8 @@ export interface AlertPolicy {
     threshold: string,
     type: string,
     priority: string,
-    integrations: String
+    integrations: String,
+    email: String
 }
 
 export interface AlertPolicyView {
@@ -25,8 +26,9 @@ export interface AlertPolicyView {
     drive: string,
     threshold: string,
     type: string,
-    priority: string
-    group: Group
-    assignmentType: String
-    dateCreated: Date
+    priority: string,
+    group: Group,
+    assignmentType: String,
+    dateCreated: Date,
+    email: String
 }

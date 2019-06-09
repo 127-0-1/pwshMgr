@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
 import { Subscription } from "rxjs";
-import { FormBuilder, FormGroup, FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from "../auth/auth.service";
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogData } from '../group/group-details/group-details.component';
@@ -14,6 +14,7 @@ export interface ResetPasswordReturn {
   styleUrls: ["./login.component.css"]
 })
 export class LoginComponent implements OnInit, OnDestroy {
+
   isLoading = false;
   private authStatusSub: Subscription;
   loginForm: FormGroup;
@@ -74,11 +75,9 @@ export class ResetPasswordDialog {
     public dialogRef: MatDialogRef<ResetPasswordDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {
-
     this.resetPasswordForm = this.formBuilder.group({
       'email': ['', [Validators.email]]
     })
-
   }
 
   submitForm(resetPasswordForm) {
@@ -86,7 +85,6 @@ export class ResetPasswordDialog {
     this.authService.requestPasswordReset(resetPasswordForm).subscribe(
       data => {
         if (data.message === "SUCCESS") {
-          console.log("this was OK")
           this.loading = false
           this.success = true
         }
@@ -95,7 +93,7 @@ export class ResetPasswordDialog {
         this.loading = false
       })
   }
-  
+
   closeDialog() {
     this.dialogRef.close()
   }

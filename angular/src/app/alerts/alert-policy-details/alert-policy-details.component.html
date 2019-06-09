@@ -12,6 +12,10 @@
         <p>{{alertPolicy.assignmentType}}</p>
         <h4>Priority</h4>
         <p>{{alertPolicy.priority}}</p>
+        <div *ngIf="alertPolicy.email">
+          <h4>Send email to</h4>
+          <p>{{alertPolicy.email}}</p>
+        </div>
         <h4>Date Added</h4>
         <p>{{alertPolicy.dateCreated | date:'medium'}}</p>
       </mat-tab>

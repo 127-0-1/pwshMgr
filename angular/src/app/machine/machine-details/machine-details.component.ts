@@ -1,9 +1,8 @@
-import { Component, OnInit, TemplateRef, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MachineService } from '../machine.service';
 import { Machine, Application, Process, Drive, Service } from '../machine.model';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import * as io from 'socket.io-client';
 import { JobService } from '../../jobs/jobs.service';
 import { Alert } from '../../alerts/alert.model';
 import { GroupService } from 'src/app/group/group.service';
@@ -21,15 +20,12 @@ export interface DialogData {
   machineId: string
 }
 
-
 @Component({
   selector: 'app-machine-details',
   templateUrl: './machine-details.component.html',
   styleUrls: ['./machine-details.component.css']
 })
 export class MachinedetailsComponent implements OnInit, OnDestroy {
-
-  socket: SocketIOClient.Socket
   deployForm: FormGroup;
   machine: Machine;
   id: string;
@@ -62,7 +58,6 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     private jobService: JobService,
     private dialog: MatDialog
   ) {
-    // this.socket = io.connect("http://localhost:8080")
     this.id = this.route.snapshot.params['id'];
   }
 
@@ -71,15 +66,10 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
       .subscribe(machine => {
         this.machine = machine
       });
-    // this.socket.emit('room', this.id)
-    // this.socket.on('machineUpdate', (machine: Machine) => {
-    //   console.log("received update")
-    //   this.machine = machine
-    // })
   }
 
   deleteMachine() {
-    if (confirm("Are you sure to delete?")) {
+    if (confirm("Are you sure to delete? This will remove all jobs, alert polices and alerts related to this machine.")) {
       this.machineService.deleteMachine(this.machine._id)
         .subscribe()
       this.router.navigate(['main/machines'])
@@ -106,7 +96,6 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     dialogConfig.position = { top: '10%' }
     this.dialog.open(MachineAddToGroupDialogComponent, dialogConfig);
   }
-
 
   startMaintenance() {
     this.machine.status = "Maintenance"
@@ -137,32 +126,27 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     }
     if (tab.tab.textLabel == "Applications") {
       this.option = "applications"
-      
-      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(applications => {
+
+      this.machineService.getMachineSpecificItems(this.id, this.option).subscribe(applications => {
         this.applications = applications.applications
-        console.log(applications)
       })
     }
     if (tab.tab.textLabel == "Drives") {
       this.option = "drives"
-      
-      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(drives => {
+      this.machineService.getMachineSpecificItems(this.id, this.option).subscribe(drives => {
         this.drives = drives.drives
-        console.log(drives)
       })
     }
     if (tab.tab.textLabel == "Services") {
       this.option = "services"
-      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(services => {
+      this.machineService.getMachineSpecificItems(this.id, this.option).subscribe(services => {
         this.services = services.services
-        console.log(services)
       })
     }
     if (tab.tab.textLabel == "Processes") {
       this.option = "processes"
-      this.machineService.getMachineSpecificItems(this.id,this.option ).subscribe(processes => {
+      this.machineService.getMachineSpecificItems(this.id, this.option).subscribe(processes => {
         this.processes = processes.processes
-        console.log(processes)
       })
     }
   }
@@ -174,8 +158,7 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // this.socket.disconnect()
-    // console.log("disconneted socket")
+
   }
 
   runJob(): void {
@@ -198,8 +181,6 @@ export class MachinedetailsComponent implements OnInit, OnDestroy {
     dialogConfig.position = { top: '5%' }
     this.dialog.open(NewAlertPolicyDialog, dialogConfig);
   }
-
-
 
 }
 
@@ -228,19 +209,16 @@ export class RunJobDialog implements OnInit {
   ngOnInit() {
     this.scriptService.getAllScripts().subscribe(scripts => {
       this.scripts = scripts
-      console.log(this.scripts)
     })
   }
 
   submitForm(newJob: NewJob) {
     newJob.machine = this.data.machineId
-    console.log(newJob)
     this.jobService.postJob(newJob).subscribe(() => {
       this.dialogRef.close()
     })
   }
 }
-
 
 @Component({
   selector: 'new-alert-policy-dialog',
@@ -304,11 +282,9 @@ export class NewAlertPolicyDialog implements OnInit {
 
 
   constructor(
-    private machineService: MachineService,
     private alertService: AlertService,
     private router: Router,
     private formBuilder: FormBuilder,
-    private groupService: GroupService,
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {
 
@@ -318,7 +294,6 @@ export class NewAlertPolicyDialog implements OnInit {
       'priority': ['', [Validators.required]],
       'threshold': ['', []]
     })
-
   }
 
   ngOnInit() {
@@ -341,7 +316,6 @@ export class NewAlertPolicyDialog implements OnInit {
   submitForm(newAlertPolicyForm) {
     newAlertPolicyForm.assignedTo = this.data.machineId
     newAlertPolicyForm.assignmentType = "Machine"
-    console.log(newAlertPolicyForm)
     this.alertService.postAlertPolicy(newAlertPolicyForm)
       .subscribe(alertPolicy => {
         this.router.navigate(['main/alertpolicies/' + alertPolicy._id])

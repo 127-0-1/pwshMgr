@@ -6,33 +6,23 @@ const mongoose = require('mongoose');
 const status = require('http-status');
 const Job = require('../models/job');
 const Alert = require('../models/alert');
+const AlertPolicy = require('../models/alertPolicy');
 const checkAuth = require("../middleware/check-auth");
+const Group = require("../models/group")
 
-router.put('/multiple', async (req,res) => {
-    const result = await Machine.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
-    console.log(result)
-    res.status(status.OK).json({message: 'SUCCESS'})
+
+// delete multiuple
+router.put('/multiple', async (req, res) => {
+    await Machine.remove({ _id: { $in: (req.body).map(mongoose.Types.ObjectId) } });
+    await Job.remove({ machine: { $in: (req.body).map(mongoose.Types.ObjectId) } });
+    await Alert.remove({ machine: { $in: (req.body).map(mongoose.Types.ObjectId) } });
+    await AlertPolicy.deleteMany({ assignedTo: { $in: (req.body).map(mongoose.Types.ObjectId) } });
+    await Group.updateMany({ machines: { $in: (req.body).map(mongoose.Types.ObjectId) } }, { $pull: { machines: req.params.machineid } }, { safe: true, upsert: true })
+    res.status(status.OK).json({ message: 'SUCCESS' })
 })
 
-router.get('/count', (req, res) => {
-    Machine.count({}, function (err, count) {
-        if (err) return res.status(status.BAD_REQUEST).json(err);
-        var object = {
-            count: count.toString()
-        }
-        res.status(status.OK).json(object);
-    });
-});
-
-router.get('/nonmaintenance', async (req, res) => {
-    const machines = await Machine.find({"status": {"$ne": "Maintenance"}, pollingCycle: req.query.pollcycle },'name _id operatingSystem status ipAddress credential');
-    res.send(machines);
-});
-
 router.get('/:id', validateObjectId, async (req, res) => {
-    if (req.query.select){
-        console.log("select sent")
-        console.log(req.query.select)
+    if (req.query.select) {
         const machine = await Machine.findById(req.params.id).select(req.query.select);
         res.send(machine);
     } else {
@@ -49,37 +39,31 @@ router.get('/:id/drives', validateObjectId, async (req, res) => {
 });
 
 // update status
-router.post('/offline/:id', checkAuth, validateObjectId, async (req,res) => {
+router.post('/offline/:id', checkAuth, validateObjectId, async (req, res) => {
     const machine = await Machine.findById(req.params.id);
     machine.status = "Offline"
-    await Machine.findByIdAndUpdate({_id: req.params.id}, machine, {new:true})
+    await Machine.findByIdAndUpdate({ _id: req.params.id }, machine, { new: true })
     req.io.sockets.in(req.params.id).emit('machineUpdate', machine)
-    res.status(status.OK).json({message: 'Success'});
+    res.status(status.OK).json({ message: 'Success' });
 })
 
-// update status (winrm)
-router.post('/winrmfailed/:id', checkAuth, validateObjectId, async (req,res) => {
-    const machine = await Machine.findById(req.params.id);
-    machine.status = "Online, WinRM unreachable"
-    await Machine.findByIdAndUpdate({_id: req.params.id}, machine, {new:true})
-    req.io.sockets.in(req.params.id).emit('machineUpdate', machine)
-    res.status(status.OK).json({message: 'Success'});
-})
-
-router.delete('/:id', checkAuth,validateObjectId, async (req, res) => {
+// delete single machine
+router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {
     await Machine.findByIdAndRemove(req.params.id);
+    await Job.deleteMany({ machine: req.params.id });
+    await Alert.deleteMany({ machine: req.params.id });
+    await AlertPolicy.deleteMany({ assignedTo: req.params.id });
+    await Group.updateMany({ machines: req.params.id }, { $pull: { machines: req.params.machineid } }, { safe: true, upsert: true })
     res.status(status.OK).json({ message: 'SUCCESS' });
 });
 
-
-
-
-
+// get all machines
 router.get('/', checkAuth, async (req, res) => {
-    const machines = await Machine.find({},'name _id operatingSystem status ipAddress credential');
+    const machines = await Machine.find({}, 'name _id operatingSystem status');
     res.send(machines);
 });
 
+// update machine
 router.put('/:id', validateObjectId, async (req, res) => {
     const machine = await Machine.findById(req.params.id)
     machine.name = req.body.name
@@ -94,8 +78,8 @@ router.put('/:id', validateObjectId, async (req, res) => {
     machine.processes = req.body.processes
     machine.drives = req.body.drives
     machine.status = req.body.status
-    if (req.body.pollingCycle){
-        console.log("this is an update from the UI")   
+    if (req.body.pollingCycle) {
+        console.log("this is an update from the UI")
         machine.pollingCycle = req.body.pollingCycle
     }
     if (req.body.credential) {

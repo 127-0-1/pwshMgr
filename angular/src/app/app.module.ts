@@ -23,7 +23,7 @@ import { NewSlackIntegrationComponent } from './integrations/new-slack-integrati
 import { AlertPolicyDetailsComponent } from './alerts/alert-policy-details/alert-policy-details.component';
 import { AlertDetailsComponent } from './alerts/alert-details/alert-details.component';
 import { ScriptListComponent } from './script/script-list/script-list.component';
-import { ScriptDetailsComponent } from './script/script-details/script-details.component';
+import { ScriptDetailsComponent, EditScriptDialog } from './script/script-details/script-details.component';
 import { JobDetailsComponent } from './jobs/job-details/job-details.component';
 import { JobListComponent } from './jobs/job-list/job-list.component';
 import { JobService } from './jobs/jobs.service';
@@ -37,7 +37,7 @@ import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { DashboardService } from './dashboard/dashboard.service';
 import { GroupListComponent } from './group/group-list/group-list.component';
 import { GroupService } from './group/group.service';
-import { GroupDetailsComponent, AddMachinesToGroupDialog } from './group/group-details/group-details.component';
+import { GroupDetailsComponent, AddMachinesToGroupDialog, RenameGroupDialog } from './group/group-details/group-details.component';
 import { NewGroupComponent } from './group/new-group/new-group.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -106,7 +106,9 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     NewAlertPolicyDialog,
     AddMachinesToGroupDialog,
     ResetPasswordDialog,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    EditScriptDialog,
+    RenameGroupDialog
   ],
   imports: [
     BrowserModule,
@@ -243,7 +245,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     DashboardService,
     AuthGuard,
     GroupService,
-    ErrorDialogService
+    ErrorDialogService,
+    AuthService
   ],
   entryComponents: [
     ErrorDialogComponent,
@@ -255,7 +258,9 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     RunJobDialog,
     NewAlertPolicyDialog,
     AddMachinesToGroupDialog,
-    ResetPasswordDialog
+    ResetPasswordDialog,
+    EditScriptDialog,
+    RenameGroupDialog
   ],
   bootstrap: [AppComponent]
 })

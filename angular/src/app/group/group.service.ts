@@ -22,8 +22,8 @@ export class GroupService {
     return this.http.post<Group>('http://localhost:8080/api/groups/', group);
   }
 
-  updateGroup(group: Group): Observable<Group> {
-    return this.http.put<Group>('http://localhost:8080/api/groups', group);
+  updateGroup(group: Group, groupId) {
+    return this.http.put<Group>(`http://localhost:8080/api/groups/${groupId}`, group);
   }
 
   deleteGroup(groupID) {

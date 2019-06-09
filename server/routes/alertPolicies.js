@@ -1,13 +1,12 @@
 const validateObjectId = require('../middleware/validateObjectId');
 const AlertPolicy = require('../models/alertPolicy');
+const Alert = require('../models/alert')
 const Machine = require('../models/machine');
 const Group = require('../models/group')
 const express = require('express');
 const router = express.Router();
-
 const mongoose = require('mongoose');
 const status = require('http-status');
-
 const checkAuth = require("../middleware/check-auth");
 
 router.post('/', checkAuth, async (req, res) => {
@@ -46,15 +45,16 @@ router.post('/', checkAuth, async (req, res) => {
         priority: data.priority,
         priorityNumber: priorityNumber,
         assignmentType: data.assignmentType,
-        dateCreated: Date.now()
+        dateCreated: Date.now(),
+        email: data.email
     });
     await newAlertPolicy.save()
     res.status(status.OK).json(newAlertPolicy);
 });
 
 router.post('/multiple/delete', checkAuth, async (req, res) => {
-    const result = await AlertPolicy.remove({ _id: { $in: (req.body).map(mongoose.Types.ObjectId) } });
-    console.log(result)
+    await AlertPolicy.remove({ _id: { $in: (req.body).map(mongoose.Types.ObjectId) } });
+    await Alert.remove({alertPolicyId: {$in: (req.body).map(mongoose.Types.ObjectId)}})
     res.status(status.OK).json({ message: 'SUCCESS' })
 })
 
@@ -89,6 +89,7 @@ router.get('/', async (req, res) => {
 
 router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {
     await AlertPolicy.findByIdAndRemove(req.params.id);
+    await Alert.remove({alertPolicyId: req.params.id})
     res.status(status.OK).json({ message: 'SUCCESS' });
 });
 

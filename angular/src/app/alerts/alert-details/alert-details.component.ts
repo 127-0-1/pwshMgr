@@ -27,19 +27,10 @@ export class AlertDetailsComponent implements OnInit {
       });
   }
 
-  deleteAlert() {
+  delete() {
     this.alertService.deleteAlert(this.alert._id)
       .subscribe()
-      this.router.navigate(['alerts'])
-  }
-
-  class() {
-    if (this.alert.priority == "High") {
-      return "table-warning"
-    }
-    if (this.alert.priority == "Urgent") {
-      return "table-danger"
-    }
+      this.router.navigate(['main/alerts'])
   }
 
 }

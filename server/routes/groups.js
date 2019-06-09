@@ -5,11 +5,11 @@ var status = require('http-status');
 const Group = require('../models/group');
 const checkAuth = require("../middleware/check-auth");
 const validateObjectId = require('../middleware/validateObjectId');
+const AlertPolicy = require('../models/alertPolicy')
 
 
 //create new group
 router.post('/', async (req, res) => {
-    console.log(req.body)
     var newGroup = Group({
         name: req.body.name,
         machines: req.body.machines
@@ -19,11 +19,18 @@ router.post('/', async (req, res) => {
     res.status(status.OK).json(group);
 });
 
-router.post('/multiple/delete', async (req,res) => {
-    const result = await Group.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
-    console.log(result)
-    res.status(status.OK).json({message: 'SUCCESS'})
+router.put('/:id', checkAuth, validateObjectId, async (req,res) => {
+    let group = await Group.findById(req.params.id)
+    group.name = req.body.name
+    await group.save()
+    res.json({message: "OK"})
 })
+
+router.post('/multiple/delete', async (req,res) => {
+    await Group.remove({_id: {$in: (req.body).map(mongoose.Types.ObjectId)}});
+    await AlertPolicy.remove({assignedTo: {$in: (req.body).map(mongoose.Types.ObjectId)}})
+    res.status(status.OK).json({message: 'SUCCESS'})
+});
 
 // get groups for specific machine
 router.get('/machine/:id', validateObjectId, async (req, res) => {
@@ -42,6 +49,7 @@ router.get('/', async (req, res) => {
 // delete group
 router.delete('/:id', checkAuth, validateObjectId, async (req, res) => {
     await Group.findByIdAndRemove(req.params.id);
+    await AlertPolicy.deleteMany({assignedTo: req.params.id})
     res.status(status.OK).json({ message: 'SUCCESS' });
 });
 

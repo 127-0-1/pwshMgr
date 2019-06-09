@@ -1,15 +1,13 @@
-import { Component, OnInit, TemplateRef, Inject, ViewChild } from '@angular/core';
-import { Group, SingleGroupView, Machine } from '../group.model';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { SingleGroupView, Machine } from '../group.model';
 import { GroupService } from '../group.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MachineService } from 'src/app/machine/machine.service';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import {SelectionModel} from '@angular/cdk/collections';
-import {MatTableDataSource} from '@angular/material/table';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { AlertPolicyView } from 'src/app/alerts/alertpolicy.model';
 import { AlertService } from 'src/app/alerts/alert.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 export interface DialogData {
   groupId: string
@@ -36,22 +34,22 @@ export class GroupDetailsComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private alertService: AlertService
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
     this.groupService.getGroupById(this.id)
       .subscribe(group => {
-         this.group = group
-         this.machines = group.machines
-        })
+        this.group = group
+        this.machines = group.machines
+      })
   }
 
   deleteGroup() {
-    if(confirm("Are you sure to delete?")) {
+    if (confirm("Are you sure to delete? This will delete any alert policies assigned to this group.")) {
       this.groupService.deleteGroup(this.group._id)
-      .subscribe()
-    this.router.navigate(['main/groups'])
+        .subscribe()
+      this.router.navigate(['main/groups'])
     }
   }
 
@@ -63,25 +61,49 @@ export class GroupDetailsComponent implements OnInit {
     dialogConfig.width = '1000px'
     dialogConfig.height = '700px'
     dialogConfig.position = { top: '10%' }
-    this.dialog.open(AddMachinesToGroupDialog, dialogConfig);
+    const dialogRef = this.dialog.open(AddMachinesToGroupDialog, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.groupService.getGroupById(this.id)
+        .subscribe(group => {
+          this.group = group
+          this.machines = group.machines
+        })
+    });
+  }
+
+  rename() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = false;
+    dialogConfig.data = this.group
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '700px'
+    dialogConfig.height = '300px'
+    dialogConfig.position = { top: '10%' }
+    const dialogRef = this.dialog.open(RenameGroupDialog, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.groupService.getGroupById(this.id)
+        .subscribe(group => {
+          this.group = group
+          this.machines = group.machines
+        })
+    });
   }
 
   tabClick(tab) {
     if (tab.tab.textLabel == "Alert Policies") {
-      console.log("alert policies selected")
-      
       this.alertService.getSingleMachineAlertPolicies(this.id).subscribe(alertPolicies => {
         this.alertPolicies = alertPolicies
-        console.log(this.alertPolicies)
       })
     }
   }
 
-  deleteFromGroup(machineId){
+  deleteFromGroup(machineId) {
     this.groupService.deleteMachineFromGroup(this.id, machineId)
-    .subscribe((group: SingleGroupView) => this.group = group)
+      .subscribe((group: SingleGroupView) => this.group = group)
   }
-
+  
 }
 
 @Component({
@@ -112,10 +134,8 @@ export class AddMachinesToGroupDialog implements OnInit {
       });
   }
 
-
   addMachinesToGroup() {
     let result = this.selected.map(a => a._id);
-    console.log(result)
     var postData = {
       machines: result,
       groupId: this.data.groupId
@@ -123,19 +143,44 @@ export class AddMachinesToGroupDialog implements OnInit {
     this.groupService.addMultipleMachinesToGroup(postData).subscribe(result => {
       this.dialogRef.close()
     })
-    // this.groupService.deleteMultipleGroups(result).subscribe(() => {
-    //   this.groupService.getAllGroups()
-    //     .subscribe((groups: Array<Group>) => {
-    //       this.groups = groups
-    //       this.temp = [...groups]
-    //       this.tData = true
-    //       this.selected = []
-    //     });
-    // })
   }
 
   onSelect({ selected }) {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
   }
+}
+
+
+@Component({
+  selector: 'rename-group-dialog',
+  templateUrl: 'rename-group-dialog.html',
+  styleUrls: ['./rename-group-dialog.css']
+})
+export class RenameGroupDialog implements OnInit {
+
+  renameGroupForm: FormGroup
+
+  constructor(
+    private groupService: GroupService,
+    private dialog: MatDialog,
+    public dialogRef: MatDialogRef<AddMachinesToGroupDialog>,
+    private formBuilder: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: SingleGroupView
+  ) { 
+    this.renameGroupForm = this.formBuilder.group({
+      'name': ['', [Validators.required]]
+    })
+  }
+
+
+  ngOnInit() {
+    this.renameGroupForm.patchValue(this.data)
+  }
+
+  submitForm(group){
+    this.groupService.updateGroup(group, this.data._id).subscribe()
+    this.dialogRef.close()
+  }
+
 }

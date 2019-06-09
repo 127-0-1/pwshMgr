@@ -22,8 +22,8 @@ export class ScriptService {
       return this.http.post<Script>('http://localhost:8080/api/scripts/', script);
     }
   
-    updateScript(script: Script): Observable<Script> {
-      return this.http.put<Script>('http://localhost:8080/api/scripts', script);
+    updateScript(script: Script, scriptId): Observable<Script> {
+      return this.http.put<Script>(`http://localhost:8080/api/scripts/${scriptId}`, script);
     }
   
     deleteScript(scriptID) {

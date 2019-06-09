@@ -5,6 +5,7 @@ const User = require("../models/user")
 const crypto = require("crypto")
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs")
+const smtpConfig = require("../../config/smtp_config")
 
 router.post("/register", UserController.createUser);
 
@@ -20,20 +21,31 @@ router.post('/request-reset-password', async (req, res) => {
     user.resetPasswordToken = hashedToken
     user.resetPasswordExpires = Date.now() + 3600000
     await User.findOneAndUpdate({ _id: user._id }, user)
+
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: smtpConfig.secure,
         auth: {
-            user: process.env.EMAIL_ADDRESS,
-            pass: process.env.EMAIL_PASSWORD
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD
         }
     })
+
     const mailOptions = {
-        from: process.env.EMAIL_ADDRESS,
+        from: process.env.SMTP_EMAIL_ADDRESS,
         to: user.email,
         subject: "Password reset link",
         text: `password reset link: http://localhost:4200/login/reset-password/${token}`
     }
-    await transporter.sendMail(mailOptions)
+    
+    try {
+        await transporter.sendMail(mailOptions)
+    }
+    catch (error){
+        return res.status(500).json({message: "Interal server error"})
+    }
+
     res.json({ message: 'SUCCESS' })
 })
 

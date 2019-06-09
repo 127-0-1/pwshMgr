@@ -1,25 +1,19 @@
-<div class="container-fluid pt-3">
-  <table class="table table-bordered table-hover table-sm">
-    <tbody>
-        <tr>
-            <th>Machine Name</th>
-            <td>{{alert.machine.name}}</td>
-          </tr>
-      <tr>
-        <th>Alert Name</th>
-        <td>{{alert.name}}</td>
-      </tr>
-      <tr [ngClass]="class()">
-        <th>Priority</th>
-        <td>{{alert.priority}}</td>
-      </tr>
-      <tr>
-        <th>Date Raised</th>
-        <td>{{alert.createdAt | date:'medium'}}</td>
-      </tr>
-    </tbody>
-  </table>
-  <button type="button" class="btn btn-secondary btn-space" (click)="deleteAlert()">Delete</button>
+<div class="table-div" *ngIf="alert">
+  <mat-card>
+    <mat-card-title>{{alert.name}}</mat-card-title>
+  </mat-card>
   <br>
+  <mat-card>
+    <mat-tab-group [@.disabled]="true">
+      <mat-tab label="Details">
+        <h4>Machine Name</h4>
+        <p>{{alert.machine.name}}</p>
+        <h4>Priority</h4>
+        <p>{{alert.priority}}</p>
+        <h4>Date Raised</h4>
+        <p>{{alert.createdAt | date:'medium'}}</p>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
   <br>
-</div>
+  <button mat-stroked-button (click)="delete()" color="primary"><strong>DELETE</strong></button>

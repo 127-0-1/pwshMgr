@@ -8,6 +8,8 @@ const app = express();
 const fs = require('fs');
 const NodeRSA = require('node-rsa');
 const aes256 = require('aes256');
+const nodemailer = require("nodemailer");
+const smtpConfig = require("../config/smtp_config")
 const { createLogger, format, transports } = require('winston');
 const { combine, timestamp, printf } = format;
 const db = process.env.MONGODBPATH
@@ -90,6 +92,30 @@ async function jobUpdate(machineId, jobData) {
     }
 }
 
+async function sendMail(emailAddress, message, subject) {
+    try {
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
+            secure: smtpConfig.secure,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD
+            }
+        })
+        const mailOptions = {
+            from: process.env.SMTP_EMAIL_ADDRESS,
+            to: emailAddress,
+            subject: subject,
+            text: message
+        }
+        await transporter.sendMail(mailOptions)
+    }
+    catch (error) {
+        logger.error(`error occured in sending alert email: ${error.message}`)
+    }
+}
+
 async function dataUpdate(machineId, payload) {
     try {
         const machine = await Machine.findOne({ _id: machineId })
@@ -163,6 +189,15 @@ async function processAlerts(machineId) {
                             status: "Active"
                         });
                         newAlert.save()
+                        if (alertPolicy.email) {
+                            logger.info(`sending email for alert id ${newAlert._id}`)
+                            const machineName = await Machine.findOne({ _id: machineId }).select('name')
+                            const subject = `pwshMgr: ${alertPolicy.priority} alert on ${machineName.name}`
+                            const message = `${alertPolicy.priority} alert on ${machineName.name}\n` +
+                                `${alertPolicy.name}\n` +
+                                `${smtpConfig.webHostname}/main/alerts/${newAlert._id}`
+                            sendMail(alertPolicy.email, message, subject)
+                        }
                     }
                 } else {
                     const activeAlert = await Alert
@@ -195,6 +230,15 @@ async function processAlerts(machineId) {
                             status: "Active"
                         });
                         newAlert.save()
+                        if (alertPolicy.email) {
+                            logger.info(`sending email for alert id ${newAlert._id}`)
+                            const machineName = await Machine.findOne({ _id: machineId }).select('name')
+                            const subject = `pwshMgr: ${alertPolicy.priority} alert on ${machineName.name}`
+                            const message = `${alertPolicy.priority} alert on ${machineName.name}\n` +
+                                `${alertPolicy.name}\n` +
+                                `${smtpConfig.webHostname}/main/alerts/${newAlert._id}`
+                            sendMail(alertPolicy.email, message, subject)
+                        }
                     }
                 } else {
                     const activeAlert = await Alert
@@ -224,6 +268,15 @@ async function processAlerts(machineId) {
                             status: "Active"
                         });
                         newAlert.save()
+                        if (alertPolicy.email) {
+                            logger.info(`sending email for alert id ${newAlert._id}`)
+                            const machineName = await Machine.findOne({ _id: machineId }).select('name')
+                            const subject = `pwshMgr: ${alertPolicy.priority} alert on ${machineName.name}`
+                            const message = `${alertPolicy.priority} alert on ${machineName.name}\n` +
+                                `${alertPolicy.name}\n` +
+                                `${smtpConfig.webHostname}/main/alerts/${newAlert._id}`
+                            sendMail(alertPolicy.email, message, subject)
+                        }
                     }
                 } else {
                     const activeAlert = await Alert
@@ -326,9 +379,10 @@ app.post('/job-runner', async (req, res) => {
     const encryptedPayload = cipher.encrypt(payloadJson)
     res.send(encryptedPayload)
     const startDate = Date.now()
-    await Job.findByIdAndUpdate(job._id, { 
-        status: "Running", 
-        startDate: startDate })
+    await Job.findByIdAndUpdate(job._id, {
+        status: "Running",
+        startDate: startDate
+    })
 })
 
 // route agents contact to update job status and send output

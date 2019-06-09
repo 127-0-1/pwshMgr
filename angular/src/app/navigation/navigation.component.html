@@ -1,5 +1,7 @@
 <mat-toolbar class="mat-elevation-z6" color="primary">
-  pwshMgr
+  onyx 
+  <span class="spacer"></span>
+  {{userName}}
 </mat-toolbar>
 <mat-sidenav-container>
   <mat-sidenav mode="side" opened="true" [fixedInViewport]="true" [fixedTopGap]="64">
@@ -10,6 +12,7 @@
       <a mat-list-item routerLinkActive="active" class="font-nav" fxLayoutAlign="start center" routerLink="/main/scripts"><span>SCRIPTS</span></a>
       <a mat-list-item routerLinkActive="active" class="font-nav" fxLayoutAlign="start center" routerLink="/main/alertpolicies"><span>ALERT POLICIES</span></a>
       <a mat-list-item routerLinkActive="active" class="font-nav" fxLayoutAlign="start center" routerLink="/main/alerts"><span>ALERTS</span></a>
+      <a mat-list-item  class="font-nav" fxLayoutAlign="start center" (click)="logout()"><span>LOGOUT</span></a>
     </mat-nav-list>
   </mat-sidenav>
   <router-outlet></router-outlet>

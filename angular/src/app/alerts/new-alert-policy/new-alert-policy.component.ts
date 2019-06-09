@@ -70,7 +70,6 @@ export class NewAlertPolicyComponent implements OnInit {
     { value: 'Z', viewValue: 'Z' }
   ];
 
-
   constructor(
     private dialogRef: MatDialogRef<NewAlertPolicyComponent>,
     private machineService: MachineService,
@@ -86,7 +85,8 @@ export class NewAlertPolicyComponent implements OnInit {
       'type': ['', [Validators.required]],
       'item': ['', [Validators.required]],
       'priority': ['', [Validators.required]],
-      'threshold': ['', []]
+      'threshold': ['', []],
+      'email': ['', [Validators.email]]
     })
 
   }
@@ -113,7 +113,6 @@ export class NewAlertPolicyComponent implements OnInit {
   }
 
   submitForm(newAlertPolicyForm) {
-    console.log(newAlertPolicyForm)
     this.alertService.postAlertPolicy(newAlertPolicyForm)
       .subscribe(alertPolicy => {
         this.router.navigate(['main/alertpolicies/' + alertPolicy._id])

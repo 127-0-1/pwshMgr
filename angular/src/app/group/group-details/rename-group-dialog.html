@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Rename Group</h2>
+<form [formGroup]="renameGroupForm" autocomplete="off" (ngSubmit)="submitForm(renameGroupForm.value)">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-stroked-button color="primary" type="Start" [disabled]="!renameGroupForm.valid"><strong>SAVE</strong></button>
+  </mat-dialog-actions>
+</form>

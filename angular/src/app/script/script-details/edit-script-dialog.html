@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Edit script</h2>
+<form [formGroup]="editScriptForm" autocomplete="off" (ngSubmit)="submitForm(editScriptForm.value)">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Script</mat-label>
+      <textarea matInput formControlName="scriptBody">
+  </textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-stroked-button color="primary" type="Start" [disabled]="!editScriptForm.valid"><strong>SAVE</strong></button>
+  </mat-dialog-actions>
+</form>
