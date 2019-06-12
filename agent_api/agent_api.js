@@ -291,6 +291,12 @@ async function processAlerts(machineId) {
     }
 }
 
+
+// download agent api public key
+app.get('/api-public-cert', async (req,res) => {
+    res.download('/etc/ssl/agent_public_key.pem')
+})
+
 // Authentication route
 app.post('/handshake', async (req, res) => {
     try {

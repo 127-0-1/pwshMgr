@@ -13,13 +13,7 @@ export class MachineService {
   apiPath: string
 
   constructor(private http: HttpClient) {
-    if (environment.production){
-      console.log("this is production")
-      this.apiPath = "/api/"
-      } else {
-        console.log("this is development")
-        this.apiPath = "http://localhost:8080/api/"
-      }
+    this.apiPath = environment.apiPath
   }
   
 

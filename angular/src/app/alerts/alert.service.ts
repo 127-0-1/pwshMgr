@@ -3,52 +3,58 @@ import { AlertPolicy, AlertPolicyView } from './alertpolicy.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Alert } from './alert.model';
+import { environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlertService {
 
-  constructor(private http: HttpClient) {}
+  apiPath: string
 
+  constructor(private http: HttpClient) {
+    this.apiPath = environment.apiPath
+  }
+
+  
 
   getAllAlertPolicies(): Observable<AlertPolicyView[]> {
-    return this.http.get<AlertPolicyView[]>('http://localhost:8080/api/alertpolicies');
+    return this.http.get<AlertPolicyView[]>(`${this.apiPath}/alertpolicies`);
   }
 
   getAllAlerts(): Observable<Alert[]> {
-    return this.http.get<Alert[]>('http://localhost:8080/api/alerts');
+    return this.http.get<Alert[]>(`${this.apiPath}/alerts`);
   }
 
   getSingleMachineAlerts(machineId): Observable<Alert[]>{
-    return this.http.get<Alert[]>(`http://localhost:8080/api/alerts?machine=${machineId}`)
+    return this.http.get<Alert[]>(`${this.apiPath}/alerts?machine=${machineId}`)
   }
 
   getSingleMachineAlertPolicies(machineId): Observable<AlertPolicyView[]>{
-    return this.http.get<AlertPolicyView[]>(`http://localhost:8080/api/alertPolicies?machine=${machineId}`)
+    return this.http.get<AlertPolicyView[]>(`${this.apiPath}/alertPolicies?machine=${machineId}`)
   }
 
   postAlertPolicy(alertpolicy: AlertPolicy): Observable<AlertPolicy>{
-    return this.http.post<AlertPolicy>('http://localhost:8080/api/alertpolicies', alertpolicy)
+    return this.http.post<AlertPolicy>(`${this.apiPath}/alertpolicies`, alertpolicy)
   }
 
   getAlertPolicyById(alertPolicyId): Observable<AlertPolicyView> {
-    return this.http.get<AlertPolicyView>('http://localhost:8080/api/alertpolicies/' + alertPolicyId)
+    return this.http.get<AlertPolicyView>(`${this.apiPath}/alertpolicies/` + alertPolicyId)
   }
 
   getAlertById(alertId): Observable<Alert> {
-    return this.http.get<Alert>('http://localhost:8080/api/alerts/' + alertId)
+    return this.http.get<Alert>(`${this.apiPath}/alerts/` + alertId)
   }
 
   deleteAlert(alertId) {
-    return this.http.delete('http://localhost:8080/api/alerts/' + alertId)
+    return this.http.delete(`${this.apiPath}/alerts/` + alertId)
   }
 
   deleteAlertPolicy(alertPolicyId) {
-    return this.http.delete('http://localhost:8080/api/alertpolicies/' + alertPolicyId);
+    return this.http.delete(`${this.apiPath}/alertpolicies/` + alertPolicyId);
   }
 
   deleteMultipleAlertPolicies(alertPolicies){
-    return this.http.post('http://localhost:8080/api/alertPolicies/multiple/delete', alertPolicies)
+    return this.http.post(`${this.apiPath}/alertPolicies/multiple/delete`, alertPolicies)
   }
 }

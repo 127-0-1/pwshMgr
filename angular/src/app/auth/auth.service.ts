@@ -2,11 +2,12 @@ import { Injectable, Output, EventEmitter } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
-
+import { environment} from '../../environments/environment';
 import { AuthData } from "./auth-data.model";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
+  apiPath: string
   private isAuthenticated = false;
   private token: string;
   private tokenTimer: any;
@@ -16,6 +17,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) { 
     this.getLoggedInName = new EventEmitter();
+    this.apiPath = environment.apiPath
   }
 
   getToken() {
@@ -43,7 +45,7 @@ export class AuthService {
   createUser(email: string, password: string) {
     const authData: AuthData = { email: email, password: password };
     this.http
-      .post("http://localhost:8080/api/users/register", authData)
+      .post(`${this.apiPath}/users/register`, authData)
       .subscribe(() => {
         this.router.navigate(["/"]);
       }, error => {
@@ -55,7 +57,7 @@ export class AuthService {
     const authData: AuthData = { email: email, password: password };
     this.http
       .post<{ token: string; expiresIn: number; userId: string }>(
-        "http://localhost:8080/api/users/login",
+        `${this.apiPath}/users/login`,
         authData
       )
       .subscribe(response => {
@@ -128,11 +130,11 @@ export class AuthService {
   }
 
   requestPasswordReset(email){
-    return this.http.post<any>("http://localhost:8080/api/users/request-reset-password", email)
+    return this.http.post<any>(`${this.apiPath}/users/request-reset-password`, email)
   }
 
   passwordReset(data){
-    return this.http.post<any>("http://localhost:8080/api/users/reset-password", data)
+    return this.http.post<any>(`${this.apiPath}/users/reset-password`, data)
   }
 
 
